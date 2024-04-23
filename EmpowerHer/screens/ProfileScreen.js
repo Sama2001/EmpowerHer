@@ -59,6 +59,7 @@ const ProfileScreen = ({route}) => {
       if (!result.canceled) {
       
         // Save the URI to AsyncStorage
+        setProfilePicture(result.uri);
         saveProfilePicture(result); // Pass the entire result object
 
     }
@@ -67,13 +68,12 @@ const ProfileScreen = ({route}) => {
     }
   };
   
-
   useEffect(() => {
     // Fetch user info when component mounts
     console.log('Auth Token:', authToken);
     fetchUserInfo();
     loadProfilePicture();
-}, []);
+  }, [profilePicture]); ////new
 
 const fetchUserInfo = async () => {
     try {
