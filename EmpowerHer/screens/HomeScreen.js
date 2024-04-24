@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, ImageBackground ,Image,Animated} from 'react-native';
+import { homeScreenStyles as styles} from '../styles/HomeScreenStyles'; // Import the styles from HomeScreenStyles.js
 
 const HomeScreen = ({ navigation }) => {
 
@@ -78,68 +79,6 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
- 
-  container: {
-   // backgroundColor:'#eeddd9',
-    backgroundColor: 'hsla(0, 15%, 90%, 0.3)',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: 'rgba(187, 123, 107, 0.79)', 
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    width: 300,
-    alignItems: 'center',
-  },
 
-  title: {
-    fontFamily: 'Helvetica',
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff', // white
-    marginTop: 130, // Adjust as needed
-    marginLeft:130,
-    marginBottom:80,
-  },
-  signupText: {
-    marginTop: 20, // Adjust as needed for spacing
-    fontSize: 16,
-    color: '#6b6c6e',
-    
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffff', 
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    marginTop:10,
-  },
-  logo: {
-    width: 200, // Adjust width and height as needed
-    height: 200,
-    alignSelf: 'center', // Center the logo horizontally
-    marginTop: -150, // Adjust as needed for spacing
-    marginBottom:70,
-  },
-
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffff', // Background color for the loading screen
-  },
-  Alogo: {
-    marginBottom:100,
-    width: 250, // Adjust width and height as needed
-    height: 250,
-  },
-});
 
 export default HomeScreen;

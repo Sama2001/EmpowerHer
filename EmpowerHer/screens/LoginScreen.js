@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Alert, TouchableOpacity, StyleSheet,Animated ,Text} from 'react-native';
+import { View, TextInput, Button, Alert, TouchableOpacity, StyleSheet,Animated ,Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from expo/vector-icons
 import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome icons
 
 import emailValidator from 'email-validator';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { loginScreenStyles as styles } from '../styles/LoginScreenStyles'; // Import styles
+
 const LoginScreen = ({ navigation,route }) => {
   const [email, setEmail] = useState('');
 
@@ -128,74 +130,5 @@ useEffect(() => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth:5,
-    borderRadius:30,
-    margin:5,
-    borderColor:'#a86556',
-  },
-  title: {
-    fontFamily: 'Helvetica',
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#a86556',
-    marginBottom: 80,
-    marginTop:-100,
-  },
-
-  inputContainer: {
-    backgroundColor:'#ffff',
-       width:'85%',
-       flexDirection: 'row',
-       alignItems: 'center',
-       marginBottom: 17,
-      
-     },
-
-     icon: {
-      position: 'absolute',
-      left: 10, // Adjust the left position as needed
-    },
-
-  input: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingLeft: 40, // Added padding to align text after the icon
-  },
-  passwordInput: {
-    paddingRight: 40, // Adjust the right padding to make space for the icon
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    top: 10, // Adjust the top position to vertically center the icon
-  },
-  button:{
-    backgroundColor: 'rgba(187, 123, 107, 0.79)', 
-    borderRadius: 8,
-    padding:12,
-    marginTop: 10,
-    width: 250,
-    alignItems: 'center',
-    borderRadius:50,
-    
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffff', 
-  },
-
-
-});
 
 export default LoginScreen;

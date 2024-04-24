@@ -4,8 +4,9 @@ import { View, TextInput, Button, Image, StyleSheet ,Alert,Text} from 'react-nat
 //import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
+import { profileScreenStyles as styles } from '../styles/ProfileScreenStyles'; // Import styles
 
-const ProfileScreen = ({route}) => {
+const ProfileScreen = ({route,navigation}) => {
     //const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
@@ -13,6 +14,10 @@ const ProfileScreen = ({route}) => {
     const [lastName, setLastName] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const {authToken} = route.params;
+
+    const navigateToFirstPage = () => {
+      navigation.navigate('First', { authToken, profilePicture });
+  };
 
 
   const saveProfilePicture = async (result) => {
@@ -163,7 +168,7 @@ const fetchUserInfo = async () => {
 
   return (
     <View style={styles.container}>
-            <Button title="Choose Profile Picture" onPress={handleChoosePhoto} />
+            <Button title="Edit Profile Picture" onPress={handleChoosePhoto} />
 
     <Image source={{ uri: profilePicture }} style={styles.profilePicture} /> 
 
@@ -184,30 +189,12 @@ const fetchUserInfo = async () => {
       <Text style={styles.text}>Mobile Number: {mobile}</Text>
     
       <Button title="Save Changes" onPress={handleSaveChanges} />
+      <Button title="Back to Home" onPress={navigateToFirstPage} /> 
+
+    
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    width: '80%',
-    marginBottom: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  profilePicture: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
-  },
-});
 
 export default ProfileScreen;

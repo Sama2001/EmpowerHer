@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, StyleSheet,TouchableOpacity,Text } from 'react-native';
 import emailValidator from 'email-validator';
 import GoogleSignIn from './google';
+import { signupScreenStyles as styles } from '../styles/SignupScreenStyles'; // Import styles
+
 import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome icons
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -137,59 +139,6 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    
-  },
 
-  button:{
-    backgroundColor: 'rgba(187, 123, 107, 0.79)', 
-    borderRadius: 8,
-    padding:12,
-    marginTop: 10,
-    width: 250,
-    alignItems: 'center',
-    borderRadius:50,
-    
-  },
-
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffff', 
-  },
-
-  icon: {
-    position: 'absolute',
-    left: 10, // Adjust the left position as needed
-  },
-  inputContainer: {
- backgroundColor:'#ffff',
-    width:'85%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 17,
-   
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingLeft: 40, // Added padding to align text after the icon
-  },
-  title: {
-    color:'#6b6c6e',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop:-60,
-    marginBottom: 50, // Adjust as needed for spacing
-  
-  },
-});
 
 export default SignupScreen; 

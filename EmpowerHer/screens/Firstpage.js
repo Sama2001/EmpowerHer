@@ -1,11 +1,21 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Import MaterialIcons
+import React, { useState, useRef,useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated,Image } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import * as SecureStore from 'expo-secure-store';
 
-const FirstPage = ({ navigation, route }) => {
-  const { authToken} = route.params;
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to track menu visibility
-  const menuWidth = useRef(new Animated.Value(0)).current; // Animated value for menu width
+import { firstPageStyles as styles } from '../styles/FirstPageStyles'; 
+
+const FirstPage = ({ navigation, route,result }) => {
+  const { authToken, profilePicture: initialProfilePicture } = route.params;
+  const [profilePicture, setProfilePicture] = useState(initialProfilePicture);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  const menuWidth = useRef(new Animated.Value(0)).current; 
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen); // Toggle menu visibility
@@ -17,9 +27,58 @@ const FirstPage = ({ navigation, route }) => {
     }).start();
   };
 
+////////////////
+  const loadProfilePicture = async () => {
+    try {
+      const uriString = await SecureStore.getItem('profilePictureURI');
+      if (uriString !== null) {
+        setProfilePicture(uriString); // Use URI string directly
+      }
+    } catch (error) {
+      console.error('Error loading profile picture:', error);
+    }
+  };
+
+  const fetchUserInfo = async () => {
+    try {
+
+        if (!authToken) {
+            console.error('Error: authToken is not provided');
+            return;
+        }
+        const token = authToken; 
+        const response = await fetch('http://192.168.1.120:3000/Gprofile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token,
+            }
+        });
+        const data = await response.json();
+        if (data.success) {
+            const { firstName, lastName,email,mobile } = data.user;
+            setFirstName(firstName);
+            setLastName(lastName);
+            setEmail(email);
+            setMobile(mobile);
+           
+        } else {
+            Alert.alert('Error', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        Alert.alert('Error', 'An error occurred while fetching user info');
+    }
+};
+
+useEffect(() => {
+  fetchUserInfo();
+  loadProfilePicture();
+}, ); 
+
   const navigateToPage4 = async() => {
 
-   navigation.navigate('Profile', { authToken });
+   navigation.navigate('Profile', { authToken});
 
   };
 
@@ -41,8 +100,13 @@ const FirstPage = ({ navigation, route }) => {
       <Animated.View style={[styles.menuContainer, { width: menuWidth }]}>
         {/* Profile Button */}
         <TouchableOpacity style={styles.profileButton} onPress={navigateToPage4}>
-          <Text style={styles.menuItemText}>Profile</Text>
-        </TouchableOpacity>
+        <View style={styles.profileInfoContainer}>
+        {profilePicture && <Image source={{ uri: profilePicture }} style={styles.profilePicture} />}
+        <Text style={styles.menuItemText}>
+      {firstName !== '' && lastName !== '' ? `${firstName} ${lastName}` : 'Loading...'}
+    </Text>
+        </View>
+  </TouchableOpacity>
         
         {/* Other Menu Items */}
         {/* Add more menu items as needed */}
@@ -51,57 +115,5 @@ const FirstPage = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: 'white',
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-  },
-  contentContainer: {
-    // Add your content container styles
-  },
-  profileButton: {
-    position: 'absolute',
-    top: 70,
-    left: 5,
-    padding: 10,
-    borderRadius: 10,
-    borderBottomWidth:2,
-    borderColor:'#a86556',
-    width:150,
-    zIndex: 2, // Ensure the profile button is above the menu
-  },
-  menuIconContainer: {
-    position: 'absolute',
-    top: 10, // Adjust top position as needed
-    left: 5, // Adjust left position as needed
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1, // Ensure the menu button is above the menu
-  },
-  menuContainer: {
-    borderTopRightRadius:30,
-    borderBottomRightRadius:30,
-    backgroundColor: 'rgba(128, 128, 128, 0.1)', // Semi-transparent gray background color
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 0, // Ensure the menu is behind other elements
-  },
-  menuItemText: {
-    fontSize: 16,
-    // Add any other styles for menu item text
-  },
-});
 
 export default FirstPage;
