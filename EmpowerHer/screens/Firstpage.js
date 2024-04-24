@@ -15,7 +15,17 @@ const FirstPage = ({ navigation, route,result }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-
+  const handleLogout = async () => {
+    try {
+      // Clear authentication token from AsyncStorage
+      await AsyncStorage.removeItem('authToken');
+      Alert.alert('Logging out');
+      // Navigate back to the login screen
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error removing authentication token:', error);
+    }
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen); // Toggle menu visibility
@@ -76,11 +86,24 @@ useEffect(() => {
   loadProfilePicture();
 }, ); 
 
-  const navigateToPage4 = async() => {
+  const navigateToProfile = async() => {
 
    navigation.navigate('Profile', { authToken});
 
   };
+
+  const navigateToMembership = async() => {
+
+    navigation.navigate('Member', { authToken});
+ 
+   };
+
+   
+  const navigateToVolunteer = async() => {
+
+    navigation.navigate('volunteer', { authToken});
+ 
+   };
 
   return (
     <View style={styles.container}>
@@ -99,7 +122,7 @@ useEffect(() => {
       {/* Menu */}
       <Animated.View style={[styles.menuContainer, { width: menuWidth }]}>
         {/* Profile Button */}
-        <TouchableOpacity style={styles.profileButton} onPress={navigateToPage4}>
+        <TouchableOpacity style={styles.profileButton} onPress={navigateToProfile}>
         <View style={styles.profileInfoContainer}>
         {profilePicture && <Image source={{ uri: profilePicture }} style={styles.profilePicture} />}
         <Text style={styles.menuItemText}>
@@ -107,9 +130,24 @@ useEffect(() => {
     </Text>
         </View>
   </TouchableOpacity>
-        
-        {/* Other Menu Items */}
-        {/* Add more menu items as needed */}
+
+  <TouchableOpacity style={styles.MemberButton} onPress={navigateToMembership}>
+       
+        <Text style={styles.menuItemText}> Membership </Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity style={styles.OpButton} onPress={navigateToVolunteer}>
+       
+       <Text style={styles.menuItemText}> Opportunities </Text>
+ </TouchableOpacity>
+
+  <TouchableOpacity style={styles.logout} onPress={handleLogout}>
+    <MaterialIcons name="exit-to-app" size={24} color="#a86556" style={styles.menuItemIcon} />
+    <Text style={styles.menuItemText}>Logout</Text>
+  </TouchableOpacity>
+
+
+
       </Animated.View>
     </View>
   );

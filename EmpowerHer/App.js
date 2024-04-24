@@ -9,7 +9,8 @@ import MenuScreen from './screens/MenuScreen';
 import AboutScreen from './screens/AboutScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import FirstPage from './screens/Firstpage';
-
+import Membership from './screens/Membership';
+import volunteer from './screens/Volunteer'
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -23,7 +24,8 @@ export default function App() {
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="First" component={FirstPage} />
-
+        <Stack.Screen name="Member" component={Membership} />
+        <Stack.Screen name="volunteer" component={volunteer} />
 
       </Stack.Navigator>
     </NavigationContainer>

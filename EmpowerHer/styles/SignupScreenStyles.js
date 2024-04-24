@@ -3,8 +3,14 @@ import { StyleSheet } from 'react-native';
 export const signupScreenStyles = StyleSheet.create({
   container: {
     flex: 1,
+    flex: 1,
+    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 5,
+    borderRadius: 30,
+    margin: 5,
+    borderColor: '#a86556',
   },
   button: {
     backgroundColor: 'rgba(187, 123, 107, 0.79)',
@@ -31,6 +37,7 @@ export const signupScreenStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 17,
   },
+
   input: {
     flex: 1,
     height: 40,
