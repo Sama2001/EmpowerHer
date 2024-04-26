@@ -151,18 +151,18 @@ const OpportunitiesSchema = new mongoose.Schema({
     required: true
   },
  
-  mobileNumber: {
+  mobile: {
     type: String,
     required: true
   },
-  emailAddress: {
+  email: {
     type: String,
     required: true
   },
   cv: [String]
 })
 const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
-
+module.exports=Opportunities;
 
 
 app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
@@ -178,7 +178,7 @@ app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, 
 });
 
 
-app.post('/opportunities', upload.array('cv'), async (req, res) => {
+app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
   try {
     const oppData = req.body;
     const cv = req.files.map(file => file.path);
@@ -189,6 +189,9 @@ app.post('/opportunities', upload.array('cv'), async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to submit opp application' });
   }
 });
+
+
+
 ///////////////////////////////////
 
 app.post('/register', async (req, res) => {
