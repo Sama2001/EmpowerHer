@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const emailValidator = require('email-validator'); // Add email validation library
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-
+const path = require('path');
 const multer = require('multer');
 
 const app = express();
@@ -22,6 +22,17 @@ mongoose.connect('mongodb+srv://sama:S123456@cluster0.28oglsd.mongodb.net/?retry
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
 
 const UserSchema = new mongoose.Schema({
 
@@ -61,6 +72,105 @@ lastName: {
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
+
+////////////////////////////////////////////////////
+const MembershipSchema = new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+ 
+  mobileNumber: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  education: {
+    type: String,
+    required: true
+  },
+  age: {
+    type: Number,
+    required: true
+  },
+  socialMediaLink: {
+    type: String,
+    required: true
+  },
+  projectLocation: {
+    type: String,
+    required: true
+  },
+  projectSector: {
+    type: String,
+    required: true
+  },
+  projectSummary: {
+    type: String,
+    required: true
+  },
+  projectPictures: [String] 
+});
+
+const Membership = mongoose.model('Membership', MembershipSchema);
+module.exports = Membership;
+
+const OpportunitiesSchema = new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+ 
+  mobileNumber: {
+    type: String,
+    required: true
+  },
+  emailAddress: {
+    type: String,
+    required: true
+  },
+  cv: [String]
+})
+const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
+
+
+
+app.post('/membership', upload.array('projectPictures'), async (req, res) => {
+  try {
+    const membershipData = req.body;
+    const projectPictures = req.files.map(file => file.path);
+    const newMembership = await Membership.create({ ...membershipData, projectPictures });
+    res.status(201).json({ success: true, message: 'Membership application submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting membership application:', error);
+    res.status(500).json({ success: false, message: 'Failed to submit membership application' });
+  }
+});
+
+
+app.post('/opportunities', upload.array('cv'), async (req, res) => {
+  try {
+    const oppData = req.body;
+    const cv = req.files.map(file => file.path);
+    const newOpp = await Opportunities.create({ ...oppData, cv });
+    res.status(201).json({ success: true, message: 'opp application submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting opp application:', error);
+    res.status(500).json({ success: false, message: 'Failed to submit opp application' });
+  }
+});
+///////////////////////////////////
 
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile  } = req.body;
@@ -207,7 +317,7 @@ app.get('/Gprofile', verifyToken, async (req, res) => {
 
 //////////////////////////////////////////////
 
-const storage = multer.diskStorage({
+/*const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = './uploads';
     fs.mkdirSync(uploadDir, { recursive: true }); // Create the uploads directory if it doesn't exist
@@ -217,7 +327,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });*/
 
 // PUT endpoint for updating user profile
 /*app.put('/profile', verifyToken, async (req, res) => {
@@ -241,6 +351,7 @@ const upload = multer({ storage: storage });
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });*/
+
 
 app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, res) => {
   try {

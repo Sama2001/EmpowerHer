@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Membership as styles } from '../styles/MemberShipStyles'; // Import styles
+import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 
 const MembershipForm = () => {
   const [fullName, setFullName] = useState('');
@@ -15,25 +17,78 @@ const MembershipForm = () => {
   const [projectSummary, setProjectSummary] = useState('');
   const [projectPictures, setProjectPictures] = useState([]); // State for project pictures
 
-  const handleSubmit = () => {
-    // Perform form submission logic here
-    // You can submit the form data to your backend or perform any other action
-    console.log('Form submitted!');
-    console.log('Full Name:', fullName);
-    console.log('Address:', address);
-    console.log('Mobile Number:', mobileNumber);
-    console.log('Email:', email);
-    console.log('Education Level:', educationLevel);
-    console.log('Age:', age);
-    console.log('Website/Facebook Link:', websiteLink);
-    console.log('Project Sector:', projectSector);
-    console.log('Project Location:', projectLocation);
-    console.log('Project Summary:', projectSummary);
-    console.log('Project Pictures:', projectPictures);
-
-  };
   
+  const handlePictureSelection = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        multiple: true, // Enable multiple selection
+      });
+      console.log('Image Picker Result:', result); // Log the result object
 
+  
+      if (!result.canceled) {
+        // Extract URIs of selected pictures from the assets array
+        const selectedURIs = result.assets.map((asset) => asset.uri);
+        
+        // Update selected pictures state
+        setProjectPictures([...projectPictures, ...selectedURIs]);
+        console.log('Selected Pictures:', projectPictures); // Log selected pictures
+      }
+
+      else {
+        console.log('Image selection cancelled or URI undefined.');
+      }
+    } catch (error) {
+      console.error('Error selecting picture:', error);
+    }
+  };
+
+
+  
+const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('fullName', fullName);
+      formData.append('address', address);
+      formData.append('mobileNumber', mobileNumber);
+      formData.append('email', email);
+      formData.append('education', educationLevel);
+      formData.append('age', age);
+      formData.append('socialMediaLink', websiteLink);
+      formData.append('projectSector', projectSector);
+      formData.append('projectLocation', projectLocation);
+      formData.append('projectSummary', projectSummary);
+      
+      projectPictures.forEach((uri, index) => {
+
+        const uriParts = uri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+        
+        formData.append('projectPictures', {
+          uri,
+          name: `projectPictures_${index}.${fileType}`,
+          type: `projectPictures/${fileType}`,
+        });
+      });
+
+      const response = await axios.post('http://192.168.1.120:3000/membership', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Membership application submitted:', response.data);
+      // Optionally, you can navigate to a success screen or show a success message
+    } catch (error) {
+      console.error('Error submitting membership application:', error);
+      // Handle error, show alert, etc.
+    }
+  };
+
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Membership Form</Text>
@@ -87,12 +142,15 @@ const MembershipForm = () => {
       </View>
       <View style={styles.section}>
         <Text style={styles.label}>Project Information</Text>
+       
         <TextInput
           style={styles.input}
           placeholder="Project Sector"
           value={projectSector}
           onChangeText={setProjectSector}
-        />
+       
+       />
+
         <TextInput
           style={styles.input}
           placeholder="Project Location"
@@ -111,7 +169,7 @@ const MembershipForm = () => {
       </View>
       <Text style={styles.label}>Project pictures</Text>
 
-      <TouchableOpacity style={styles.button1} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.button1} onPress={handlePictureSelection}>
         <Text style={styles.buttonText1}>choose pictures</Text>
       </TouchableOpacity>
       
