@@ -15,10 +15,16 @@ const ProfileScreen = ({route,navigation}) => {
     const [lastName, setLastName] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const {authToken} = route.params;
     const [showOldPassword, setShowOldPassword] = useState(false); // State variable to control old password visibility
     const [showNewPassword, setShowNewPassword] = useState(false); // State variable to control new password visibility
+    const [changePasswordVisible, setChangePasswordVisible] = useState(false); // State variable to control visibility of password change fields
+
+    const handleChangePasswordPress = () => {
+      setChangePasswordVisible(true);
+  };
+
     const navigateToFirstPage = () => {
       navigation.navigate('First', { authToken, profilePicture });
   };
@@ -184,10 +190,13 @@ const fetchUserInfo = async () => {
 
   return (
     <View style={styles.container}>
-            <Button title="Edit Profile Picture" onPress={handleChoosePhoto} />
+      
 
     <Image source={{ uri: profilePicture }} style={styles.profilePicture} /> 
+    <Button title="Edit Profile Picture" onPress={handleChoosePhoto} />
 
+      <Text style={styles.text}>Email: {email}</Text>
+      <Text style={styles.text}>            Mobile Number: {mobile}</Text>
       <TextInput
         style={styles.input}
         value={firstName}
@@ -201,33 +210,56 @@ const fetchUserInfo = async () => {
         placeholder="last name"
       />
  
-<Text style={styles.text}>Email: {email}</Text>
-      <Text style={styles.text}>Mobile Number: {mobile}</Text>
-    
-      <TextInput
-        style={styles.input}
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        placeholder="Old Password"
-        secureTextEntry={!showOldPassword} 
-      />
-      <TouchableOpacity onPress={() => setShowOldPassword(!showOldPassword)}>
-  <FontAwesome name={showOldPassword ? 'eye' : 'eye-slash'} size={24} color="black" />
-</TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        value={newPassword}
-        onChangeText={setNewPassword}
-        placeholder="New Password"
-        secureTextEntry={!showNewPassword} 
-      />
-      <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
-  <FontAwesome name={showNewPassword ? 'eye' : 'eye-slash'} size={24} color="black" />
-</TouchableOpacity>
+ <TouchableOpacity style={styles.button1}
+    onPress={handleChangePasswordPress} 
 
-      <Button title="Save Changes" onPress={handleSaveChanges} />
-      <Button title="Back to Home" onPress={navigateToFirstPage} /> 
+ >
+ <Text style={styles.buttonText1}>Change password</Text>
+
+            </TouchableOpacity>
+{changePasswordVisible && (
+
+                <>
+
+                    <TextInput
+                        style={styles.input}
+                        value={oldPassword}
+                        onChangeText={setOldPassword}
+                        placeholder="Old Password"
+                        secureTextEntry={!showOldPassword}
+                    />
+                    <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowOldPassword(!showOldPassword)}>
+                        <FontAwesome name={showOldPassword ? 'eye' : 'eye-slash'} size={22} color="#a86556" />
+                    </TouchableOpacity>
+
+                    <TextInput
+                        style={styles.input}
+                        value={newPassword}
+                        onChangeText={setNewPassword}
+                        placeholder="New Password"
+                        secureTextEntry={!showNewPassword}
+                    />
+                    <TouchableOpacity style={styles.eyeIcon1} onPress={() => setShowNewPassword(!showNewPassword)}>
+                        <FontAwesome name={showNewPassword ? 'eye' : 'eye-slash'} size={22} color="#a86556" />
+                    </TouchableOpacity>
+                </>
+            )}
+
+<TouchableOpacity 
+style={styles.button}
+onPress={handleSaveChanges}
+>
+ <Text style={styles.buttonText}>Save Changes</Text>
+ </TouchableOpacity>
+
+ <TouchableOpacity style={styles.button2}
+ onPress={navigateToFirstPage}
+ >
+ <Text style={styles.buttonText}>Back to Home</Text>
+ </TouchableOpacity>
+
+     
 
     
     </View>

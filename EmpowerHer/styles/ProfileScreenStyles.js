@@ -14,10 +14,71 @@ export const profileScreenStyles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
   },
+  eyeIcon: {
+    position: 'absolute',
+    right: 50,
+    top: 470,
+  },
+  eyeIcon1: {
+    position: 'absolute',
+    right: 50,
+    top: 530,
+  },
+  
+  button: {
+    backgroundColor: 'rgba(187, 123, 107, 0.79)',
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 50,
+    width: 210,
+    alignItems: 'center',
+    borderRadius: 50,
+    color:'black',
+  },
+  button2: {
+    backgroundColor: 'rgba(187, 123, 107, 0.79)',
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 20,
+    width: 210,
+    alignItems: 'center',
+    borderRadius: 50,
+    color:'black',
+  },
+
+  button1: {
+    backgroundColor: 'rgba(187, 123, 107, 0.5)',
+    padding: 12,
+    marginTop: 5,
+    marginBottom:20,
+    marginRight:145,
+    width: 180,
+    alignItems: 'center',
+    borderRadius: 5,
+
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffff',
+  },
+  buttonText1: {
+    fontSize: 15,
+    color: 'black',
+
+  },
+  text: {
+    fontSize: 15,
+    fontWeight: 'normal',
+    color: 'black',
+    marginRight:160,
+    marginBottom:10,
+  },
   profilePicture: {
     width: 150,
     height: 150,
     borderRadius: 75,
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop:-45,
   },
 });
