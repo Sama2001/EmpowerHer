@@ -4,10 +4,10 @@ import { Membership as styles } from '../styles/MemberShipStyles'; // Import sty
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 
-const MembershipForm = () => {
+const MembershipForm = ({route}) => {
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
+  const [mobile, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [educationLevel, setEducationLevel] = useState('');
   const [age, setAge] = useState('');
@@ -16,8 +16,15 @@ const MembershipForm = () => {
   const [projectLocation, setProjectLocation] = useState('');
   const [projectSummary, setProjectSummary] = useState('');
   const [projectPictures, setProjectPictures] = useState([]); // State for project pictures
+  const {authToken} = route.params;
 
+  useEffect(() => {
+    // Fetch user info when component mounts
+    console.log(authToken);
+        fetchUserInfo();
+  },[]); 
   
+
   const handlePictureSelection = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,14 +34,16 @@ const MembershipForm = () => {
         quality: 1,
         multiple: true, // Enable multiple selection
       });
-      console.log('Image Picker Result:', result); // Log the result object
+     
+     console.log('Image Picker Result:', result); // Log the result object
 
-  
       if (!result.canceled) {
         // Extract URIs of selected pictures from the assets array
-        const selectedURIs = result.assets.map((asset) => asset.uri);
-        
+       const selectedURIs = result.assets.map((asset) => asset.uri);
+
         // Update selected pictures state
+      
+        
         setProjectPictures([...projectPictures, ...selectedURIs]);
         console.log('Selected Pictures:', projectPictures); // Log selected pictures
       }
@@ -45,16 +54,47 @@ const MembershipForm = () => {
     } catch (error) {
       console.error('Error selecting picture:', error);
     }
+   
+     
+  
   };
 
 
-  
+  const fetchUserInfo = async () => {
+    try {
+
+        if (!authToken) {
+            console.error('Error: authToken is not provided');
+            return;
+        }
+        const token = authToken; 
+        const response = await fetch('http://192.168.1.120:3000/Gprofile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token,
+            }
+        });
+        const data = await response.json();
+        if (data.success) {
+            const { email,mobile } = data.user;
+            setEmail(email);
+            setMobileNumber(mobile);
+        } else {
+            Alert.alert('Error', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        Alert.alert('Error', 'An error occurred while fetching user info');
+    }
+};
+
 const handleSubmit = async () => {
     try {
       const formData = new FormData();
       formData.append('fullName', fullName);
       formData.append('address', address);
-      formData.append('mobileNumber', mobileNumber);
+      formData.append('mobile', mobile);
       formData.append('email', email);
       formData.append('education', educationLevel);
       formData.append('age', age);
@@ -71,13 +111,16 @@ const handleSubmit = async () => {
         formData.append('projectPictures', {
           uri,
           name: `projectPictures_${index}.${fileType}`,
-          type: `projectPictures/${fileType}`,
+          type: `image/${fileType}`,
         });
       });
 
+        const token = authToken; 
       const response = await axios.post('http://192.168.1.120:3000/membership', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': token,
+
         },
       });
       console.log('Membership application submitted:', response.data);
@@ -109,7 +152,7 @@ const handleSubmit = async () => {
         <TextInput
           style={styles.input}
           placeholder="Mobile Number"
-          value={mobileNumber}
+          value={mobile}
           onChangeText={setMobileNumber}
           keyboardType="phone-pad"
         />

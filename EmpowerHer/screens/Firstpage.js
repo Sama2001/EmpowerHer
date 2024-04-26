@@ -88,20 +88,20 @@ useEffect(() => {
 
   const navigateToProfile = async() => {
 
-   navigation.navigate('Profile', { authToken});
+   navigation.navigate('Profile', {authToken});
 
   };
 
   const navigateToMembership = async() => {
 
-    navigation.navigate('Member', { authToken});
+    navigation.navigate('Member', {authToken});
  
    };
 
    
   const navigateToVolunteer = async() => {
 
-    navigation.navigate('volunteer', { authToken});
+    navigation.navigate('volunteer', {authToken});
  
    };
 

@@ -23,6 +23,25 @@ mongoose.connect('mongodb+srv://sama:S123456@cluster0.28oglsd.mongodb.net/?retry
   useUnifiedTopology: true,
 });
 
+// Middleware to verify JWT token and extract user information
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization; // Assuming token is sent in the 'Authorization' header
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Token not provided' });
+  }
+
+  jwt.verify(token, '7bI$64T*5!sKv&9Lp@8Fq#3m^2Hd', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = decoded; // Attach decoded user information to the request object
+    next(); // Call the next middleware or route handler
+  });
+};
+
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -84,7 +103,7 @@ const MembershipSchema = new mongoose.Schema({
     required: true
   },
  
-  mobileNumber: {
+  mobile: {
     type: String,
     required: true
   },
@@ -146,7 +165,7 @@ const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
 
 
 
-app.post('/membership', upload.array('projectPictures'), async (req, res) => {
+app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
   try {
     const membershipData = req.body;
     const projectPictures = req.files.map(file => file.path);
@@ -233,22 +252,6 @@ app.post('/login', async (req, res) => {
 
 
 
-// Middleware to verify JWT token and extract user information
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization; // Assuming token is sent in the 'Authorization' header
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Token not provided' });
-  }
-
-  jwt.verify(token, '7bI$64T*5!sKv&9Lp@8Fq#3m^2Hd', (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ success: false, message: 'Invalid token' });
-    }
-    req.user = decoded; // Attach decoded user information to the request object
-    next(); // Call the next middleware or route handler
-  });
-};
 
 
 // GET endpoint to fetch user by ID
