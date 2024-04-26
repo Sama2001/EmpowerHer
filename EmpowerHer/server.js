@@ -321,44 +321,6 @@ app.get('/Gprofile', verifyToken, async (req, res) => {
 });
 
 
-//////////////////////////////////////////////
-
-/*const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = './uploads';
-    fs.mkdirSync(uploadDir, { recursive: true }); // Create the uploads directory if it doesn't exist
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage: storage });*/
-
-// PUT endpoint for updating user profile
-/*app.put('/profile', verifyToken, async (req, res) => {
-  try {
-    // Extract user ID, first name, and last name from request body
-    const { firstName, lastName } = req.body;
-    const email = req.user.userId;
-
-    // Find the user by ID and update the first name and last name
-    const user = await User.findByIdAndUpdate(email, { firstName, lastName }, { new: true });
-
-    // Check if the user exists
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    // Return success response with updated user profile
-    return res.status(200).json({ success: true, message: 'User profile updated successfully', user });
-  } catch (error) {
-    console.error('Error updating user profile:', error);
-    return res.status(500).json({ success: false, message: 'Server error' });
-  }
-});*/
-
-
 app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -376,6 +338,35 @@ app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, re
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
 
+
+    /////////////////////////
+    const { oldPassword, newPassword } = req.body;
+
+    // Check if oldPassword and newPassword are provided
+    if (oldPassword && newPassword) {
+      // Compare old password with the hashed password in the database
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordMatch) {
+        console.log('Incorrect old password');
+        return res.status(400).json({ success: false, message: 'Incorrect old password' });
+      }
+
+      // Validate new password strength
+      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        console.log('New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character');
+
+        return res.status(400).json({
+          success: false,
+          message: 'New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character',
+        });
+      }
+
+      // Hash and update the new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedNewPassword;
+    }
+    ////////////////////////////////////////////
     // Save updated user
     await user.save();
 

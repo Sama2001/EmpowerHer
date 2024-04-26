@@ -1,9 +1,10 @@
 //profileScreen
 import React, {useState, useEffect} from 'react';
-import { View, TextInput, Button, Image, StyleSheet ,Alert,Text} from 'react-native';
+import { View, TextInput, Button, Image, StyleSheet ,Alert,Text,TouchableOpacity} from 'react-native';
 //import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
+import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome icons
 import { profileScreenStyles as styles } from '../styles/ProfileScreenStyles'; // Import styles
 
 const ProfileScreen = ({route,navigation}) => {
@@ -13,8 +14,11 @@ const ProfileScreen = ({route,navigation}) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
+    const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
     const {authToken} = route.params;
-
+    const [showOldPassword, setShowOldPassword] = useState(false); // State variable to control old password visibility
+    const [showNewPassword, setShowNewPassword] = useState(false); // State variable to control new password visibility
     const navigateToFirstPage = () => {
       navigation.navigate('First', { authToken, profilePicture });
   };
@@ -129,7 +133,9 @@ const fetchUserInfo = async () => {
       formData.append('lastName', lastName);
       formData.append('mobile', mobile);
       formData.append('email', email);
-    
+      formData.append('oldPassword', oldPassword);
+      formData.append('newPassword', newPassword);
+
     if (profilePicture) {
       const localUri = profilePicture;
       const filename = localUri.split('/').pop();
@@ -148,14 +154,24 @@ const fetchUserInfo = async () => {
         body: formData,
       // body: JSON.stringify({ firstName, lastName }),
        
-        
+
 
       });
+      const responseData = await response.json();
+
       console.log(token);
       if (response.ok) {
         // Profile updated successfully
         Alert.alert('Success', 'Profile updated successfully');
-      } else {
+      } 
+      if (response.status === 400 && responseData.message === 'Incorrect old password') {
+        // Incorrect old password
+        Alert.alert('Error', 'Old password is incorrect');
+      } else if (response.status === 400 && responseData.message.includes('New password must be')) {
+        // Weak password
+        Alert.alert('Error', 'New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character');
+      }
+      else {
         // Error updating profile
         Alert.alert('Error', 'Failed to update profile');
       }
@@ -188,6 +204,28 @@ const fetchUserInfo = async () => {
 <Text style={styles.text}>Email: {email}</Text>
       <Text style={styles.text}>Mobile Number: {mobile}</Text>
     
+      <TextInput
+        style={styles.input}
+        value={oldPassword}
+        onChangeText={setOldPassword}
+        placeholder="Old Password"
+        secureTextEntry={!showOldPassword} 
+      />
+      <TouchableOpacity onPress={() => setShowOldPassword(!showOldPassword)}>
+  <FontAwesome name={showOldPassword ? 'eye' : 'eye-slash'} size={24} color="black" />
+</TouchableOpacity>
+
+      <TextInput
+        style={styles.input}
+        value={newPassword}
+        onChangeText={setNewPassword}
+        placeholder="New Password"
+        secureTextEntry={!showNewPassword} 
+      />
+      <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
+  <FontAwesome name={showNewPassword ? 'eye' : 'eye-slash'} size={24} color="black" />
+</TouchableOpacity>
+
       <Button title="Save Changes" onPress={handleSaveChanges} />
       <Button title="Back to Home" onPress={navigateToFirstPage} /> 
 
