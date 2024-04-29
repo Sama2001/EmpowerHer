@@ -17,6 +17,7 @@ const client = new OAuth2Client('55269184028-f6oopb7bk04spr4p7ns05at5arfadl6t.ap
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
 
 mongoose.connect('mongodb+srv://sama:S123456@cluster0.28oglsd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
@@ -79,10 +80,13 @@ lastName: {
       required: true
   },
 
-
   mobile:{
     type: String, // Adding lastName field
     required: true
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
   },
 
   profilePicture:String // Add profilePicture field
@@ -92,6 +96,23 @@ lastName: {
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
 
+///////////managers////////////////////
+const ManagerSchema = new mongoose.Schema({
+ 
+  email: {
+    type: String,
+    ref: 'User',
+    unique: true // Ensure each user has only one manager
+
+},
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    unique: true // Ensure each user has only one manager
+  }});
+
+const Manager = mongoose.model('Manager', ManagerSchema); // Define and export the Manager model directly
+module.exports = Manager;
 ////////////////////////////////////////////////////
 const MembershipSchema = new mongoose.Schema({
   fullName: {
@@ -165,6 +186,7 @@ const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
 module.exports=Opportunities;
 
 
+
 app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
   try {
     const membershipData = req.body;
@@ -195,7 +217,7 @@ app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
 ///////////////////////////////////
 
 app.post('/register', async (req, res) => {
-  const { firstName, lastName,email, password,mobile  } = req.body;
+  const { firstName, lastName,email, password,mobile} = req.body;
 
   // Validate email format
   if (!emailValidator.validate(email)) {
@@ -217,8 +239,30 @@ app.post('/register', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Please provide all required fields' });
 }
   const hashedPassword = await bcrypt.hash(password, 10);
+  const adminEmails = ['admin31@gmail.com', 'adminSama@example.com', 'admin3@example.com'];
   try {
-    const newUser = await User.create({ firstName, lastName, email, password: hashedPassword,mobile});
+   
+    console.log('Email:', email);
+    const isAdmin = adminEmails.includes(email);
+
+    const newUser = await User.create({ firstName, lastName, email, password: hashedPassword,mobile,isAdmin});
+    console.log('New user created:', newUser); // Log the newly created user
+ console.log(isAdmin);
+    if(isAdmin) {
+      console.log('Registered as admin');
+
+      // Create and save a new manager instance
+      const newManager = new Manager({ email:newUser.email,userId: newUser._id  });
+      await newManager.save()
+        .then((manager) => {
+          console.log('New manager created:', manager); // Log the newly created manager
+        })
+        .catch((error) => {
+          console.error('Error creating manager:', error); // Log any error that occurs during manager creation
+        });
+
+     }
+
     res.status(201).json({ success: true, message: 'User registered successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to register user' });
@@ -244,17 +288,16 @@ app.post('/login', async (req, res) => {
   }
 
   // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, '7bI$64T*5!sKv&9Lp@8Fq#3m^2Hd', { expiresIn: "1h" });
+  const manager = await Manager.findOne({ userId: user._id });
 
+  const token = jwt.sign({ userId: user._id }, '7bI$64T*5!sKv&9Lp@8Fq#3m^2Hd', { expiresIn: "1h" });
+console.log(manager);
   // Send token to the client
   console.log('Generated token:', token);
  
-  res.status(200).json({ success: true, message: 'Login successful', token });
+  res.status(200).json({ success: true, message: 'Login successful', token, isManager: manager  });
   
-});
-
-
-
+});     
 
 
 // GET endpoint to fetch user by ID
@@ -377,7 +420,29 @@ app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, re
   }
 });
 
+app.get('/managers',verifyToken , async (req, res) => { 
+  try {
+    // Find all managers
+    const managers = await Manager.find();
 
+    // Return the list of managers
+    return res.status(200).json({ success: true, managers });
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/Gmembership',verifyToken, async (req, res) => {
+  try {
+    // Fetch membership data from the database
+    const membershipData = await Membership.find({});
+    return res.status(200).json({ success: true, membershipData });
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -21,6 +21,7 @@ const LoginScreen = ({ navigation,route }) => {
 
     try {
 
+
       const response = await fetch('http://192.168.1.120:3000/login', {
         method: 'POST',
         headers: {
@@ -33,6 +34,7 @@ const LoginScreen = ({ navigation,route }) => {
       if (data.success) {
 
         const token = data.token;
+        const isManager = data.isManager;
        
         if (token) {
           // Store token and its expiration time in AsyncStorage
@@ -42,10 +44,14 @@ const LoginScreen = ({ navigation,route }) => {
           await AsyncStorage.setItem('authTokenExpiration', expirationTime.toString());
           Alert.alert('Success', data.message);
           console.log(email);
-
-             setEmail('');
-            setPassword('');
-          navigation.navigate('First',{ authToken: token  });
+          if (isManager) {
+            navigation.navigate('ManagerScreen',{ authToken: token  }); // Navigate to manager screen if the user is a manager
+          } 
+else{          navigation.navigate('First',{ authToken: token  });
+}
+        
+          setEmail('');
+          setPassword('');
 
         } else {
           Alert.alert('Error', 'Token not received from server');
