@@ -444,6 +444,17 @@ app.get('/Gmembership',verifyToken, async (req, res) => {
   }
 });
 
+app.get('/Gopportunities', verifyToken, async (req, res) => {
+  try {
+    // Fetch membership data from the database
+    const opportunitiesData = await Opportunities.find({});
+    return res.status(200).json({ success: true, opportunitiesData });
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
