@@ -187,35 +187,8 @@ module.exports=Opportunities;
 
 
 
-app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
-  try {
-    const membershipData = req.body;
-    const projectPictures = req.files.map(file => file.path);
-    const newMembership = await Membership.create({ ...membershipData, projectPictures });
-    res.status(201).json({ success: true, message: 'Membership application submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting membership application:', error);
-    res.status(500).json({ success: false, message: 'Failed to submit membership application' });
-  }
-});
 
-
-app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
-  try {
-    const oppData = req.body;
-    const cv = req.files.map(file => file.path);
-    const newOpp = await Opportunities.create({ ...oppData, cv });
-    res.status(201).json({ success: true, message: 'opp application submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting opp application:', error);
-    res.status(500).json({ success: false, message: 'Failed to submit opp application' });
-  }
-});
-
-
-
-///////////////////////////////////
-
+//////////register/////////////
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile} = req.body;
 
@@ -271,9 +244,7 @@ app.post('/register', async (req, res) => {
   
 });
 
-
-
-
+/////////////login////////////
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -300,7 +271,34 @@ console.log(manager);
 });     
 
 
-// GET endpoint to fetch user by ID
+////////////////post membership//////////////////
+app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
+  try {
+    const membershipData = req.body;
+    const projectPictures = req.files.map(file => file.path);
+    const newMembership = await Membership.create({ ...membershipData, projectPictures });
+    res.status(201).json({ success: true, message: 'Membership application submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting membership application:', error);
+    res.status(500).json({ success: false, message: 'Failed to submit membership application' });
+  }
+});
+
+/////post opportunities (Internship)/////////////////
+app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
+  try {
+    const oppData = req.body;
+    const cv = req.files.map(file => file.path);
+    const newOpp = await Opportunities.create({ ...oppData, cv });
+    res.status(201).json({ success: true, message: 'opp application submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting opp application:', error);
+    res.status(500).json({ success: false, message: 'Failed to submit opp application' });
+  }
+});
+
+
+// GET user to fetch user by ID
 app.get('/user/:id', verifyToken,async (req, res) => {
   try {
     const userId = req.params.id;
@@ -321,7 +319,7 @@ app.get('/user/:id', verifyToken,async (req, res) => {
   }
 });
 
-// GET endpoint to fetch user by email
+// GET user to fetch user by email
 app.get('/userE/:email', verifyToken, async (req, res) => {
   try {
     const email = req.params.email;
@@ -342,7 +340,7 @@ app.get('/userE/:email', verifyToken, async (req, res) => {
   }
 });
 
-
+////////////get prfile data////////////
 app.get('/Gprofile', verifyToken, async (req, res) => {
   try {
       const userId =req.user.userId;
@@ -363,7 +361,7 @@ app.get('/Gprofile', verifyToken, async (req, res) => {
   }
 });
 
-
+/////////////update profile////////
 app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -420,6 +418,7 @@ app.put('/profile', verifyToken, upload.single('profilePicture'), async (req, re
   }
 });
 
+///////////////get managers///////////////
 app.get('/managers',verifyToken , async (req, res) => { 
   try {
     // Find all managers
@@ -433,6 +432,7 @@ app.get('/managers',verifyToken , async (req, res) => {
   }
 });
 
+//////////////get membership forms///////////
 app.get('/Gmembership',verifyToken, async (req, res) => {
   try {
     // Fetch membership data from the database
@@ -444,6 +444,7 @@ app.get('/Gmembership',verifyToken, async (req, res) => {
   }
 });
 
+/////////////get internship forms//////////////////
 app.get('/Gopportunities', verifyToken, async (req, res) => {
   try {
     // Fetch membership data from the database
