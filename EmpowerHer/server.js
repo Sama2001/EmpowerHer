@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = 3000;
@@ -162,6 +163,62 @@ const MembershipSchema = new mongoose.Schema({
 const Membership = mongoose.model('Membership', MembershipSchema);
 module.exports = Membership;
 
+const members = new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+ 
+  mobileNumber: {
+    type: String,
+    required: true
+  },
+  emailAddress: {
+    type: String,
+    required: true
+  },
+
+  projectSummary: {
+    type: String,
+    required: true
+  }
+});
+
+const member = mongoose.model('Members', members);
+module.exports = member;
+
+
+const internships= new mongoose.Schema({
+  fullName: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+ 
+  mobileNumber: {
+    type: String,
+    required: true
+  },
+  emailAddress: {
+    type: String,
+    required: true
+  }
+
+
+});
+
+const internship = mongoose.model('internships', internships);
+module.exports = internship;
+
+
+
 const OpportunitiesSchema = new mongoose.Schema({
   fullName: {
     type: String,
@@ -184,8 +241,6 @@ const OpportunitiesSchema = new mongoose.Schema({
 })
 const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
 module.exports=Opportunities;
-
-
 
 
 //////////register/////////////
@@ -277,10 +332,41 @@ app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, 
     const membershipData = req.body;
     const projectPictures = req.files.map(file => file.path);
     const newMembership = await Membership.create({ ...membershipData, projectPictures });
+    sendEmailNotification(membershipData.email); // Assuming email is provided in the membership data
+
+   
     res.status(201).json({ success: true, message: 'Membership application submitted successfully' });
   } catch (error) {
     console.error('Error submitting membership application:', error);
     res.status(500).json({ success: false, message: 'Failed to submit membership application' });
+  }
+
+  async function sendEmailNotification(email) {
+    try {
+      // Create a transporter object using SMTP transport
+      let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: '   ', // your email
+          pass: '  ' // app password
+        }
+      });
+  
+      // Send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: '"Your Organization" <your_email@example.com>', // sender address
+        to: email, // list of receivers
+        subject: 'Membership Application Submitted', // Subject line
+        text: 'Your membership application has been successfully submitted.', // plain text body
+        html: '<b>Your membership application has been successfully submitted.</b>' // html body
+      });
+  
+      console.log('Email sent:', info.messageId);
+    } catch (error) {
+      console.error('Error sending email notification:', error);
+    }
   }
 });
 
@@ -297,6 +383,43 @@ app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
   }
 });
 
+//////Post members////////////
+app.post('/members',verifyToken, async (req, res) => {
+  try {
+    const { fullName, address, mobileNumber, emailAddress, projectSummary } = req.body; // Destructure variables from req.body
+
+    // Create a new member instance using the Member model
+    const newMember = new member({ fullName, address, mobileNumber, emailAddress, projectSummary });
+
+    // Save the new member to the database
+    await newMember.save();
+
+
+    res.status(201).json({ success: true, message: 'member added successfully'});
+  } catch (error) {
+    console.error('Error adding member application:', error);
+    res.status(500).json({ success: false, message: 'Failed to add member' });
+  }
+});
+
+////////////post internship/////
+app.post('/internships',verifyToken, async (req, res) => {
+  try {
+    const { fullName, address, mobileNumber, emailAddress } = req.body; // Destructure variables from req.body
+
+    // Create a new member instance using the Member model
+    const newIntern = new internship({ fullName, address, mobileNumber, emailAddress });
+
+    // Save the new member to the database
+    await newIntern.save();
+
+
+    res.status(201).json({ success: true, message: 'internship added successfully'});
+  } catch (error) {
+    console.error('Error adding internship application:', error);
+    res.status(500).json({ success: false, message: 'Failed to add internship' });
+  }
+});
 
 // GET user to fetch user by ID
 app.get('/user/:id', verifyToken,async (req, res) => {
@@ -444,6 +567,29 @@ app.get('/Gmembership',verifyToken, async (req, res) => {
   }
 });
 
+app.get('/Gmembers',verifyToken, async (req, res) => {
+  try {
+    // Fetch membership data from the database
+    const membersData = await member.find({});
+    return res.status(200).json({ success: true, membersData });
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+////get interns/////////
+app.get('/interns',verifyToken, async (req, res) => {
+  try {
+    // Fetch membership data from the database
+    const internshipData = await internship.find({});
+    return res.status(200).json({ success: true, internshipData });
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 /////////////get internship forms//////////////////
 app.get('/Gopportunities', verifyToken, async (req, res) => {
   try {
@@ -452,6 +598,45 @@ app.get('/Gopportunities', verifyToken, async (req, res) => {
     return res.status(200).json({ success: true, opportunitiesData });
   } catch (error) {
     console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+//////delete membership form///////////////////////
+app.delete('/membership/:id', verifyToken, async (req, res) => {
+  try {
+    const membershipId = req.params.id;
+
+    // Find the membership form by ID and delete it
+    const deletedMembership = await Membership.findByIdAndDelete(membershipId);
+
+    if (!deletedMembership) {
+      return res.status(404).json({ success: false, message: 'Membership form not found' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Membership form deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting membership form:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+////delete opportunity////////////
+app.delete('/opportunity/:id', verifyToken, async (req, res) => {
+  try {
+    const OppId = req.params.id;
+
+    // Find the membership form by ID and delete it
+    const deletedOpp = await Opportunities.findByIdAndDelete(OppId);
+
+    if (!deletedOpp) {
+      return res.status(404).json({ success: false, message: 'Opportunities form not found' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Opportunities form deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting Opportunity form:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
