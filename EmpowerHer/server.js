@@ -209,8 +209,11 @@ const internships= new mongoose.Schema({
   emailAddress: {
     type: String,
     required: true
+  },
+  employeeId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Members',
   }
-
 
 });
 
@@ -243,6 +246,29 @@ const Opportunities = mongoose.model('opportunities', OpportunitiesSchema);
 module.exports=Opportunities;
 
 
+const TaskSchema = new mongoose.Schema({
+  memberId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Members", // Reference to the Member model
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  deadline: {
+    type: Date,
+    required: true,
+  },
+  progress: {
+    type: String,
+    required: false,
+    default: '0%', 
+  },
+});
+
+const Task = mongoose.model("tasks", TaskSchema);
+
 //////////register/////////////
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile} = req.body;
@@ -262,7 +288,7 @@ app.post('/register', async (req, res) => {
   }
 
 
-  // Ensure other fields are provided as well
+  // Ensure  other fields are provided as well
   if ( !firstName || !lastName||!email || !password ||!mobile ) {
     return res.status(400).json({ success: false, message: 'Please provide all required fields' });
 }
@@ -324,7 +350,6 @@ console.log(manager);
   res.status(200).json({ success: true, message: 'Login successful', token, isManager: manager  });
   
 });     
-
 
 ////////////////post membership//////////////////
 app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, res) => {
@@ -420,6 +445,43 @@ app.post('/internships',verifyToken, async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to add internship' });
   }
 });
+
+/////post task////
+app.post("/tasks",verifyToken, async (req, res) => {
+  try {
+    const { memberId, description, deadline } = req.body;
+    const newTask = await Task.create({
+      memberId,
+      description,
+      deadline,
+      progress: '0%', // Set default progress
+    });
+    res.status(201).json({ success: true, task: newTask });
+  } catch (error) {
+    console.error("Error creating task:", error);
+    res.status(500).json({ success: false, message: "Failed to create task" });
+  }
+});
+
+////get tasks/////
+app.get("/tasks/:id",verifyToken, async (req, res) => {
+  try {
+    const memberId = req.params.id;
+    // Find all tasks associated with the given member ID
+    const tasks = await Task.find({ memberId });
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ success: false, message: "No tasks found for this member" });
+    }
+
+    // Return the tasks associated with the member ID
+    res.status(200).json({ success: true, tasks });
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 
 // GET user to fetch user by ID
 app.get('/user/:id', verifyToken,async (req, res) => {
@@ -602,7 +664,6 @@ app.get('/Gopportunities', verifyToken, async (req, res) => {
   }
 });
 
-
 //////delete membership form///////////////////////
 app.delete('/membership/:id', verifyToken, async (req, res) => {
   try {
@@ -640,6 +701,35 @@ app.delete('/opportunity/:id', verifyToken, async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+app.put("/Internship/:internshipId", async (req, res) => {
+  try {
+    const { internshipId } = req.params;
+    const { employeeId } = req.body;
+    console.log(employeeId);
+
+    // Check if the provided employeeId already exists in the internships collection
+    const existingInternship = await internship.findOne({ employeeId });
+    if (existingInternship && existingInternship._id.toString() !== internshipId) {
+      // If the provided employeeId already exists and it's not the current internship, handle the error
+      return res.status(400).json({ success: false, message: "Employee is already assigned to another internship" });
+    }
+
+    // Update the Internship document with the provided employeeId
+    const updatedInternship = await internship.findByIdAndUpdate(
+      internshipId,
+      { $set: { employeeId } }, // Use $set to update the specific field
+      { new: true }
+    );
+
+    // Return the updated Internship document
+    res.status(200).json({ success: true, internship: updatedInternship });
+  } catch (error) {
+    console.error("Error assigning employee to internship:", error);
+    res.status(500).json({ success: false, message: "Failed to assign employee to internship" });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Manager as styles } from '../styles/ManagerStyles'; // Import styles from the separated file
 import ProjectPicturesModal from '../screens/ProjectPicturesModal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import { Picker } from '@react-native-picker/picker'; // Import Picker from '@react-native-picker/picker'
+import TaskForm from './TaskForm';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -15,7 +17,11 @@ const ManagerScreen = ({ navigation,route }) => {
   const [showInterns, setShowInterns] = useState(false); // State for showing/hiding membership forms
   const [showOpportunitiesForms, setShowOpportunitiesForms] = useState(false); // State for showing/hiding membership forms
   const [showModal, setShowModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null); // State for selected member from dropdown
+  const [showTaskForm, setShowTaskForm] = useState(false);
   const {authToken} = route.params;
+  const [selectedMembers, setSelectedMembers] = useState(Array(internsData.length).fill(null));
+  const [selectedMemberData, setSelectedMemberData] = useState(null);
 
 
   const openModal = () => {
@@ -325,6 +331,80 @@ const ManagerScreen = ({ navigation,route }) => {
     }
   };
   
+  const handleMemberChange = (index, value) => {
+    const selectedMember = membersData.find(member => member.fullName === value);
+    setSelectedMember(selectedMember); // Update selectedMember state
+    const updatedSelectedMembers = [...selectedMembers];
+    updatedSelectedMembers[index] = selectedMember;
+    setSelectedMembers(updatedSelectedMembers);
+  };
+  
+
+  const handleConnect = async (internId, selectedMemberId) => {
+    try {
+      // Make a PUT request to update the Internship document with the selected memberId
+      const response = await fetch(`http://192.168.1.120:3000/Internship/${internId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken, // Replace with your actual token
+        },
+        body: JSON.stringify({ employeeId: selectedMemberId }), // Send selected memberId in the request body
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        // Perform any additional actions as needed (e.g., updating UI, refreshing data)
+        Alert.alert('Success', 'Connected successfully');
+      } else {
+        Alert.alert('Error', data.message); // Display error message if request fails
+      }
+    } catch (error) {
+      console.error('Error connecting member:', error);
+      Alert.alert('Error', 'Failed to connect member');
+    }
+  };
+  
+  
+  const handleAssignTask = async (description, deadline) => {
+    try {
+      // Make a POST request to assign a task to the member
+      const memberId = selectedMemberData?._id;
+
+      const response = await fetch('http://192.168.1.120:3000/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken, // Assuming you have a token for authentication
+        },
+        body: JSON.stringify({ memberId,description, deadline }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // If task is successfully assigned, perform any additional actions as needed
+        Alert.alert('Success', 'Task assigned successfully');
+      } else {
+        Alert.alert('Error', data.message); // Display error message if request fails
+      }
+    } catch (error) {
+      console.error('Error assigning task:', error);
+      Alert.alert('Error', 'Failed to assign task');
+    }
+  };
+
+  const openTaskForm = (memberData) => {
+    setSelectedMemberData(memberData); // Set the selected member's data
+    setShowTaskForm(true); // Open the task form
+  };
+
+  // Function to close the task form
+  const closeTaskForm = () => {
+    setSelectedMemberData(null); // Reset selected member's data
+    setShowTaskForm(false); // Close the task form
+  };
+  
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center',margin:10,borderWidth:1,borderColor:'gray' }}>
 
@@ -511,9 +591,15 @@ const ManagerScreen = ({ navigation,route }) => {
             <Text>Name: {member.fullName}</Text>
             <Text>Address: {member.address}</Text>
 
-            <TouchableOpacity style={styles.Taskbutton} onPress={() => handleApproveOpp(opportunity)}>
-           <Text style={styles.buttonText1}>Assign task</Text>
-           </TouchableOpacity>
+            <TouchableOpacity onPress={() => openTaskForm(member)} style={styles.button}>
+                <Text>Add Task</Text>
+              </TouchableOpacity>
+      <TaskForm
+                visible={showTaskForm}
+                onClose={closeTaskForm}
+                onAssignTask={handleAssignTask}
+                memberData={selectedMemberData} // Pass the selected member's data as props
+              />
           </View>
 
 
@@ -539,8 +625,34 @@ const ManagerScreen = ({ navigation,route }) => {
           <View key={index} style={styles.opportunityContainer}>
             <Text style={styles.opportunityTitle}>Intern {index + 1}</Text>
             <Text>Name: {interns.fullName}</Text>
+            <Text>Email: {interns.email}</Text>
             <Text>Address: {interns.address}</Text>
-        
+             
+             
+             {/* Dropdown for selecting members */}
+             <Picker
+        selectedValue={selectedMembers[index]?.fullName}
+        onValueChange={(value) => handleMemberChange(index, value)}>
+        <Picker.Item label="Select a member" value={null} />
+        {membersData.map((member, memberIndex) => (
+          <Picker.Item key={memberIndex} label={member.fullName} value={member.fullName} />
+        ))}
+      </Picker>
+      {selectedMembers[index] && (
+        <View style={styles.selectedMemberInfo}>
+          <Text style={styles.selectedMemberTitle}>Selected Member:</Text>
+          <Text>Name: {selectedMembers[index]._id}</Text>
+          <Text>Email: {selectedMembers[index].emailAddress}</Text>
+          {/* Add more fields here as needed */}
+        </View>
+      )}
+            <TouchableOpacity 
+  style={styles.Taskbutton} 
+  onPress={() => handleConnect(interns._id, selectedMembers[index]?._id)}
+>
+  <Text style={styles.buttonText1}>Connect</Text>
+</TouchableOpacity>
+
           </View>
         ))
       )}
