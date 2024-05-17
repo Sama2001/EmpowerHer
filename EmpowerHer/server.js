@@ -265,6 +265,11 @@ const TaskSchema = new mongoose.Schema({
     required: false,
     default: '0%', 
   },
+  status:{
+    type :String,
+    required:false,
+    default: 'in progress'
+  }
 });
 
 const Task = mongoose.model("tasks", TaskSchema);
@@ -464,7 +469,7 @@ app.post("/tasks",verifyToken, async (req, res) => {
 });
 
 ////get tasks/////
-app.get("/tasks/:id",verifyToken, async (req, res) => {
+app.get("/tasks/:id", async (req, res) => {
   try {
     const memberId = req.params.id;
     // Find all tasks associated with the given member ID
@@ -481,6 +486,30 @@ app.get("/tasks/:id",verifyToken, async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
+app.get('/members/:email', async (req, res) => {
+  try {
+    const { email } = req.params; // Extract email from request parameters
+
+    const regex = new RegExp('^' + email + '$', 'i'); // 'i' flag for case-insensitivity
+    const Member = await member.findOne({ $or: [{ email: { $regex: regex } }, { emailAddress: { $regex: regex } }] });
+    
+
+    if (!Member) {
+      return res.status(404).json({ error: 'Member not found' });
+    }
+
+    res.json({ memberId: Member._id });
+  } catch (error) {
+    console.error('Error fetching member ID:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
 
 
 // GET user to fetch user by ID
@@ -528,11 +557,10 @@ app.get('/userE/:email', verifyToken, async (req, res) => {
 ////////////get prfile data////////////
 app.get('/Gprofile', verifyToken, async (req, res) => {
   try {
-      const userId =req.user.userId;
+       const userId =req.user.userId;
 
       // Find the user by userId
       const user = await User.findById(userId);
-
       // Check if the user exists
       if (!user) {
           return res.status(404).json({ success: false, message: 'User not found' });
@@ -639,6 +667,8 @@ app.get('/Gmembers',verifyToken, async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+
 
 ////get interns/////////
 app.get('/interns',verifyToken, async (req, res) => {

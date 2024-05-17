@@ -47,6 +47,18 @@ export const firstPageStyles = StyleSheet.create({
     marginTop:160,
     zIndex: 2,
   },
+  TasksButton: {
+    position: 'absolute',
+    top: 70,
+    left: 5,
+    padding: 10,
+    borderRadius: 10,
+    borderBottomWidth: 1,
+    borderColor: '#a86556',
+    width: 150,
+    marginTop:220,
+    zIndex: 2,
+  },
   logout: {
     position: 'absolute',
     top: 70,
@@ -56,7 +68,7 @@ export const firstPageStyles = StyleSheet.create({
    // borderBottomWidth: 2,
     borderColor: '#a86556',
     width: 150,
-    marginTop:250,
+    marginTop:300,
     zIndex: 2,
   },
   profileInfoContainer: {

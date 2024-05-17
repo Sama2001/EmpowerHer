@@ -1,5 +1,5 @@
 import React, { useState, useRef,useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated,Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated,Image,Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import * as SecureStore from 'expo-secure-store';
 
@@ -14,6 +14,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [mobile, setMobile] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [memberId, setMemberId] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -49,6 +50,35 @@ const FirstPage = ({ navigation, route,result }) => {
     }
   };
 
+
+  const fetchMemberIdByEmail = async (email) => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/members/${email}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch member data');
+      }
+  
+      const data = await response.json();
+  
+      if (data && data.memberId) {
+        setMemberId(data.memberId);
+      } else {
+        Alert.alert('Error', 'Member not found');
+      }
+    } catch (error) {
+      console.error('Error fetching member ID:', error);
+      Alert.alert('Error', 'An error occurred while fetching member ID');
+    }
+  };
+  
+
   const fetchUserInfo = async () => {
     try {
 
@@ -71,7 +101,8 @@ const FirstPage = ({ navigation, route,result }) => {
             setLastName(lastName);
             setEmail(email);
             setMobile(mobile);
-           
+                   fetchMemberIdByEmail(email);
+
         } else {
             Alert.alert('Error', data.message);
         }
@@ -84,6 +115,7 @@ const FirstPage = ({ navigation, route,result }) => {
 useEffect(() => {
   fetchUserInfo();
   loadProfilePicture();
+  
 }, ); 
 
   const navigateToProfile = async() => {
@@ -104,6 +136,15 @@ useEffect(() => {
     navigation.navigate('volunteer', {authToken});
  
    };
+
+   const navigateToTasks = () => {
+    if (memberId) {
+      navigation.navigate('tasks', { authToken, memberId });
+    } else {
+      
+      Alert.alert('Error', 'Member ID not found');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -126,7 +167,7 @@ useEffect(() => {
         <View style={styles.profileInfoContainer}>
         {profilePicture && <Image source={{ uri: profilePicture }} style={styles.profilePicture} />}
         <Text style={styles.menuItemText}>
-      {firstName !== '' && lastName !== '' ? `${firstName} ${lastName}` : 'Loading...'}
+      {firstName !== '' && lastName !== '' ? `${firstName} ${lastName} ` : 'Loading...'}
     </Text>
         </View>
   </TouchableOpacity>
@@ -140,6 +181,17 @@ useEffect(() => {
        
        <Text style={styles.menuItemText}> Opportunities </Text>
  </TouchableOpacity>
+
+ <TouchableOpacity style={styles.TasksButton} onPress={navigateToTasks}>
+       
+       <Text style={styles.menuItemText}> Tasks </Text>
+ </TouchableOpacity>
+
+ <View style={styles.contentContainer}>
+         
+ 
+          
+        </View>
 
   <TouchableOpacity style={styles.logout} onPress={handleLogout}>
     <MaterialIcons name="exit-to-app" size={24} color="#a86556" style={styles.menuItemIcon} />

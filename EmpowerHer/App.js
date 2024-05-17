@@ -12,6 +12,7 @@ import FirstPage from './screens/Firstpage';
 import Membership from './screens/Membership';
 import volunteer from './screens/Volunteer'
 import manager from './screens/ManagerScreen';
+import task from './screens/Tasks';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Member" component={Membership} />
         <Stack.Screen name="volunteer" component={volunteer} />
         <Stack.Screen name="ManagerScreen" component={manager} />
+        <Stack.Screen name="tasks" component={task} />
 
       </Stack.Navigator>
     </NavigationContainer>
