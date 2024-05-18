@@ -6,6 +6,8 @@ import ProjectPicturesModal from '../screens/ProjectPicturesModal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import { Picker } from '@react-native-picker/picker'; // Import Picker from '@react-native-picker/picker'
 import TaskForm from './TaskForm';
+import TasksModal from './TasksModal'; // Import the TasksModal component
+import { format } from 'date-fns';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -22,6 +24,8 @@ const ManagerScreen = ({ navigation,route }) => {
   const {authToken} = route.params;
   const [selectedMembers, setSelectedMembers] = useState(Array(internsData.length).fill(null));
   const [selectedMemberData, setSelectedMemberData] = useState(null);
+  const [tasksModalVisible, setTasksModalVisible] = useState(false); // State for task modal visibility
+  const [tasks, setTasks] = useState([]); // State for tasks data
 
 
   const openModal = () => {
@@ -161,8 +165,37 @@ const ManagerScreen = ({ navigation,route }) => {
       Alert.alert('Error', 'An error occurred while fetching interns data');
     }
   };
-  
+  const fetchMemberTasks = async (memberId) => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
 
+      const response = await fetch(`http://192.168.1.120:3000/tasks/${memberId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+
+      const data = await response.json();
+      console.log('Response data:', data); // Log the response data
+
+      if (data.success) {
+        setTasks(data.tasks); // Set tasks for the specific member
+        setTasksModalVisible(true); // Show the modal with tasks
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching member tasks:', error);
+      Alert.alert('Error', 'An error occurred while fetching member tasks');
+    }
+  };
+  
   const toggleMembershipForms = () => {
     setShowMembershipForms(!showMembershipForms); // Toggle the state
 
@@ -506,14 +539,14 @@ const ManagerScreen = ({ navigation,route }) => {
       
 
       <View style={styles.buttonContainer}>
-  <TouchableOpacity style={styles.button} onPress={() => handleApprove(form)}>
-    <Text style={styles.buttonText1}>Approve</Text>
+  <TouchableOpacity style={styles.Approve} onPress={() => handleApprove(form)}>
+    <Text style={styles.buttonText}>Approve</Text>
   </TouchableOpacity>
 
 
   
-  <TouchableOpacity style={styles.button1} onPress={() => handleReject(form)}>
-    <Text style={styles.buttonText1}>Reject</Text>
+  <TouchableOpacity style={styles.Reject} onPress={() => handleReject(form)}>
+    <Text style={styles.buttonText}>Reject</Text>
   </TouchableOpacity>
 </View>
 
@@ -555,14 +588,14 @@ const ManagerScreen = ({ navigation,route }) => {
             ))}
 
 <View style={styles.buttonContainer}>
-  <TouchableOpacity style={styles.button} onPress={() => handleApproveOpp(opportunity)}>
-    <Text style={styles.buttonText1}>Approve</Text>
+  <TouchableOpacity style={styles.Approve} onPress={() => handleApproveOpp(opportunity)}>
+    <Text style={styles.buttonText}>Approve</Text>
   </TouchableOpacity>
 
 
   
-  <TouchableOpacity style={styles.button1} onPress={() => handleRejectOpp(opportunity)}>
-    <Text style={styles.buttonText1}>Reject</Text>
+  <TouchableOpacity style={styles.Reject} onPress={() => handleRejectOpp(opportunity)}>
+    <Text style={styles.buttonText}>Reject</Text>
   </TouchableOpacity>
 </View>
 
@@ -591,15 +624,19 @@ const ManagerScreen = ({ navigation,route }) => {
             <Text>Name: {member.fullName}</Text>
             <Text>Address: {member.address}</Text>
 
-            <TouchableOpacity onPress={() => openTaskForm(member)} style={styles.button}>
+            <TouchableOpacity onPress={() => openTaskForm(member)} style={styles.Taskbutton}>
                 <Text>Add Task</Text>
               </TouchableOpacity>
+
       <TaskForm
                 visible={showTaskForm}
                 onClose={closeTaskForm}
                 onAssignTask={handleAssignTask}
                 memberData={selectedMemberData} // Pass the selected member's data as props
               />
+                <TouchableOpacity onPress={() => fetchMemberTasks(member._id)} style={styles.Taskbutton}>
+                <Text>View Tasks</Text>
+              </TouchableOpacity>
           </View>
 
 
@@ -661,6 +698,12 @@ const ManagerScreen = ({ navigation,route }) => {
     <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />
     <Text style={styles.logoutText}>Logout</Text>
   </TouchableOpacity>
+
+  <TasksModal
+        visible={tasksModalVisible}
+        onClose={() => setTasksModalVisible(false)}
+        tasks={tasks}
+      />
 
     </View>
     </ScrollView>

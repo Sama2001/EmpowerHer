@@ -23,18 +23,18 @@ export const Manager = StyleSheet.create({
     marginBottom: 10,
   },
   opportunityContainer: {
-    marginTop:10,
+    marginTop: 10,
     marginBottom: 20,
     padding: 10,
     borderWidth: 1,
     borderColor: 'lightgray',
     borderRadius: 5,
-    width: 200,
+    width: 250, // Ensure enough width to fit buttons
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // or any other alignment you prefer
-    marginBottom: 20, // optional: adjust as needed
+    justifyContent: 'space-between', // Space between buttons
+    marginTop: 10, // Optional: add margin at the top
   },
   button: {
     height:50,
@@ -47,6 +47,17 @@ export const Manager = StyleSheet.create({
 
   },
 
+  Approve: {
+    height:40,
+    width:100,
+    backgroundColor: 'rgba(187, 129, 107, 0.79)',
+    borderRadius: 2,
+    alignItems: 'center',
+   // marginTop:20,
+    paddingTop:7,
+
+  },
+ 
   Taskbutton: {
     height:30,
     width:100,
@@ -79,6 +90,17 @@ export const Manager = StyleSheet.create({
     alignItems: 'center',
     marginTop:15,
     paddingTop:8,
+  },
+
+  
+  Reject: {
+    height:40,
+    width:100,
+    backgroundColor: 'grey',
+    borderRadius: 2,
+    alignItems: 'center',
+   // marginTop:60,
+    paddingTop:7,
   },
   text:{
 margin:7,
@@ -114,6 +136,48 @@ paddingVertical:8,
     paddingLeft:10,
 
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  taskItem: {
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+  },
+  taskText: {
+    fontSize: 16,
+  },
+  noTasksText: {
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  closeButton: {
+    marginTop: 20,
+    alignSelf: 'center',
+    padding: 10,
+    backgroundColor: 'blue',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
+  }, 
   buttonText:{
     paddingTop:5,
 fontWeight:'bold',

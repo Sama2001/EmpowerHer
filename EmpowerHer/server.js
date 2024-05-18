@@ -271,7 +271,6 @@ const TaskSchema = new mongoose.Schema({
     default: 'in progress'
   }
 });
-
 const Task = mongoose.model("tasks", TaskSchema);
 
 //////////register/////////////
@@ -507,11 +506,6 @@ app.get('/members/:email', async (req, res) => {
   }
 });
 
-
-
-
-
-
 // GET user to fetch user by ID
 app.get('/user/:id', verifyToken,async (req, res) => {
   try {
@@ -668,8 +662,6 @@ app.get('/Gmembers',verifyToken, async (req, res) => {
   }
 });
 
-
-
 ////get interns/////////
 app.get('/interns',verifyToken, async (req, res) => {
   try {
@@ -760,6 +752,34 @@ app.put("/Internship/:internshipId", async (req, res) => {
   }
 });
 
+//update task progress
+app.put("/tasks/:id", async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { progress } = req.body;
+
+    // Update task progress
+    const updatedTask = await Task.findByIdAndUpdate(taskId, { progress }, { new: true });
+
+    // Update status field based on progress and deadline
+    let status;
+    if (progress === '100%') {
+      status = 'completed';
+    } else if (new Date(updatedTask.deadline) < new Date() && progress !== '100%') {
+      status = 'unaccomplished';
+    } else {
+      status = 'in progresss'; // Optional: You can set a default status if needed
+    }
+
+    // Update status field in the database
+    await Task.findByIdAndUpdate(taskId, { status });
+
+    res.status(200).json({ success: true, task: updatedTask });
+  } catch (error) {
+    console.error("Error updating task progress:", error);
+    res.status(500).json({ success: false, message: "Failed to update task progress" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

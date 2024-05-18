@@ -22,6 +22,12 @@ export const tasksScreenStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  taskDeadline: {
+    fontSize: 14,
+    color: '#ff0000',
+    marginTop: 5,
+  },
+
   taskDescription: {
     fontSize: 14,
     color: '#666',
@@ -34,6 +40,27 @@ export const tasksScreenStyles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
   },
+
+  progressInput: {
+    height: 40,
+    borderColor: '#cccccc',
+    borderWidth: 1,
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  updateButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#28a745',
+    borderRadius: 5,
+  },
+  editButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+  },
+  
   buttonText: {
     color: '#fff',
     fontSize: 16,

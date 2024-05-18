@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, FlatList, ActivityIndicator, Text, Alert, TouchableOpacity,TextInput } from 'react-native';
 import { tasksScreenStyles as styles } from '../styles/TasksScreenStyles';
+import { format } from 'date-fns';
 
 const TasksScreen = ({ route, navigation }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { authToken, memberId } = route.params;
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [newProgress, setNewProgress] = useState('');
 
 
   useEffect(() => {
@@ -43,8 +46,44 @@ const TasksScreen = ({ route, navigation }) => {
     fetchTasks();
   }, [authToken,memberId]);
 
+
+  const handleUpdateProgress = async (taskId) => {
+    try {
+      const percentage = `${parseFloat(newProgress)}%`;
+
+      const response = await fetch(`http://192.168.1.120:3000/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken,
+        },
+        body: JSON.stringify({ progress: percentage }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) => (task._id === taskId ? data.task : task))
+        );
+        setNewProgress('');
+        setSelectedTask(null);
+        Alert.alert('Success', 'Task progress updated successfully');
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (err) {
+      console.error('Error updating task progress:', err);
+      Alert.alert('Error', err.message || 'Failed to update task progress');
+    }
+  };
+
   const navigateToHome = () => {
     navigation.navigate('Home', { authToken });
+  };
+
+  const formatDeadline = (deadline) => {
+    return format(new Date(deadline), 'dd-MM-yyyy');
   };
 
   if (loading) {
@@ -63,8 +102,34 @@ const TasksScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item._id.toString()}
         renderItem={({ item }) => (
           <View style={styles.taskItem}>
-            <Text style={styles.taskTitle}>{item.description}</Text>
-            <Text style={styles.taskDescription}>{item.progress}</Text>
+            <Text style={styles.taskTitle}>Task description:{item.description}</Text>
+            <Text style={styles.taskDeadline}>Deadline: {formatDeadline(item.deadline)}</Text>
+            <Text style={styles.taskDescription}>Progress: {item.progress}</Text>
+            {selectedTask === item._id ? (
+              <View>
+                <TextInput
+                  style={styles.progressInput}
+                  placeholder="Enter new progress"
+                  value={newProgress}
+                  onChangeText={setNewProgress}
+                  keyboardType="numeric"
+                />
+                <TouchableOpacity
+                  style={styles.updateButton}
+                  onPress={() => handleUpdateProgress(item._id)}
+                >
+                  <Text style={styles.buttonText}>Update Progress</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => setSelectedTask(item._id)}
+              >
+                <Text style={styles.buttonText}>Edit Progress</Text>
+              </TouchableOpacity>
+            )}
+
           </View>
         )}
       />
