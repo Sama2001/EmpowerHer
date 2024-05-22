@@ -1,9 +1,33 @@
 // ManagerScreen.styles.js
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet ,Dimensions} from 'react-native';
 
 export const Manager = StyleSheet.create({
 
+  modalMemberContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  Closebutton:{
+    position: 'absolute',
+    top: 80,
+    right: -85,
+    padding: 5,
+    borderRadius:10,
+    backgroundColor: 'rgba(187, 123, 107, 0.6)',
+
+  },
+
+  CloseButton:{
+    position: 'absolute',
+    top: 60,
+    right: -5,
+    padding: 5,
+    borderRadius:10,
+    backgroundColor: 'rgba(187, 123, 107, 0.6)',
+
+  },
   container:{
     flexGrow: 1, 
     alignItems: 'center', 
@@ -25,11 +49,11 @@ export const Manager = StyleSheet.create({
   opportunityContainer: {
     marginTop: 10,
     marginBottom: 20,
-    padding: 10,
+    padding: 20,
     borderWidth: 1,
     borderColor: 'lightgray',
     borderRadius: 5,
-    width: 250, // Ensure enough width to fit buttons
+    width: 350, // Ensure enough width to fit buttons
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -102,9 +126,11 @@ export const Manager = StyleSheet.create({
    // marginTop:60,
     paddingTop:7,
   },
+
   text:{
 margin:7,
   },
+
   title:{
     fontWeight:'bold'
 

@@ -7,7 +7,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Picker } from '@react-native-picker/picker'; // Import Picker from '@react-native-picker/picker'
 import TaskForm from './TaskForm';
 import TasksModal from './TasksModal'; // Import the TasksModal component
-import { format } from 'date-fns';
+import MembershipFormsModal from './MembershipFormsModal'; // Import the MembershipFormsModal component
+import OpportunitiesModal  from './oppModal';
+import MembersModal from './membersModal';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -26,8 +28,16 @@ const ManagerScreen = ({ navigation,route }) => {
   const [selectedMemberData, setSelectedMemberData] = useState(null);
   const [tasksModalVisible, setTasksModalVisible] = useState(false); // State for task modal visibility
   const [tasks, setTasks] = useState([]); // State for tasks data
+  const [showMembersModal, setShowMembersModal] = useState(false); // State for showing/hiding members modal
 
+  const openMembersModal = () => {
+    setShowMembersModal(true);
+  };
 
+  // Function to close members modal
+  const closeMembersModal = () => {
+    setShowMembersModal(false);
+  };
   const openModal = () => {
     setShowModal(true);
   };
@@ -443,9 +453,48 @@ const ManagerScreen = ({ navigation,route }) => {
 
     <View style={styles.container}>
       <Text style={{ fontSize: 24, marginBottom: 20 }}>Manager Screen</Text>
-      
+
+      <TouchableOpacity style={styles.button} onPress={() => setShowMembershipForms(true)}>
+          <Text style={styles.buttonText}>Membership Forms</Text>
+        </TouchableOpacity>
+ <MembershipFormsModal
+        visible={showMembershipForms}
+        onClose={() => setShowMembershipForms(false)}
+        membershipData={membershipData}
+        handleApprove={handleApprove}
+        handleReject={handleReject}
+      />
+
+<TouchableOpacity style={styles.button} onPress={() => setShowOpportunitiesForms(true)}>
+          <Text style={styles.buttonText}>Opportunities Forms</Text>
+        </TouchableOpacity>
+ <OpportunitiesModal
+        visible={showOpportunitiesForms}
+        onClose={() => setShowOpportunitiesForms(false)}
+        opportunitiesData={opportunitiesData}
+        handleApproveOpp={handleApproveOpp}
+        handleRejectOpp={handleRejectOpp}
+      />
+
+<TouchableOpacity style={styles.button} onPress={openMembersModal}>
+          <Text style={styles.buttonText}>Show Members</Text>
+        </TouchableOpacity>
+
+        {/* Render MembersModal component */}
+        <MembersModal
+          visible={showMembersModal}
+          onClose={closeMembersModal}
+          membersData={membersData}
+          openTaskForm={openTaskForm}
+          showTaskForm={showTaskForm}
+          closeTaskForm={closeTaskForm}
+          handleAssignTask={handleAssignTask}
+          fetchMemberTasks={fetchMemberTasks}
+          selectedMemberData={selectedMemberData}
+        />
+
       {/*memberships */}      
-      <TouchableOpacity
+     {/* <TouchableOpacity
   style={showMembershipForms ? styles.button1 : styles.button}
   onPress={toggleMembershipForms}
 >
@@ -453,7 +502,7 @@ const ManagerScreen = ({ navigation,route }) => {
 </TouchableOpacity>
 
       {showMembershipForms && membershipData.length === 0 && (
-        <Text>No forms found</Text>
+        <Text>All forms are reviewd </Text>
       )}
 
       {showMembershipForms && membershipData.length > 0 && (
@@ -512,22 +561,8 @@ const ManagerScreen = ({ navigation,route }) => {
             <View style={{ flexDirection: 'row' }}>
             <Text style={[styles.title, styles.text]}>Project summary: </Text>
             <Text style={styles.text}>{form.projectSummary}</Text>
-            </View>
-
-            {/* Render project pictures 
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              {form.projectPictures.map((picture, picIndex) => (
-                <Image
-                  key={picIndex}
-                  source={{ uri: `http://192.168.1.120:3000/${picture.replace(/\\/g, '/')}` }}
-                 // source={{ uri: `data:image/png;base64,${form.projectPictures}` }}
-
-                  style={{ width: 50, height: 50, marginRight: 10 }}
-                  onError={(error) => console.error('Error loading image:', error)}
-                />
-              ))}
-            </View>
-*/}
+            </View> 
+          
 
             <TouchableOpacity onPress={openModal} style={styles.button}>
         <Text style={styles.buttonText}>View Pictures</Text>
@@ -549,23 +584,23 @@ const ManagerScreen = ({ navigation,route }) => {
     <Text style={styles.buttonText}>Reject</Text>
   </TouchableOpacity>
 </View>
-
-            {/* Add more fields as needed */}
        
           </View>
         ))
-      )}
+      )}*/} 
 
 
 {/* opportunities */}
-<TouchableOpacity
+
+
+{/* <TouchableOpacity
   style={showOpportunitiesForms ? styles.button1 : styles.button}
   onPress={toggleOpportunitiesForms}
 >
   <Text style={styles.buttonText}>{showOpportunitiesForms ? "Hide Opportunities Forms" : "Show Opportunities Forms"}</Text>
 </TouchableOpacity>
 {showOpportunitiesForms && opportunitiesData.length === 0 && (
-        <Text>No opportunities found</Text>
+        <Text>All forms are reviewd </Text>
       )}
 
         {showOpportunitiesForms && opportunitiesData.length > 0 && (
@@ -575,7 +610,7 @@ const ManagerScreen = ({ navigation,route }) => {
             <Text>Name: {opportunity.fullName}</Text>
             <Text>Address: {opportunity.address}</Text>
          
-            {/* Render PDF files */}
+          
             {opportunity.cv && opportunity.cv.map((pdfFile, pdfIndex) => (
             <Button
             key={pdfIndex}
@@ -601,12 +636,16 @@ const ManagerScreen = ({ navigation,route }) => {
 
           </View>
         ))
-      )}
+      )}*/}
+      
+    
 
 
 {/* members */}
 
-<TouchableOpacity
+
+
+{/* <TouchableOpacity
   style={showMembers ? styles.button1 : styles.button}
   onPress={toggleMembers}
 >
@@ -643,7 +682,7 @@ const ManagerScreen = ({ navigation,route }) => {
 
         ))
         
-      )}
+      )}*/}
 
 
 {/*interns */}
