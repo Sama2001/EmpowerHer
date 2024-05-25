@@ -491,6 +491,9 @@ const ManagerScreen = ({ navigation,route }) => {
           handleAssignTask={handleAssignTask}
           fetchMemberTasks={fetchMemberTasks}
           selectedMemberData={selectedMemberData}
+          tasks={tasks} // Pass tasks data to MembersModal
+          tasksModalVisible={tasksModalVisible} // Pass tasks modal visibility state
+          setTasksModalVisible={setTasksModalVisible} 
         />
 
       {/*memberships */}      
@@ -738,11 +741,11 @@ const ManagerScreen = ({ navigation,route }) => {
     <Text style={styles.logoutText}>Logout</Text>
   </TouchableOpacity>
 
-  <TasksModal
+  {/*<TasksModal
         visible={tasksModalVisible}
         onClose={() => setTasksModalVisible(false)}
         tasks={tasks}
-      />
+      /> */}
 
     </View>
     </ScrollView>

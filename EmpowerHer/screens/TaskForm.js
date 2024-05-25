@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Modal, Platform, StyleSheet, Text } from 'react-native';
+import { View, TextInput, Button, Modal, Platform, Text,TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker from '@react-native-community/datetimepicker'
+import { TaskForm as styles } from '../styles/TaskFormStyle'; // Import styles
+import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
 const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
   const [description, setDescription] = useState('');
@@ -30,12 +32,11 @@ const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.container}>
-        {/* Render selected member's data */}
         {memberData && (
           <View style={styles.memberInfo}>
             <Text style={styles.memberInfoTitle}>Selected Member:</Text>
             <Text>Name: {memberData.fullName}</Text>
-            <Text>Email: {memberData.emailAddress}</Text>
+            <Text>Email: {memberData.emailAddress|| memberData.email}</Text>
             {/* Add more member fields here as needed */}
           </View>
         )}
@@ -43,10 +44,14 @@ const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
         <TextInput
           style={styles.input}
           placeholder="Task Description"
+          placeholderTextColor="gray" 
           value={description}
           onChangeText={text => setDescription(text)}
         />
-        <Button title="Select Deadline" onPress={() => setShowDatePicker(true)} />
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.selectDate}>
+        <Text style={styles.buttonText}>Select Deadline</Text>
+          </TouchableOpacity>
+
         {showDatePicker && (
           <DateTimePicker
             value={deadline}
@@ -56,41 +61,23 @@ const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
               setShowDatePicker(Platform.OS === 'ios');
               setDeadline(selectedDate || deadline); // If user cancels, keep the current deadline
             }}
+            textColor={Platform.OS === 'ios' ? 'black' : undefined} // iOS specific text color
+          style={Platform.OS === 'android' ? styles.pickerText : undefined} // Android specific style
           />
         )}
-        <Button title="Assign Task" onPress={handleAssignTask} />
-        <Button title="Close" onPress={onClose} />
+       {/* <Button title="Assign Task" onPress={handleAssignTask} />*/} 
+
+        <TouchableOpacity onPress={() => {handleAssignTask} } style={styles.selectDate}>
+        <Text style={styles.buttonText}>Assign Task</Text>
+          </TouchableOpacity>
+
+        <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
       </View>
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: 'pink',
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    marginBottom: 20,
-    paddingHorizontal: 10,
-  },
-  memberInfo: {
-    marginBottom:-5,
-    color:'pink',
-  },
-  memberInfoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color:'white',
-  },
-});
 
 export default TaskForm;

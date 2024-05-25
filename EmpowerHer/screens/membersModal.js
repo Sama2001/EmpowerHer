@@ -4,13 +4,12 @@ import { Manager as styles } from '../styles/ManagerStyles'; // Import styles fr
 import TaskForm from './TaskForm';
 import TasksModal from './TasksModal'; // Import the TaskModal component
 
-const MembersModal = ({ visible, onClose, membersData, openTaskForm, showTaskForm, closeTaskForm, handleAssignTask, fetchMemberTasks, selectedMemberData }) => {
-    const [showTaskModal, setShowTaskModal] = useState(false); // State to control the visibility of TasksModal
-    const [tasks, setTasks] = useState([]); // State to store tasks data
+const MembersModal = ({ visible, onClose, membersData, openTaskForm, showTaskForm, closeTaskForm, handleAssignTask, fetchMemberTasks, selectedMemberData,tasks,tasksModalVisible, setTasksModalVisible  }) => {
 
-    const toggleTasksModal = () => {
-        setShowTaskModal(!showTaskModal);
-    };
+  
+  
+  
+
     return (
     <Modal visible={visible} animationType="slide" transparent={false}>
               <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center',margin: 10 }}>
@@ -39,19 +38,29 @@ const MembersModal = ({ visible, onClose, membersData, openTaskForm, showTaskFor
                 />
               )}
 
-              <TouchableOpacity onPress={() => fetchMemberTasks(member._id)} style={styles.Taskbutton}>
-                <Text>View Tasks</Text>
-              </TouchableOpacity>
+<TouchableOpacity onPress={() => fetchMemberTasks(member._id)} style={styles.Taskbutton}>
+                                <Text>View Tasks</Text>
+                            </TouchableOpacity>
+
             </View>
           ))
         )}
        
-       
+  
+                        <TasksModal
+                            visible={tasksModalVisible}
+                            onClose={() => setTasksModalVisible(false)}
+                            tasks={tasks}
+                        />
+                 
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Text style={styles.buttonText}>Close</Text>
         </TouchableOpacity>
       </View>
       </ScrollView>
+     
+
+
     </Modal>
   );
 };

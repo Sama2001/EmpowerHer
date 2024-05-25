@@ -8,6 +8,7 @@ export const Manager = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   Closebutton:{
     position: 'absolute',
@@ -164,9 +165,14 @@ paddingVertical:8,
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    borderWidth: 4,
+    borderRadius: 30,
+    margin: 5,
+    borderColor: '#a86556',
   },
   modalContent: {
     width: '80%',
