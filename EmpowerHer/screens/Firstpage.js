@@ -146,6 +146,12 @@ useEffect(() => {
     }
   };
 
+  const navigateToStore = () => {
+
+      navigation.navigate('store', { authToken,memberId });
+      
+  };
+
   return (
     <View style={styles.container}>
       {/* Menu Button */}
@@ -186,6 +192,10 @@ useEffect(() => {
        
        <Text style={styles.menuItemText}> Tasks </Text>
  </TouchableOpacity>
+
+ <TouchableOpacity style={styles.StoreButton} onPress={navigateToStore}>
+        <Text style={styles.menuItemText}> Store </Text>
+      </TouchableOpacity>
 
  <View style={styles.contentContainer}>
          
