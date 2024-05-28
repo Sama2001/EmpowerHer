@@ -673,7 +673,7 @@ app.get('/Gprofile', verifyToken, async (req, res) => {
       }
 
       // Return the user's profile data
-      return res.status(200).json({ success: true, user: { firstName: user.firstName, lastName: user.lastName , email:user.email , mobile:user.mobile} });
+      return res.status(200).json({ success: true, user: { _id:user._id,firstName: user.firstName, lastName: user.lastName , email:user.email , mobile:user.mobile } });
   } catch (error) {
       console.error('Error fetching user profile:', error);
       return res.status(500).json({ success: false, message: 'Server error' });

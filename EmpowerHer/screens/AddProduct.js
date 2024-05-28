@@ -89,13 +89,14 @@ const AddProduct = ({ navigation, route }) => {
   
       if (response.data.success) {
         Alert.alert('Success', 'Product added successfully');
-       fetchProducts();
         setPickedImages([]);
         setDescription('');
         setCategory('');
         setPrice('');
         setProductName('');
         setQuantity('');
+        fetchProducts();
+
       } else {
         Alert.alert('Error', response.data.message);
       }

@@ -77,8 +77,6 @@ export const firstPageStyles = StyleSheet.create({
     top: 70,
     left: 5,
     padding: 10,
-    //borderRadius: 10,
-   // borderBottomWidth: 2,
     borderColor: '#a86556',
     width: 150,
     marginTop:380,
@@ -106,6 +104,12 @@ export const firstPageStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
+  },
+  cartIconContainer: {
+    alignItems: 'flex-end',
+    top: 20,
+    right:10,
+
   },
   menuContainer: {
     borderTopRightRadius: 30,

@@ -1,7 +1,8 @@
 import React, { useState, useRef,useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated,Image,Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated,Image,Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import * as SecureStore from 'expo-secure-store';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { firstPageStyles as styles } from '../styles/FirstPageStyles'; 
 
@@ -15,6 +16,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [memberId, setMemberId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const handleLogout = async () => {
     try {
@@ -96,12 +98,13 @@ const FirstPage = ({ navigation, route,result }) => {
         });
         const data = await response.json();
         if (data.success) {
-            const { firstName, lastName,email,mobile } = data.user;
+            const { _id,firstName, lastName,email,mobile} = data.user;
             setFirstName(firstName);
             setLastName(lastName);
             setEmail(email);
             setMobile(mobile);
-                   fetchMemberIdByEmail(email);
+            setUserId(_id);
+            fetchMemberIdByEmail(email);
 
         } else {
             Alert.alert('Error', data.message);
@@ -148,9 +151,24 @@ useEffect(() => {
 
   const navigateToStore = () => {
 
-      navigation.navigate('store', { authToken,memberId });
+      navigation.navigate('store', { authToken,memberId,userId });
       
   };
+
+ /* const navigateToCart = () => {
+   // navigation.navigate('Cart', { authToken, memberId});
+   // Example navigation code to navigate to the ShoppingCartScreen
+navigation.navigate('Cart', { userId: userId });
+
+  };*/
+  const navigateToCart = () => {
+    if (userId) {
+        navigation.navigate('Cart', { authToken,userId });
+    } else {
+        Alert.alert('Error', 'User ID not found');
+    }
+};
+
 
   return (
     <View style={styles.container}>
@@ -159,6 +177,10 @@ useEffect(() => {
         <MaterialIcons name="menu" size={30} color="#a86556" />
       </TouchableOpacity>
       
+      <TouchableOpacity style={styles.cartIconContainer} onPress={navigateToCart}>
+          <MaterialCommunityIcons name="cart-outline" size={28} color="#a86556" />
+        </TouchableOpacity>
+
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.contentContainer}>

@@ -38,7 +38,7 @@ const LoginScreen = ({ navigation,route }) => {
        
         if (token) {
           // Store token and its expiration time in AsyncStorage
-          const expirationTime = new Date().getTime() + '1h'; // 5 seconds
+          const expirationTime = new Date().getTime() + '1h';
           await AsyncStorage.setItem('authToken', token);
           //setAuthToken(token); // Set authToken state or update context if using state management
           await AsyncStorage.setItem('authTokenExpiration', expirationTime.toString());

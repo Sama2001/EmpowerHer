@@ -16,11 +16,17 @@ import task from './screens/Tasks';
 import StoreScreen from './screens/Store';
 import AddProduct from './screens/AddProduct';
 import ProductDetailsScreen from './screens/ProductScreen';
+import CartScreen from './screens/AddtoCart';
+import Cart from './screens/Cart';
+import { CartProvider } from './screens/CartContext';
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <CartProvider>
+
     <NavigationContainer>
+
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -36,9 +42,16 @@ export default function App() {
         <Stack.Screen name="store" component={StoreScreen}/>
         <Stack.Screen name="AddProduct" component={AddProduct}/>
         <Stack.Screen name="ProductDetails" component={ProductDetailsScreen}/>
+        <Stack.Screen name="AddToCart" component={CartScreen}/>
+        <Stack.Screen name="Cart" component={Cart}/>
+
 
       </Stack.Navigator>
+
     </NavigationContainer>
+    </CartProvider>
+
+
   );
 }
 

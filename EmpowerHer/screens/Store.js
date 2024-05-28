@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 const StoreScreen = ({ navigation, route }) => {
-    const { authToken, memberId } = route.params;
+    const { authToken, memberId,userId } = route.params;
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -121,7 +121,7 @@ const StoreScreen = ({ navigation, route }) => {
         renderItem={({ item }) => (
             <TouchableOpacity 
             style={styles.productContainer} 
-            onPress={() => navigation.navigate('ProductDetails', { productId: item._id, authToken })}
+            onPress={() => navigation.navigate('ProductDetails', { productId: item._id, authToken,userId })}
         >        
          {/*  {item.images.map((imageUri, index) => (
               <Image key={index} source={{ uri: imageUri }} style={styles.productImage} />
