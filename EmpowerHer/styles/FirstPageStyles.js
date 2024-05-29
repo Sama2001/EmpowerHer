@@ -94,6 +94,7 @@ export const firstPageStyles = StyleSheet.create({
     marginRight: 6,
 
   },
+ 
   menuIconContainer: {
     position: 'absolute',
     top: 10,
@@ -105,12 +106,52 @@ export const firstPageStyles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1,
   },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 10,
+    paddingTop: 18,
+  },
+  iconContainer: {
+    position: 'relative',
+    marginHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+ 
   cartIconContainer: {
     alignItems: 'flex-end',
     top: 20,
-    right:10,
+    right:50,
 
   },
+  ChaticonContainer:{
+    alignItems: 'flex-end',
+    
+    top: 20,
+    right:30,
+  },
+
+  NotiiconContainer:{
+    top: 20,
+    right:10,
+  },
+  notification: {
+    position: 'absolute',
+    top: -8, // Adjust this value to position the notification correctly
+    right: -8, // Adjust this value to position the notification correctly
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+notificationText: {
+  color: 'white',
+  fontSize: 12,
+  fontWeight: 'bold',
+},
   menuContainer: {
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,

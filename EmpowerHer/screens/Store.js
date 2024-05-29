@@ -107,11 +107,21 @@ const StoreScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Store</Text>
-      <Button
+     {/*<Text style={styles.title}>Store</Text> */} 
+      
+
+      <TouchableOpacity 
+            style={styles.Button} 
+            onPress={() => navigation.navigate('AddProduct', { authToken, memberId })}
+            >        
+            <Text style={styles.ButtonText}>+ Add Product</Text>
+           </TouchableOpacity>
+
+       {/**   <Button
     title="Add "
     onPress={() => navigation.navigate('AddProduct', { authToken, memberId })}
-/>
+/> */}    
+   
 
       <FlatList
         data={products}
@@ -143,7 +153,34 @@ const StoreScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+   // paddingHorizontal: 20,
+    borderWidth: 4,
+    borderRadius: 30,
+    margin: 5,
+    borderColor: '#a86556',
+  },
+  Button: {
+    backgroundColor: '#ffff',
+    borderRadius: 10,
+    borderTopLeftRadius:45,
+    padding: 10,
+    marginTop:-1,
+    marginLeft:-3,
+    //marginRight:100,
+    borderLeftWidth:2,
+    width: 150,
+    alignItems: 'center',
+    borderColor:'rgba(187, 123, 107, 0.79)',
+    borderWidth:1,
+    //borderRadius: 50,
+  },
+  ButtonText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'rgba(187, 123, 107, 1)',
   },
   title: {
     fontSize: 24,

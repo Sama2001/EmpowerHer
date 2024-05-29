@@ -32,7 +32,7 @@ const AddToCart = ({ route,navigation }) => {
 
     const handleAddToCart = () => {
         console.log('User ID:', userId);
-addToCart(userId, { ...product, quantity });
+addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageIndex] });
 
     };
 

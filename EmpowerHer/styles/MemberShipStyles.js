@@ -9,6 +9,7 @@ export const Membership = StyleSheet.create({
     borderRadius: 30,
     margin: 10,
     borderColor: '#a86556',
+    //height:2000,
 
   },
 
@@ -45,6 +46,7 @@ export const Membership = StyleSheet.create({
     backgroundColor: 'rgba(187, 123, 107, 0.79)',
     borderRadius: 8,
     padding: 12,
+    marginBottom:10,
     alignItems: 'center',
   },
   button1: {

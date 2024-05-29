@@ -3,6 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, Animated,Image,Alert } from '
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import * as SecureStore from 'expo-secure-store';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import  Ionicons  from '@expo/vector-icons';
+
+import { useCart } from './CartContext'; // Assuming you have a CartContext
 
 import { firstPageStyles as styles } from '../styles/FirstPageStyles'; 
 
@@ -17,6 +20,12 @@ const FirstPage = ({ navigation, route,result }) => {
   const [lastName, setLastName] = useState('');
   const [memberId, setMemberId] = useState(null);
   const [userId, setUserId] = useState(null);
+
+  const { cartItems } = useCart(); // Access the cartItems from the context
+  console.log('Cart Items:', cartItems);
+  const userCartItems = cartItems.filter(item => item.userId === userId);
+
+  const totalUniqueItemsInCart = [...new Set(userCartItems.map(item => item._id))].length;
 
   const handleLogout = async () => {
     try {
@@ -176,10 +185,29 @@ navigation.navigate('Cart', { userId: userId });
       <TouchableOpacity style={styles.menuIconContainer} onPress={toggleMenu}>
         <MaterialIcons name="menu" size={30} color="#a86556" />
       </TouchableOpacity>
+
       
-      <TouchableOpacity style={styles.cartIconContainer} onPress={navigateToCart}>
+
+      <View style={styles.iconRow}>
+      <TouchableOpacity style={styles.iconContainer} onPress={navigateToCart}>
           <MaterialCommunityIcons name="cart-outline" size={28} color="#a86556" />
+          {totalUniqueItemsInCart > 0 && (
+            <View style={styles.notification}>
+              <Text style={styles.notificationText}>{totalUniqueItemsInCart}</Text>
+            </View>
+          )}
         </TouchableOpacity>
+        
+        <TouchableOpacity style={[styles.iconContainer, styles.circularIconContainer]}>
+          <MaterialCommunityIcons name="message-processing-outline" size={28} color="#a86556" />
+        
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.iconContainer}>
+          <MaterialCommunityIcons name="bell-outline" size={28} color="#a86556" />
+         
+        </TouchableOpacity>
+      </View>
 
       {/* Content */}
       <ScrollView contentContainerStyle={styles.scrollViewContent}>

@@ -17,6 +17,15 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  {/*  const resetCart = async () => {
+    try {
+      await AsyncStorage.removeItem('cartItems');
+      setCartItems([]);
+    } catch (error) {
+      console.error('Error resetting cart:', error);
+    }
+  }; */}
+
   // Function to retrieve cart items from AsyncStorage
   const loadCartItems = async () => {
     try {
@@ -54,7 +63,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart}}>
       {children}
     </CartContext.Provider>
   );

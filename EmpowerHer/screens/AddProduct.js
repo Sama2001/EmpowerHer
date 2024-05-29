@@ -142,7 +142,10 @@ const AddProduct = ({ navigation, route }) => {
                 value={quantity}
                 onChangeText={(text) => setQuantity(text)}
             />
-            <Button title="Pick Images" onPress={pickImage} />
+           {/*<Button title="Pick Images" onPress={pickImage} />*/} 
+            <TouchableOpacity   onPress={pickImage} style={styles.Button}>
+            <Text style={styles.ButtonText}>Pick Images</Text>
+          </TouchableOpacity>
             <View style={styles.imagePreview}>
                 {pickedImages.map((imageUri, index) => (
                     <Image key={index} source={{ uri: imageUri }} style={styles.image} />
@@ -150,13 +153,17 @@ const AddProduct = ({ navigation, route }) => {
             </View>
 
             
-            <Button 
+           {/*<Button 
   title="Add Product" 
   onPress={() => addProduct({ productName, description, price, category, quantity })} 
-/>       
-<TouchableOpacity onPress={() => navigation.navigate('store', { authToken, memberId})}>
-            <Text style={styles.link}>Back to Store</Text>
-        </TouchableOpacity>    
+/>   */}      
+
+<TouchableOpacity   onPress={() => addProduct({ productName, description, price, category, quantity })} 
+ style={styles.button}>
+            <Text style={styles.buttonText}>Add Product</Text>
+          </TouchableOpacity>
+
+ 
           
 
 
@@ -167,14 +174,21 @@ const AddProduct = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
+      flex: 1,
+      backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 20,
+      borderWidth: 4,
+      borderRadius: 30,
+      margin: 5,
+      borderColor: '#a86556',
     },
     title: {
         fontSize: 24,
-        marginBottom: 20,
+        marginTop:-50,
+        marginBottom: 70,
+        color:'gray',
     },
     input: {
         borderWidth: 1,
@@ -193,6 +207,37 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         margin: 5,
+    },
+    button: {
+      backgroundColor: 'rgba(187, 123, 107, 0.79)',
+      borderRadius: 8,
+      padding: 12,
+      marginTop: 60,
+      width: 250,
+      alignItems: 'center',
+      borderRadius: 50,
+    },
+    buttonText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#ffff',
+    },
+    Button: {
+      backgroundColor: '#ffff',
+      borderRadius: 5,
+      padding: 10,
+      marginTop: 10,
+      //marginRight:100,
+      width: 250,
+      alignItems: 'center',
+      borderColor:'rgba(187, 123, 107, 0.79)',
+      borderWidth:1,
+      //borderRadius: 50,
+    },
+    ButtonText: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      color: 'rgba(187, 123, 107, 0.79)',
     },
 });
 
