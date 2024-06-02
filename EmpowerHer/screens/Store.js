@@ -13,6 +13,11 @@ const StoreScreen = ({ navigation, route }) => {
     const [products, setProducts] = useState([]);
     const [pickedImages, setPickedImages] = useState([]);
     const [showForm, setShowForm] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const toggleDropdown = (productId) => {
+      setShowDropdown(showDropdown === productId ? null : productId);
+    }
 
   useEffect(() => {
     fetchProducts();
@@ -105,6 +110,69 @@ const StoreScreen = ({ navigation, route }) => {
   };
   
 
+
+   const DropdownMenu = ({ productId }) => {
+    const handleDeleteProduct = async () => {
+      try {
+        const response = await fetch(`http://192.168.1.120:3000/product/${productId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authToken, // Assuming authToken is defined
+          },
+        });
+    
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Failed to delete product: ${errorMessage}`);
+        }
+        fetchProducts();
+        Alert.alert('Success', 'Product deleted successfully');
+        // Handle navigation or other UI updates after successful deletion
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        Alert.alert('Error', 'Failed to delete product');
+      }
+    };
+
+    const handleShowDetails = () => {
+      navigation.navigate('ProductDetails', { productId, authToken, userId });
+  };
+
+  const handleEditProduct = ()=>{
+    navigation.navigate('EditProduct', { productId, authToken }); // Navigate to EditProduct screen with product ID and auth token
+   };
+
+    return (
+      <View style={styles.dropdown}>
+        <TouchableOpacity style={styles.dropdownItem} onPress={handleEditProduct}>
+          <Text>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.dropdownItem} onPress={handleDeleteProduct}>
+          <Text>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.dropdownItem} onPress={handleShowDetails}>
+              <Text>Show details</Text>
+          </TouchableOpacity>
+      </View>
+    );
+  };
+ 
+
+const DropdownMenu2 = ({ productId }) => {
+  const handleShowDetails = () => {
+      navigation.navigate('ProductDetails', { productId, authToken, userId });
+  };
+
+  return (
+      <View style={styles.dropdown}>
+          <TouchableOpacity style={styles.dropdownItem} onPress={handleShowDetails}>
+              <Text>Show details</Text>
+          </TouchableOpacity>
+      </View>
+  );
+};
+
   return (
     <View style={styles.container}>
      {/*<Text style={styles.title}>Store</Text> */} 
@@ -141,10 +209,33 @@ const StoreScreen = ({ navigation, route }) => {
                         )}
             <Text>{item.productName}</Text>
             <Text>₪{item.price}</Text>
-           </TouchableOpacity>
 
-           
+
+            {item.memberId === memberId && ( // Check if the memberId matches the current userId
+      <View style={styles.editButtonContainer}>
+      <TouchableOpacity style={styles.editButton} onPress={() => toggleDropdown(item._id)}>
+        <Text style={styles.editButtonText}>...</Text>
+      </TouchableOpacity>
+      {showDropdown === item._id && <DropdownMenu  productId={item._id}/>}
+    </View>
+    )}
+    
+{item.memberId !== memberId && ( // Check if the memberId doesn't match the current userId
+      <View style={styles.editButtonContainer}>
+
+          <TouchableOpacity style={styles.editButton}  onPress={() => toggleDropdown(item._id)}>
+        <Text style={styles.editButtonText}>...</Text>
+                            </TouchableOpacity>
+
+      {showDropdown === item._id &&  <DropdownMenu2 productId={item._id} />}
+     </View>
+                        )}
+           </TouchableOpacity> 
+
+
         )}
+
+
       />
     </View>
   );
@@ -162,6 +253,38 @@ const styles = StyleSheet.create({
     margin: 5,
     borderColor: '#a86556',
   },
+  editButtonContainer: {
+    position: 'absolute',
+    //top: 0,
+    right: 2,
+    zIndex: 1, // Ensure the dropdown is above other content
+  },
+  editButton: {
+    position: 'absolute',
+    top: -40,
+    right: 10,
+    backgroundColor: 'transparent',
+    padding: 10,
+  },
+  editButtonText: {
+    fontSize: 30,
+  },
+
+  dropdown: {
+    //position: 'absolute',
+    top: '5%',
+    right: 0,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    elevation: 3,
+    zIndex: 1,
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  
   Button: {
     backgroundColor: '#ffff',
     borderRadius: 10,

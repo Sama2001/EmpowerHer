@@ -22,7 +22,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [userId, setUserId] = useState(null);
 
   const { cartItems } = useCart(); // Access the cartItems from the context
-  console.log('Cart Items:', cartItems);
+  //console.log('Cart Items:', cartItems);
   const userCartItems = cartItems.filter(item => item.userId === userId);
 
   const totalUniqueItemsInCart = [...new Set(userCartItems.map(item => item._id))].length;
@@ -82,10 +82,12 @@ const FirstPage = ({ navigation, route,result }) => {
         setMemberId(data.memberId);
       } else {
         Alert.alert('Error', 'Member not found');
+        console.log('No member ID found for this user');
+
       }
     } catch (error) {
-      console.error('Error fetching member ID:', error);
-      Alert.alert('Error', 'An error occurred while fetching member ID');
+      //console.error('Error fetching member ID:', error);
+     // Alert.alert('Error', 'An error occurred while fetching member ID');
     }
   };
   
@@ -178,6 +180,10 @@ navigation.navigate('Cart', { userId: userId });
     }
 };
 
+const navigateToChatScreen = () => {
+  navigation.navigate('Chat', { userId: userId }); // Pass userId to ChatScreen
+};
+
 
   return (
     <View style={styles.container}>
@@ -198,7 +204,7 @@ navigation.navigate('Cart', { userId: userId });
           )}
         </TouchableOpacity>
         
-        <TouchableOpacity style={[styles.iconContainer, styles.circularIconContainer]}>
+        <TouchableOpacity style={[styles.iconContainer, styles.circularIconContainer]} onPress={navigateToChatScreen}>
           <MaterialCommunityIcons name="message-processing-outline" size={28} color="#a86556" />
         
         </TouchableOpacity>
@@ -210,43 +216,46 @@ navigation.navigate('Cart', { userId: userId });
       </View>
 
       {/* Content */}
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.contentContainer}>
-          {/* Add your content here */}
-        </View>
-      </ScrollView>
-
+       
       {/* Menu */}
       <Animated.View style={[styles.menuContainer, { width: menuWidth }]}>
         {/* Profile Button */}
         <TouchableOpacity style={styles.profileButton} onPress={navigateToProfile}>
         <View style={styles.profileInfoContainer}>
         {profilePicture && <Image source={{ uri: profilePicture }} style={styles.profilePicture} />}
-        <Text style={styles.menuItemText}>
+        <Text style={styles.PmenuItemText}>
       {firstName !== '' && lastName !== '' ? `${firstName} ${lastName} ` : 'Loading...'}
     </Text>
         </View>
   </TouchableOpacity>
 
-  <TouchableOpacity style={styles.MemberButton} onPress={navigateToMembership}>
-       
-        <Text style={styles.menuItemText}> Membership </Text>
-  </TouchableOpacity>
+  {memberId ? (
+          <TouchableOpacity style={styles.TasksButton} onPress={navigateToTasks}>
+         <MaterialCommunityIcons name="clipboard-list-outline" size={24} color="#a86556" />
+            <Text style={styles.menuItemText}> My tasks </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.placeholderContainer} />
+        )}
 
+
+  <TouchableOpacity style={styles.MemberButton} onPress={navigateToMembership}>
+
+        <Text style={styles.menuItemText}> Membership </Text>
+
+  </TouchableOpacity>
   <TouchableOpacity style={styles.OpButton} onPress={navigateToVolunteer}>
        
        <Text style={styles.menuItemText}> Opportunities </Text>
  </TouchableOpacity>
 
- <TouchableOpacity style={styles.TasksButton} onPress={navigateToTasks}>
-       
-       <Text style={styles.menuItemText}> Tasks </Text>
- </TouchableOpacity>
+
 
  <TouchableOpacity style={styles.StoreButton} onPress={navigateToStore}>
         <Text style={styles.menuItemText}> Store </Text>
       </TouchableOpacity>
-
+      
+     
  <View style={styles.contentContainer}>
          
  

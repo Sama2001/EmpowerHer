@@ -10,6 +10,7 @@ import TasksModal from './TasksModal'; // Import the TasksModal component
 import MembershipFormsModal from './MembershipFormsModal'; // Import the MembershipFormsModal component
 import OpportunitiesModal  from './oppModal';
 import MembersModal from './membersModal';
+import InternsModal from './internsModal';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -29,6 +30,7 @@ const ManagerScreen = ({ navigation,route }) => {
   const [tasksModalVisible, setTasksModalVisible] = useState(false); // State for task modal visibility
   const [tasks, setTasks] = useState([]); // State for tasks data
   const [showMembersModal, setShowMembersModal] = useState(false); // State for showing/hiding members modal
+  const [showInternsModal, setShowInternsModal] = useState(false);
 
   const openMembersModal = () => {
     setShowMembersModal(true);
@@ -37,6 +39,15 @@ const ManagerScreen = ({ navigation,route }) => {
   // Function to close members modal
   const closeMembersModal = () => {
     setShowMembersModal(false);
+  };
+
+  const openInternsModal = () => {
+    setShowInternsModal(true);
+    // Fetch interns data here if needed
+  };
+
+  const closeInternsModal = () => {
+    setShowInternsModal(false);
   };
   const openModal = () => {
     setShowModal(true);
@@ -449,10 +460,10 @@ const ManagerScreen = ({ navigation,route }) => {
   
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center',margin:10,borderWidth:1,borderColor:'gray' }}>
-
+    <ScrollView contentContainerStyle={{}}>
     <View style={styles.container}>
       <Text style={{ fontSize: 24, marginBottom: 20 }}>Manager Screen</Text>
+      {/*membership forms */}      
 
       <TouchableOpacity style={styles.button} onPress={() => setShowMembershipForms(true)}>
           <Text style={styles.buttonText}>Membership Forms</Text>
@@ -465,6 +476,7 @@ const ManagerScreen = ({ navigation,route }) => {
         handleReject={handleReject}
       />
 
+      {/*opportunities forms */}      
 <TouchableOpacity style={styles.button} onPress={() => setShowOpportunitiesForms(true)}>
           <Text style={styles.buttonText}>Opportunities Forms</Text>
         </TouchableOpacity>
@@ -476,11 +488,11 @@ const ManagerScreen = ({ navigation,route }) => {
         handleRejectOpp={handleRejectOpp}
       />
 
+        {/*  MembersModal  */}
 <TouchableOpacity style={styles.button} onPress={openMembersModal}>
           <Text style={styles.buttonText}>Show Members</Text>
         </TouchableOpacity>
 
-        {/* Render MembersModal component */}
         <MembersModal
           visible={showMembersModal}
           onClose={closeMembersModal}
@@ -496,200 +508,20 @@ const ManagerScreen = ({ navigation,route }) => {
           setTasksModalVisible={setTasksModalVisible} 
         />
 
-      {/*memberships */}      
-     {/* <TouchableOpacity
-  style={showMembershipForms ? styles.button1 : styles.button}
-  onPress={toggleMembershipForms}
->
-  <Text style={styles.buttonText}>{showMembershipForms ? "Hide Membership Forms" : "Show Membership Forms"}</Text>
-</TouchableOpacity>
-
-      {showMembershipForms && membershipData.length === 0 && (
-        <Text>All forms are reviewd </Text>
-      )}
-
-      {showMembershipForms && membershipData.length > 0 && (
-        membershipData.map((form, index) => (
-
-          <View key={index} style={styles.formContainer}>
-            <Text style={styles.formTitle}>Form {index + 1}</Text>
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Full Name:</Text>
-            <Text style={styles.text}>{form.fullName}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Address: </Text>
-            <Text style={styles.text}>{form.address}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Email Address: </Text>
-            <Text style={styles.text}>{form.email}{form.emailAddress}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Mobile: </Text>
-            <Text style={styles.text}>{form.mobile}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Education: </Text>
-            <Text style={styles.text}>{form.education}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Age: </Text>
-            <Text style={styles.text}>{form.age}</Text>
-            </View>
-
-          
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Social media link:</Text>
-            <Text style={styles.link} onPress={() => Linking.openURL(form.socialMediaLink)}>
-              {form.socialMediaLink}
-             </Text>
-             </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Project locatiton: </Text>
-            <Text style={styles.text}>{form.projectLocation}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Project sector: </Text>
-            <Text style={styles.text}>{form.projectSector}</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row' }}>
-            <Text style={[styles.title, styles.text]}>Project summary: </Text>
-            <Text style={styles.text}>{form.projectSummary}</Text>
-            </View> 
-          
-
-            <TouchableOpacity onPress={openModal} style={styles.button}>
-        <Text style={styles.buttonText}>View Pictures</Text>
+<TouchableOpacity   style={ styles.button} onPress={openInternsModal}>
+        <Text style={styles.buttonText}>Show Interns</Text>
       </TouchableOpacity>
 
-      {showModal && (
-        <ProjectPicturesModal projectPictures={form.projectPictures} onClose={closeModal} />
-      )}
-      
-
-      <View style={styles.buttonContainer}>
-  <TouchableOpacity style={styles.Approve} onPress={() => handleApprove(form)}>
-    <Text style={styles.buttonText}>Approve</Text>
-  </TouchableOpacity>
-
-
+      <InternsModal 
+      visible={showInternsModal} 
+      onClose={closeInternsModal} 
+      internsData={internsData} 
+      membersData={membersData}
+      handleConnect={handleConnect}
+      />
   
-  <TouchableOpacity style={styles.Reject} onPress={() => handleReject(form)}>
-    <Text style={styles.buttonText}>Reject</Text>
-  </TouchableOpacity>
-</View>
-       
-          </View>
-        ))
-      )}*/} 
-
-
-{/* opportunities */}
-
-
-{/* <TouchableOpacity
-  style={showOpportunitiesForms ? styles.button1 : styles.button}
-  onPress={toggleOpportunitiesForms}
->
-  <Text style={styles.buttonText}>{showOpportunitiesForms ? "Hide Opportunities Forms" : "Show Opportunities Forms"}</Text>
-</TouchableOpacity>
-{showOpportunitiesForms && opportunitiesData.length === 0 && (
-        <Text>All forms are reviewd </Text>
-      )}
-
-        {showOpportunitiesForms && opportunitiesData.length > 0 && (
-        opportunitiesData.map((opportunity, index) => (
-          <View key={index} style={styles.opportunityContainer}>
-            <Text style={styles.opportunityTitle}>Opportunity {index + 1}</Text>
-            <Text>Name: {opportunity.fullName}</Text>
-            <Text>Address: {opportunity.address}</Text>
-         
-          
-            {opportunity.cv && opportunity.cv.map((pdfFile, pdfIndex) => (
-            <Button
-            key={pdfIndex}
-            title={`View PDF ${pdfIndex + 1}`}
-            onPress={() => {
-              const pdfUrl = `http://192.168.1.120:3000/${pdfFile.replace(/\\/g, '/')}`;
-              openPDF(pdfUrl);
-            }}
-          />
-            ))}
-
-<View style={styles.buttonContainer}>
-  <TouchableOpacity style={styles.Approve} onPress={() => handleApproveOpp(opportunity)}>
-    <Text style={styles.buttonText}>Approve</Text>
-  </TouchableOpacity>
-
-
-  
-  <TouchableOpacity style={styles.Reject} onPress={() => handleRejectOpp(opportunity)}>
-    <Text style={styles.buttonText}>Reject</Text>
-  </TouchableOpacity>
-</View>
-
-          </View>
-        ))
-      )}*/}
-      
-    
-
-
-{/* members */}
-
-
-
-{/* <TouchableOpacity
-  style={showMembers ? styles.button1 : styles.button}
-  onPress={toggleMembers}
->
-  <Text style={styles.buttonText}>{showMembers ? "Hide Members" : "Show Members"}</Text>
-</TouchableOpacity>
-
-{showMembers && membersData.length === 0 && (
-        <Text>No Members found</Text>
-      )}
-
-        {showMembers && membersData.length > 0 && (
-        membersData.map((member, index) => (
-          <View key={index} style={styles.opportunityContainer}>
-            <Text style={styles.opportunityTitle}>Member {index + 1}</Text>
-            <Text>Name: {member.fullName}</Text>
-            <Text>Address: {member.address}</Text>
-
-            <TouchableOpacity onPress={() => openTaskForm(member)} style={styles.Taskbutton}>
-                <Text>Add Task</Text>
-              </TouchableOpacity>
-
-      <TaskForm
-                visible={showTaskForm}
-                onClose={closeTaskForm}
-                onAssignTask={handleAssignTask}
-                memberData={selectedMemberData} // Pass the selected member's data as props
-              />
-                <TouchableOpacity onPress={() => fetchMemberTasks(member._id)} style={styles.Taskbutton}>
-                <Text>View Tasks</Text>
-              </TouchableOpacity>
-          </View>
-
-
-
-        ))
-        
-      )}*/}
-
-
 {/*interns */}
-<TouchableOpacity
+{/*<TouchableOpacity
   style={showInterns ? styles.button1 : styles.button}
   onPress={toggleInterns}
 >
@@ -708,7 +540,6 @@ const ManagerScreen = ({ navigation,route }) => {
             <Text>Address: {interns.address}</Text>
              
              
-             {/* Dropdown for selecting members */}
              <Picker
         selectedValue={selectedMembers[index]?.fullName}
         onValueChange={(value) => handleMemberChange(index, value)}>
@@ -722,7 +553,6 @@ const ManagerScreen = ({ navigation,route }) => {
           <Text style={styles.selectedMemberTitle}>Selected Member:</Text>
           <Text>Name: {selectedMembers[index]._id}</Text>
           <Text>Email: {selectedMembers[index].emailAddress}</Text>
-          {/* Add more fields here as needed */}
         </View>
       )}
             <TouchableOpacity 
@@ -734,7 +564,7 @@ const ManagerScreen = ({ navigation,route }) => {
 
           </View>
         ))
-      )}
+      )} */}
 
 <TouchableOpacity style={styles.logout} onPress={handleLogout}>
     <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />

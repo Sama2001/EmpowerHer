@@ -1,8 +1,10 @@
 // AddProductScreen.js
 
 import React, { useState,useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, Image, Alert,TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, Image, Alert,ScrollView,TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome } from '@expo/vector-icons';
+
 import axios from 'axios';
 
 const AddProduct = ({ navigation, route }) => {
@@ -14,7 +16,17 @@ const AddProduct = ({ navigation, route }) => {
     const [quantity, setQuantity] = useState('');
     const [pickedImages, setPickedImages] = useState([]);
     const [products, setProducts] = useState([]);
-    
+    const categories = ['Clothes And Crochet', 'Food', 'Home','Accessories']; // List of selectable categories
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const handleCategoryPress = () => {
+        setShowDropdown(!showDropdown);
+    };
+
+    const handleCategorySelect = (selectedCategory) => {
+        setCategory(selectedCategory);
+        setShowDropdown(false);
+    };
     const fetchProducts = async () => {
         try {
           const response = await axios.get('http://192.168.1.120:3000/products', {
@@ -106,7 +118,7 @@ const AddProduct = ({ navigation, route }) => {
     }
   };
 
-
+  
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Add Product</Text>
@@ -130,12 +142,21 @@ const AddProduct = ({ navigation, route }) => {
                 value={price}
                 onChangeText={(text) => setPrice(text)}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Category"
-                value={category}
-                onChangeText={(text) => setCategory(text)}
-            />
+           <TouchableOpacity style={styles.input1} onPress={handleCategoryPress}>
+           <Text style={[styles.categoryText, !category && styles.defaultCategoryText]}>
+        {category || 'Select Category'}
+    </Text>
+                    <FontAwesome name="caret-down" size={20} color="black" style={styles.arrowIcon}/>
+            </TouchableOpacity>
+            {showDropdown && (
+               <ScrollView style={styles.dropdown}>
+               {categories.map((item, index) => (
+                   <TouchableOpacity key={index} style={styles.dropdownItem} onPress={() => handleCategorySelect(item)}>
+                       <Text>{item}</Text>
+                   </TouchableOpacity>
+               ))}
+           </ScrollView>
+            )}
             <TextInput
                 style={styles.input}
                 placeholder="Quantity"
@@ -184,12 +205,14 @@ const styles = StyleSheet.create({
       margin: 5,
       borderColor: '#a86556',
     },
+  
     title: {
         fontSize: 24,
         marginTop:-50,
         marginBottom: 70,
-        color:'gray',
+        color:'black',
     },
+   
     input: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -198,6 +221,44 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '100%',
     },
+
+    input1: {
+      flexDirection: 'row', // Aligns items in a row
+      alignItems: 'center', // Aligns items along the cross axis (vertical)
+      justifyContent: 'center', // Aligns items along the main axis (horizontal)
+      borderWidth: 1,
+      borderColor: '#ccc',
+      padding: 10,
+      marginBottom: 10,
+      borderRadius: 5,
+      width: '100%',
+  },
+    categoryText: {
+      color: 'black', 
+      marginRight: 'auto',
+  },
+  defaultCategoryText: {
+      color: 'gray', 
+  },
+    arrowIcon: {
+      marginLeft: 217, // Adjust this value as needed for spacing between text and icon
+  },
+    dropdown: {
+      top: -1, // Adjust this value to position the dropdown list below the button
+      backgroundColor: '#fff',
+      width: '100%',
+      maxHeight: 90, // Set the maximum height for the dropdown
+      borderRadius: 5,
+      elevation: 5,
+  },
+  dropdownItem: {
+      padding: 10,
+      borderBottomWidth: 0.5,
+      borderBottomColor: 'lightgray',
+      width: '100%',
+      marginLeft:5,
+  },
+  
     imagePreview: {
         flexDirection: 'row',
         flexWrap: 'wrap',

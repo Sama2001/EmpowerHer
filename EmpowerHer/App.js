@@ -19,6 +19,9 @@ import ProductDetailsScreen from './screens/ProductScreen';
 import CartScreen from './screens/AddtoCart';
 import Cart from './screens/Cart';
 import { CartProvider } from './screens/CartContext';
+import ChatScreen from './screens/Chat';
+import PurchaseScreen from './screens/PurchaseScreen';
+import EditProductScreen from './screens/EditProduct';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -44,6 +47,10 @@ export default function App() {
         <Stack.Screen name="ProductDetails" component={ProductDetailsScreen}/>
         <Stack.Screen name="AddToCart" component={CartScreen}/>
         <Stack.Screen name="Cart" component={Cart}/>
+        <Stack.Screen name="Chat" component={ChatScreen}/>
+        <Stack.Screen name="Purchase" component={PurchaseScreen}/>
+        <Stack.Screen name="EditProduct" component={EditProductScreen}/>
+
 
 
       </Stack.Navigator>

@@ -69,5 +69,43 @@ export const Membership = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+
+  input1: {
+    flexDirection: 'row', // Aligns items in a row
+    alignItems: 'center', // Aligns items along the cross axis (vertical)
+    justifyContent: 'center', // Aligns items along the main axis (horizontal)
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    width: '100%',
+},
+  categoryText: {
+    color: 'black', 
+    marginRight: 'auto',
+},
+defaultCategoryText: {
+    color: 'gray', 
+},
+  arrowIcon: {
+    marginLeft: 217, // Adjust this value as needed for spacing between text and icon
+},
+  dropdown: {
+    top: -1, // Adjust this value to position the dropdown list below the button
+    backgroundColor: '#fff',
+    width: '100%',
+    maxHeight: 90, // Set the maximum height for the dropdown
+    borderRadius: 5,
+    elevation: 5,
+},
+dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'lightgray',
+    width: '100%',
+    marginLeft:5,
+},
+
 });
 

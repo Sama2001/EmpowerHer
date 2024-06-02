@@ -24,7 +24,7 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
             <Text>All forms are reviewed</Text>
           ) : (
             membershipData.map((form, index) => (
-              <View key={index} style={styles.formContainer}>
+              <View key={index} style={styles.MemeberformContainer}>
                 <Text style={styles.formTitle}>Form {index + 1}</Text>
                 <View style={{ flexDirection: 'row' }}>
                   <Text style={[styles.title, styles.text]}>Full Name:</Text>
@@ -68,15 +68,15 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
                   <Text style={[styles.title, styles.text]}>Project summary: </Text>
                   <Text style={styles.text}>{form.projectSummary}</Text>
                 </View>
-
-                <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => openPicturesModal(form.projectPictures)}>
+                <TouchableOpacity style={styles.Picbutton} onPress={() => openPicturesModal(form.projectPictures)}>
                     <Text style={styles.buttonText}>View Pictures</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.Approve} onPress={() => handleApprove(form)}>
+                <View style={styles.buttonContainer}>
+                
+                  <TouchableOpacity style={styles.Approve1} onPress={() => handleApprove(form)}>
                     <Text style={styles.buttonText}>Approve</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.Reject} onPress={() => handleReject(form)}>
+                  <TouchableOpacity style={styles.Reject1} onPress={() => handleReject(form)}>
                     <Text style={styles.buttonText}>Reject</Text>
                   </TouchableOpacity>
                 </View>
@@ -87,9 +87,11 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity> */}
           
-          <TouchableOpacity onPress={onClose} style={styles.Closebutton}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
+          <View style={styles.closeButtonContainer}>
+        <TouchableOpacity onPress={onClose} style={styles.Closebutton}>
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
         </View>
 
 

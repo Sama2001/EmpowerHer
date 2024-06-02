@@ -50,9 +50,11 @@ const OpportunitiesModal = ({ visible, onClose, opportunitiesData, handleApprove
           <Text style={styles.buttonText}>Close</Text>
         </TouchableOpacity>*/}
 
+<View style={styles.closeButtonContainer1}>
         <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       </View>
       </ScrollView>
 

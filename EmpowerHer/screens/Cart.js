@@ -3,7 +3,7 @@ import { View, Text, Button, Image, StyleSheet, ScrollView, TouchableOpacity } f
 import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Expo for icons
 import { useCart } from './CartContext';
 
-const ShoppingCartScreen = ({ route }) => {
+const ShoppingCartScreen = ({ route,navigation }) => {
     const { userId } = route.params;
     const { getCart, removeFromCart } = useCart();
     const cartItems = getCart(userId);
@@ -37,6 +37,11 @@ const ShoppingCartScreen = ({ route }) => {
 
     // Calculate the total price for each item and the total price for all items
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const handlePurchaseNavigation = () => {
+        console.log("cartItems in ShoppingCartScreen before navigation:", cartItems); // Log cartItems before navigation
+        navigation.navigate('Purchase', { userId, cartItems }); // Navigate to PurchaseScreen with userId and cartItems
+    };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -89,6 +94,12 @@ const ShoppingCartScreen = ({ route }) => {
             {cartItems.length > 0 && (
                 <Text style={styles.totalPrice}>Total Price: ₪{totalPrice.toFixed(2)}</Text>
             )}
+
+{cartItems.length > 0 && (  
+<TouchableOpacity onPress={handlePurchaseNavigation}>
+            <Text>Proceed to Purchase</Text>
+        </TouchableOpacity>
+)}
         </ScrollView>
     );
 };

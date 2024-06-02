@@ -3,6 +3,7 @@ import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 
 import { Membership as styles } from '../styles/MemberShipStyles'; // Import styles
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
+import { FontAwesome } from '@expo/vector-icons';
 
 const MembershipForm = ({route}) => {
   const [fullName, setFullName] = useState('');
@@ -16,6 +17,9 @@ const MembershipForm = ({route}) => {
   const [projectLocation, setProjectLocation] = useState('');
   const [projectSummary, setProjectSummary] = useState('');
   const [projectPictures, setProjectPictures] = useState([]); // State for project pictures
+  const sectors = ['Commercial', 'Agriculture', 'Service','Products']; // List of selectable categories
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const {authToken} = route.params;
 
   useEffect(() => {
@@ -24,7 +28,14 @@ const MembershipForm = ({route}) => {
         fetchUserInfo();
   },[]); 
   
+  const handleSectorPress = () => {
+    setShowDropdown(!showDropdown);
+};
 
+const handleSectorSelect = (selectedSector) => {
+    setProjectSector(selectedSector);
+    setShowDropdown(false);
+};
   const handlePictureSelection = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -186,13 +197,28 @@ const handleSubmit = async () => {
       <View style={styles.section}>
         <Text style={styles.label}>Project Information</Text>
        
-        <TextInput
+       {/* <TextInput
           style={styles.input}
           placeholder="Project Sector"
           value={projectSector}
           onChangeText={setProjectSector}
        
-       />
+       />*/} 
+       <TouchableOpacity style={styles.input1} onPress={handleSectorPress}>
+           <Text style={[styles.categoryText, !projectSector && styles.defaultCategoryText]}>
+        {projectSector || 'Select Project sector'}
+    </Text>
+                    <FontAwesome name="caret-down" size={20} color="black" style={styles.arrowIcon}/>
+            </TouchableOpacity>
+            {showDropdown && (
+               <ScrollView style={styles.dropdown}>
+               {sectors.map((item, index) => (
+                   <TouchableOpacity key={index} style={styles.dropdownItem} onPress={() => handleSectorSelect(item)}>
+                       <Text>{item}</Text>
+                   </TouchableOpacity>
+               ))}
+           </ScrollView>
+            )}
 
         <TextInput
           style={styles.input}

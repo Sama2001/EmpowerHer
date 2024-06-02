@@ -15,7 +15,6 @@ const app = express();
 const PORT = 3000;
 const { OAuth2Client } = require('google-auth-library'); // Import Google Auth Library
 const client = new OAuth2Client('55269184028-f6oopb7bk04spr4p7ns05at5arfadl6t.apps.googleusercontent.com'); // Replace with your Google Client ID
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
@@ -305,6 +304,30 @@ const ProductSchema = new mongoose.Schema({
 
 const Product = mongoose.model("products", ProductSchema);
 
+/*const chatSchema = new mongoose.Schema({
+  text: String,
+  createdAt: { type: Date, default: Date.now },
+  user: {
+    _id: String,
+    name: String
+  }
+});
+
+const Chat = mongoose.model('Chat', chatSchema);
+*/
+
+/*app.get('/messages', verifyToken, async (req, res) => {
+  const messages = await Chat.find().sort({ createdAt: -1 });
+  res.send(messages);
+});
+
+// Send message
+app.post('/messages', verifyToken, async (req, res) => {
+  const newMessage = new Chat(req.body);
+  await newMessage.save();
+  res.send(newMessage);
+});*/
+
 //////////register/////////////
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile} = req.body;
@@ -577,7 +600,36 @@ app.get("/product/:id", async (req, res) => {
   }
 });
 
+app.get("/products/:title", async (req, res) => {
+  try {
+    const title = req.params.title;
+    const filteredProducts = await Product.find({ category: title });
 
+    if (filteredProducts.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No products found" });
+    }
+
+    const productsWithPictures = filteredProducts.map((product) => {
+      const { images, ...rest } = product.toObject();
+      const pictureUrls = images.map(
+        (picture) =>
+          `${req.protocol}://${req.get("host")}/uploads/${path.basename(
+            picture
+          )}`
+      );
+      return { ...rest, images: pictureUrls };
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, products: productsWithPictures });
+  } catch (error) {
+    console.error("Error fetching products :", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 ////get tasks/////
 app.get("/tasks/:id", async (req, res) => {
@@ -836,6 +888,8 @@ app.delete('/opportunity/:id', verifyToken, async (req, res) => {
   }
 });
 
+
+
 app.put("/Internship/:internshipId", async (req, res) => {
   try {
     const { internshipId } = req.params;
@@ -865,6 +919,7 @@ app.put("/Internship/:internshipId", async (req, res) => {
 });
 
 //update task progress
+
 app.put("/tasks/:id", async (req, res) => {
   try {
     const taskId = req.params.id;
@@ -893,6 +948,97 @@ app.put("/tasks/:id", async (req, res) => {
   }
 });
 
+
+app.put('/products/:productId', async (req, res) => {
+  const productId = req.params.productId;
+  const { productName, description, price, category, quantity,images } = req.body;
+
+  try {
+    // Find the product by its ID
+    const product = await Product.findById(productId);
+
+    // If the product doesn't exist, return an error
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Update the product properties if they are provided in the request body
+    if (productName !== undefined) {
+      product.productName = productName;
+    }
+    if (description !== undefined) {
+      product.description = description;
+    }
+    if (price !== undefined) {
+      product.price = price;
+    }
+    if (category !== undefined) {
+      product.category = category;
+    }
+    if (quantity !== undefined) {
+      product.quantity = quantity;
+    }
+    if (images !== undefined) {
+      product.images = images;
+    }
+
+    // Save the updated product
+    await product.save();
+
+    // Return a success response
+    res.status(200).json({ success: true, message: 'Product updated successfully' });
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ success: false, message: 'Failed to update product' });
+  }
+});
+
+//update quantity/////
+app.put("/purchase", async (req, res) => {
+  const { userId, cartItems } = req.body;
+
+  try {
+    // Loop through each item in the cart
+    for (let item of cartItems) {
+      // Find the product in the database by its ID
+      const product = await Product.findById(item._id);
+
+      // If the product exists and has enough quantity
+      if (product && product.quantity >= item.quantity) {
+        // Decrease the quantity of the product
+        product.quantity -= item.quantity;
+
+        // Save the updated product in the database
+        await product.save();
+      } else {
+        // If the product doesn't exist or doesn't have enough quantity, return an error
+        return res.status(400).json({ success: false, message: `Product ${item._id} is not available or quantity is insufficient` });
+      }
+    }
+    res.status(200).json({ success: true, message: 'Purchase successful and quantities updated' });
+  } catch (error) {
+    console.error('Error processing purchase:', error);
+    res.status(500).json({ success: false, message: 'Failed to process purchase' });
+  }
+});
+
+///delete product////
+app.delete('/product/:id', verifyToken, async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting Opportunity form:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

@@ -26,6 +26,10 @@ export const CartProvider = ({ children }) => {
     }
   }; */}
 
+  const clearCart = () => {
+    setCartItems([]); // Clear the cart by setting cartItems to an empty array
+};
+
   // Function to retrieve cart items from AsyncStorage
   const loadCartItems = async () => {
     try {
@@ -63,7 +67,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart}}>
+    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart,clearCart}}>
       {children}
     </CartContext.Provider>
   );

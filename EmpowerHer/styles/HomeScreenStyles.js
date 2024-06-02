@@ -4,10 +4,14 @@ import { StyleSheet } from 'react-native';
 
 export const homeScreenStyles = StyleSheet.create({
   container: {
-    backgroundColor: 'hsla(0, 15%, 90%, 0.3)',
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
     alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 5,
+    borderRadius: 30,
+    margin: 5,
+    borderColor: '#a86556',
   },
   button: {
     backgroundColor: 'rgba(187, 123, 107, 0.79)', 
@@ -17,6 +21,20 @@ export const homeScreenStyles = StyleSheet.create({
     marginBottom: 10,
     width: 300,
     alignItems: 'center',
+  },
+  buttonS: {
+    borderRadius: 8,
+    borderWidth:1,
+    borderColor:'rgba(187, 123, 107, 0.79)',
+    paddingVertical: 5,
+    marginTop: 10,
+    width: 170,
+    alignItems: 'center',
+  },
+  buttonText1: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'rgba(187, 123, 107, 0.79)', 
   },
   title: {
     fontFamily: 'Helvetica',
@@ -28,7 +46,7 @@ export const homeScreenStyles = StyleSheet.create({
     marginBottom:80,
   },
   signupText: {
-    marginTop: 20,
+    marginTop: 50,
     fontSize: 16,
     color: '#6b6c6e',
   },
@@ -42,10 +60,10 @@ export const homeScreenStyles = StyleSheet.create({
     marginTop:10,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     alignSelf: 'center',
-    marginTop: -150,
+    marginTop: -100,
     marginBottom:70,
   },
   loadingContainer: {

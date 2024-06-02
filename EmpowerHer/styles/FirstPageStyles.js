@@ -8,13 +8,29 @@ export const firstPageStyles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
+
   },
   contentContainer: {
-    // Styles for content container
+  },
+  section: {
+
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  sectionContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 3,
   },
   profileButton: {
     position: 'absolute',
-    top: 70,
+    top: 60,
     left: 5,
     padding: 10,
     borderRadius: 10,
@@ -24,6 +40,7 @@ export const firstPageStyles = StyleSheet.create({
     zIndex: 2,
   },
   MemberButton: {
+    
     position: 'absolute',
     top: 70,
     left: 5,
@@ -32,7 +49,7 @@ export const firstPageStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#a86556',
     width: 150,
-    marginTop:90,
+    marginTop:120,
     zIndex: 2,
   },
   OpButton: {
@@ -44,19 +61,19 @@ export const firstPageStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#a86556',
     width: 150,
-    marginTop:160,
+    marginTop:220,
     zIndex: 2,
   },
   TasksButton: {
-    position: 'absolute',
-    top: 70,
-    left: 5,
+    flexDirection: 'row',
+    top: -300,
+    left: -20,
     padding: 10,
     borderRadius: 10,
-    borderBottomWidth: 1,
+   // borderBottomWidth: 1,
     borderColor: '#a86556',
-    width: 150,
-    marginTop:220,
+    //width: 150,
+    marginTop:75,
     zIndex: 2,
   },
 
@@ -69,7 +86,7 @@ export const firstPageStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#a86556',
     width: 150,
-    marginTop:280,
+    marginTop:320,
     zIndex: 2,
   },
   logout: {
@@ -79,9 +96,10 @@ export const firstPageStyles = StyleSheet.create({
     padding: 10,
     borderColor: '#a86556',
     width: 150,
-    marginTop:380,
+    marginTop:500,
     zIndex: 2,
   },
+
   profileInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -155,7 +173,9 @@ notificationText: {
   menuContainer: {
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
-    backgroundColor: 'rgba(128, 128, 128, 0.1)',
+    borderWidth:2,
+    borderColor:'lightgrey',
+    backgroundColor: 'white',
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -163,10 +183,17 @@ notificationText: {
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 0,
+    //zIndex: 0,
   },
   menuItemText: {
-    fontSize: 16,
+    fontSize: 17,
     // Other styles for menu item text
   },
+  PmenuItemText: {
+    fontSize: 17,
+    fontWeight:'bold',
+    // Other styles for menu item text
+  },
+ 
+
 });
