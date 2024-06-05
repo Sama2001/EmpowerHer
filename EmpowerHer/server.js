@@ -995,7 +995,7 @@ app.put('/products/:productId', async (req, res) => {
 
 //update quantity/////
 app.put("/purchase", async (req, res) => {
-  const { userId, cartItems } = req.body;
+  const { userId, cartItems  } = req.body;
 
   try {
     // Loop through each item in the cart

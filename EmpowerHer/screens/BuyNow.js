@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Expo for
 import { useCart } from './CartContext';
 import { AddCartScreenStyles as styles } from '../styles/AddcartStyles'; // Import styles
 
-const AddToCart = ({ route,navigation }) => {
+const BuyNow = ({ route,navigation }) => {
     const { product, userId } = route.params;
     const [quantity, setQuantity] = useState(1);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -32,9 +32,10 @@ const AddToCart = ({ route,navigation }) => {
         }
     };
 
-    const handleAddToCart = () => {
+    const handleBuyNow = () => {
         console.log('User ID:', userId);
-addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageIndex] });
+//addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageIndex] });
+navigation.navigate('Buy', { userId, product,quantity}); // Navigate to PurchaseScreen with userId and cartItems
 
     };
 
@@ -87,8 +88,8 @@ addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageI
                     <Text>+</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleAddToCart} style={styles.addToCartButton}>
-                <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+            <TouchableOpacity onPress={handleBuyNow} style={styles.addToCartButton}>
+                <Text style={styles.addToCartButtonText}>Buy</Text>
             </TouchableOpacity>
         </View>
     );
@@ -96,4 +97,4 @@ addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageI
 
 
 
-export default AddToCart;
+export default BuyNow;

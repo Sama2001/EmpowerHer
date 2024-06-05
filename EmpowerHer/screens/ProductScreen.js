@@ -49,7 +49,9 @@ const ProductDetailsScreen = ({ route ,navigation}) => {
 
     const handleBuyNow = () => {
         // Handle buy now functionality here
-        Alert.alert('Purchased', `You have purchased ${product.productName}.`);
+        navigation.navigate('BuyNow', { authToken,product,userId});
+
+       // Alert.alert('Purchased', `You have purchased ${product.productName}.`);
     };
 
 

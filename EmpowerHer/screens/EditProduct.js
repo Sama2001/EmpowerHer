@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, TextInput, Alert,TouchableOpacity } from 'react-native';
+import { EditProductScreenStyles as styles } from '../styles/EditProductStyle'; // Import styles
+
 import axios from 'axios';
 
 const EditProductScreen = ({ navigation, route }) => {
@@ -91,20 +93,25 @@ const EditProductScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Edit Product</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Product Name"
-        value={productName}
-        onChangeText={setProductName}
-      />
+      <Text  style={styles.title} >Edit Product</Text>
+     
+    
+     <Text style={styles.label}>Product Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Product Name"
+          value={productName}
+          onChangeText={setProductName}
+        />
+
+      <Text style={styles.label}>Description</Text>
       <TextInput
         style={styles.input}
         placeholder="Description"
         value={description}
         onChangeText={setDescription}
       />
-     <View style={styles.inputContainer}>
+      <Text style={styles.label}>Price</Text>
 
   <TextInput
     style={styles.input}
@@ -113,13 +120,18 @@ const EditProductScreen = ({ navigation, route }) => {
     value={price}
     onChangeText={setPrice}
   />
-</View>
+
+<Text style={styles.label}>Category</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Category"
         value={category}
         onChangeText={setCategory}
       />
+
+<Text style={styles.label}>Quantity</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Quantity"
@@ -127,33 +139,17 @@ const EditProductScreen = ({ navigation, route }) => {
         value={quantity}
         onChangeText={setQuantity}
       />
-      <Button title="Update Product" onPress={handleUpdateProduct} />
+      {/* <Button title="Update Product" onPress={handleUpdateProduct} />*/}
+
+      <TouchableOpacity   onPress={handleUpdateProduct} 
+ style={styles.button}>
+            <Text style={styles.buttonText}>Update Product</Text>
+          </TouchableOpacity>
+          
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  input: {
-    width: '80%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: 'gray',
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center', // Align items vertically in the center
-  },
-  currency: {
-    fontSize: 16, // Adjust size as needed
-    
-  },
-});
+
 
 export default EditProductScreen;

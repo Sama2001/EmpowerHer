@@ -55,8 +55,10 @@ export const tasksScreenStyles = StyleSheet.create({
     borderRadius: 5,
   },
   editButton: {
+
     marginTop: 10,
     padding: 10,
+    width:140,
     backgroundColor: '#007bff',
     borderRadius: 5,
   },
@@ -64,6 +66,7 @@ export const tasksScreenStyles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight:'bold',
   },
   errorText: {
     color: 'red',

@@ -22,6 +22,8 @@ import { CartProvider } from './screens/CartContext';
 import ChatScreen from './screens/Chat';
 import PurchaseScreen from './screens/PurchaseScreen';
 import EditProductScreen from './screens/EditProduct';
+import BuyNow from './screens/BuyNow';
+import Purchase from './screens/PurchaseNow';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -50,6 +52,8 @@ export default function App() {
         <Stack.Screen name="Chat" component={ChatScreen}/>
         <Stack.Screen name="Purchase" component={PurchaseScreen}/>
         <Stack.Screen name="EditProduct" component={EditProductScreen}/>
+        <Stack.Screen name="BuyNow" component={BuyNow}/>
+        <Stack.Screen name="Buy" component={Purchase}/>
 
 
 

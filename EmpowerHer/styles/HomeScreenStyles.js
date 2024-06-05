@@ -23,12 +23,12 @@ export const homeScreenStyles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonS: {
-    borderRadius: 8,
-    borderWidth:1,
+    borderRadius: 50,
+    borderBottomWidth:1,
     borderColor:'rgba(187, 123, 107, 0.79)',
     paddingVertical: 5,
     marginTop: 10,
-    width: 170,
+    width: 120,
     alignItems: 'center',
   },
   buttonText1: {

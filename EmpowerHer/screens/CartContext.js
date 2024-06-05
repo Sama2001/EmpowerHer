@@ -17,6 +17,29 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const incrementItemQuantity = (userId, itemId) => {
+    setCartItems(prevCart => {
+      const updatedCart = prevCart.map(item =>
+        item.userId === userId && item._id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+      );
+      saveCartItems(updatedCart);
+      return updatedCart;
+    });
+  };
+
+  // Function to decrement the quantity of an item in the cart
+  const decrementItemQuantity = (userId, itemId) => {
+    setCartItems(prevCart => {
+      const updatedCart = prevCart.map(item =>
+        item.userId === userId && item._id === itemId && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+      );
+      saveCartItems(updatedCart);
+      return updatedCart;
+    });
+  };
+
+
+
   {/*  const resetCart = async () => {
     try {
       await AsyncStorage.removeItem('cartItems');
@@ -67,7 +90,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart,clearCart}}>
+    <CartContext.Provider value={{ cartItems, getCart, addToCart, removeFromCart,clearCart, incrementItemQuantity, decrementItemQuantity}}>
       {children}
     </CartContext.Provider>
   );
