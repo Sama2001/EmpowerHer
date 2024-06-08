@@ -20,6 +20,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [lastName, setLastName] = useState('');
   const [memberId, setMemberId] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   const { cartItems } = useCart(); // Access the cartItems from the context
   //console.log('Cart Items:', cartItems);
@@ -30,7 +31,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const handleLogout = async () => {
     try {
       // Clear authentication token from AsyncStorage
-      await AsyncStorage.removeItem('authToken');
+      await SecureStore.deleteItemAsync('authToken');
       Alert.alert('Logging out');
       // Navigate back to the login screen
       navigation.navigate('Login');
@@ -50,16 +51,19 @@ const FirstPage = ({ navigation, route,result }) => {
   };
 
 ////////////////
-  const loadProfilePicture = async () => {
-    try {
-      const uriString = await SecureStore.getItem('profilePictureURI');
-      if (uriString !== null) {
-        setProfilePicture(uriString); // Use URI string directly
-      }
-    } catch (error) {
-      console.error('Error loading profile picture:', error);
+const loadProfilePicture = async (userId) => {
+  try {
+    const sanitizedEmail = sanitizeKey(userId);
+    const profilePictureKey = `${sanitizedEmail}_profilePictureURI`; 
+    console.log(`Loading profile picture with key: ${profilePictureKey}`);
+    const uriString = await SecureStore.getItemAsync(profilePictureKey);
+    if (uriString !== null) {
+      setProfilePicture(uriString); // Use URI string directly
     }
-  };
+  } catch (error) {
+    console.error('Error loading profile picture:', error);
+  }
+};
 
 
   const fetchMemberIdByEmail = async (email) => {
@@ -91,7 +95,15 @@ const FirstPage = ({ navigation, route,result }) => {
     }
   };
   
-
+  const sanitizeKey = (key) => {
+    if (!key) {
+      //console.error('Error: Key is null or undefined');
+      return null;
+    }
+    const sanitizedKey = key.replace(/[^a-zA-Z0-9.-_]/g, '_');
+    console.log('Sanitized Key:', sanitizedKey);
+    return sanitizedKey;
+  };
   const fetchUserInfo = async () => {
     try {
 
@@ -115,6 +127,7 @@ const FirstPage = ({ navigation, route,result }) => {
             setEmail(email);
             setMobile(mobile);
             setUserId(_id);
+            loadProfilePicture(_id); // Load profile picture after setting userId
             fetchMemberIdByEmail(email);
 
         } else {
@@ -128,9 +141,18 @@ const FirstPage = ({ navigation, route,result }) => {
 
 useEffect(() => {
   fetchUserInfo();
-  loadProfilePicture();
-  
-}, ); 
+  loadProfilePicture(userId);
+  const fadeInAnimation = Animated.timing(fadeAnim, {
+    toValue: 1,
+    duration: 3000,
+    useNativeDriver: true,
+  });
+  const loopAnimation = Animated.loop(fadeInAnimation);
+
+  loopAnimation.start();
+
+  return () => loopAnimation.stop();
+}, [fadeAnim]); 
 
   const navigateToProfile = async() => {
 
@@ -186,9 +208,9 @@ const navigateToChatScreen = () => {
 
 
   return (
+    
     <View style={styles.container}>
-      {/* Menu Button */}
-      <TouchableOpacity style={styles.menuIconContainer} onPress={toggleMenu}>
+        <TouchableOpacity style={styles.menuIconContainer} onPress={toggleMenu}>
         <MaterialIcons name="menu" size={30} color="#a86556" />
       </TouchableOpacity>
 
@@ -214,9 +236,85 @@ const navigateToChatScreen = () => {
          
         </TouchableOpacity>
       </View>
-
+     
+      <ScrollView>
+      <Animated.View style={[styles.empowerHerContainer, { opacity: fadeAnim }]}>
+          <Text style={styles.empowerHerText}>EmpowerHer</Text>
+        </Animated.View>
+      {/* Menu Button */}
+     
       {/* Content */}
-       
+      <View style={styles.container1}>
+      <ScrollView style={styles.contentContainer}>
+        <View style={styles.aboutSection}>
+          <View style={styles.aboutItem}>
+            <MaterialCommunityIcons name="eye" size={24} color="#a86556" style={styles.aboutIcon} />
+            <Text style={styles.aboutText}>
+              Vision: Aspiring for a capable and influential Palestinian woman in a society that enjoys social justice and democracy, pioneering to contribute to achieving sustainable economic development.
+            </Text>
+          </View>
+          <View style={styles.aboutItem}>
+            <MaterialCommunityIcons name="bullseye" size={24} color="#a86556" style={styles.aboutIcon} />
+            <Text style={styles.aboutText}>
+              Mission: The Palestinian Businesswomen's
+               Association "Asala" is a Palestinian institution 
+               that works to empower Palestinian women with limited resources 
+               to reach their economic and social rights through a comprehensive and 
+               sustainable developmental approach based on their needs and aspirations.
+            </Text>
+          </View>
+          <View style={styles.aboutItem}>
+            <MaterialCommunityIcons name="heart" size={24} color="#a86556" style={styles.aboutIcon} />
+            <Text style={styles.aboutText}>
+              Values: Accountability, Professionalism, Commitment, 
+              Rights-based Approach, Participation-based Approach, Solidarity, Innovation, Empowerment.
+            </Text>
+          </View>
+          <View style={styles.aboutItem}>
+            <MaterialCommunityIcons name="star" size={24} color="#a86556" style={styles.aboutIcon} />
+            <Text style={styles.aboutText}>
+              Goals: Asala aims to enhance the necessary skills
+               of Palestinian women and strengthen their opportunities
+                for successful contribution to society and its development,
+                 aiming for equality in rights and access to resources and institutions. 
+                 To achieve this goal, Asala's staff commit to values of transparency, democracy,
+                  and social justice, and have developed a variety of services since its founding to
+                   enable women to better organize their projects to benefit from economic opportunities.
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+</View>
+<View style={styles.additionalContainer}>
+
+<ScrollView>
+<Text style={styles.sectionTitle}>Join Us</Text>
+  <Text style={styles.additionalText}>
+    Asala Palestinian Businesswomen's Association started its
+     membership program in 2019, granting beneficiaries the opportunity
+      to join the association and benefit more from the exhibitions, workshops,
+       and trainings it conducts in various fields related to market access, 
+       capacity building, mobilization, and advocacy. Members can choose the membership 
+       category that suits them and the size of their project. Asala aims to increase its
+        membership and expand its beneficiary base to achieve its mission of empowering Palestinian 
+        women economically</Text>
+  <TouchableOpacity style={styles.membershipButton} onPress={navigateToMembership}>
+    <Text style={styles.membershipButtonText}>Membership</Text>
+  </TouchableOpacity>
+  </ScrollView>
+</View>
+
+<View style={styles.contentSection}>
+  <Text style={styles.sectionTitle}>Store</Text>
+  <Text style={styles.sectionText}>
+    Asala's store offers a variety of products produced by Palestinian women, including handicrafts, food items, clothing, jewelry, and gifts. Purchasing these products supports local women and contributes to boosting the local economy and promoting sustainable development in Palestine.
+  </Text>
+  <TouchableOpacity style={styles.button} onPress={navigateToStore}>
+    <Text style={styles.buttonText}>Visit Store</Text>
+  </TouchableOpacity>
+</View>
+
+
       {/* Menu */}
       <Animated.View style={[styles.menuContainer, { width: menuWidth }]}>
         {/* Profile Button */}
@@ -270,6 +368,8 @@ const navigateToChatScreen = () => {
 
 
       </Animated.View>
+      </ScrollView>
+
     </View>
   );
 };

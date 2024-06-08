@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity,ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,ScrollView, Alert } from 'react-native';
 import { VolunteerFormStyles  as styles } from '../styles/VolunteerStyle';
 import * as DocumentPicker from 'expo-document-picker'; // Import DocumentPicker
 import axios from 'axios';
@@ -97,6 +97,11 @@ const handleChooseFile = async () => {
         },
       });
       console.log('opportunities application submitted:', response.data);
+      Alert.alert('Success', 'Your application has been submitted successfully.');
+
+     setAddress('');
+      setFullName('');
+      setCvFiles([]);
       // Optionally, you can navigate to a success screen or show a success message
     } catch (error) {
       console.error('Error submitting opportunities application:', error);

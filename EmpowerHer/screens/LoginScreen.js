@@ -118,7 +118,7 @@ useEffect(() => {
         />
         <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}>
           <Ionicons
-            name={showPassword ? 'eye-off' : 'eye'}
+            name={showPassword ? 'eye' : 'eye-off'}
             size={24}
             color="#a86556"
           />

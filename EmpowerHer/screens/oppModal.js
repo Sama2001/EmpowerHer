@@ -11,6 +11,7 @@ const OpportunitiesModal = ({ visible, onClose, opportunitiesData, handleApprove
       };
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
+            <Text style={styles.oppTitle}>Opportunities</Text>
               <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center',margin: 10 }}>
 
       <View style={styles.modalMemberContainer}>
@@ -50,14 +51,14 @@ const OpportunitiesModal = ({ visible, onClose, opportunitiesData, handleApprove
           <Text style={styles.buttonText}>Close</Text>
         </TouchableOpacity>*/}
 
-<View style={styles.closeButtonContainer1}>
+
+      </View>
+      </ScrollView>
+      <View style={styles.closeButtonContainer1}>
         <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
           <Ionicons name="close" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      </View>
-      </ScrollView>
-
     </Modal>
   );
 };

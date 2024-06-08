@@ -7,10 +7,38 @@ export const firstPageStyles = StyleSheet.create({
     backgroundColor: 'white',
   },
   scrollViewContent: {
-    flexGrow: 1,
+   flexGrow: 1,
 
   },
+  scrollView: {
+   flex: 1, // Make the ScrollView take up the entire available space
+  },
+  aboutSection: {
+    margin: 20,
+  },
+  aboutItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: 10,
+  },
+  aboutIcon: {
+    marginRight: 10,
+  },
+  aboutText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+  },
+  container1: {
+    marginTop:50,
+    marginHorizontal:10,
+    height:200,
+    backgroundColor: '#fff',
+    borderWidth:1,
+    borderRadius:20,
+  },
   contentContainer: {
+    marginBottom: 20, // Add some bottom margin for spacing
   },
   section: {
 
@@ -30,7 +58,7 @@ export const firstPageStyles = StyleSheet.create({
   },
   profileButton: {
     position: 'absolute',
-    top: 60,
+    top: 40,
     left: 5,
     padding: 10,
     borderRadius: 10,
@@ -66,7 +94,7 @@ export const firstPageStyles = StyleSheet.create({
   },
   TasksButton: {
     flexDirection: 'row',
-    top: -300,
+    top: -310,
     left: -20,
     padding: 10,
     borderRadius: 10,
@@ -105,8 +133,8 @@ export const firstPageStyles = StyleSheet.create({
     alignItems: 'center',
   },
   profilePicture: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 15,
     marginLeft: -1,
     marginRight: 6,
@@ -115,7 +143,7 @@ export const firstPageStyles = StyleSheet.create({
  
   menuIconContainer: {
     position: 'absolute',
-    top: 10,
+    top: 8,
     left: 5,
     width: 50,
     height: 50,
@@ -170,7 +198,91 @@ notificationText: {
   fontSize: 12,
   fontWeight: 'bold',
 },
+additionalContainer: {
+  borderRadius:100,
+  height:250,
+  //width:420,
+  padding: 20,
+  //backgroundColor: '#f0f0f0',
+  backgroundColor: 'rgba(187, 123, 107, 0.25)',
+
+  borderRadius: 10,
+  marginBottom: 20,
+  marginTop:20,
+  marginHorizontal:1,
+},
+additionalText: {
+  fontSize: 16,
+  lineHeight: 24,
+  marginBottom: 20,
+},
+
+
+membershipButton: {
+  backgroundColor: '#a86556',
+  borderRadius: 10,
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  alignItems: 'center',
+},
+membershipButtonText: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+
+contentSection: {
+  //marginTop:50,
+    marginHorizontal:10,
+    height:220,
+    backgroundColor: '#fff',
+    borderWidth:1,
+    marginBottom:100,
+    //borderRadius:20,
+},
+sectionTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  marginLeft:10,
+  marginTop:5,
+},
+sectionText: {
+  marginLeft:10,
+  fontSize: 16,
+  marginBottom: 20,
+},
+button: {
+  backgroundColor: '#a86556',
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 8,
+  marginLeft:5,
+  marginRight:5,
+},
+buttonText: {
+  color: 'white',
+  fontSize: 16,
+  fontWeight: 'bold',
+  textAlign: 'center',
+},
+
+empowerHerContainer: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom:-25,
+  marginTop:20,
+},
+empowerHerText: {
+  fontSize: 28,
+  fontWeight: 'bold',
+  color: '#a86556',
+  //textTransform: 'uppercase',
+  letterSpacing: 1,
+  // Add any other styles you want to customize
+},
   menuContainer: {
+    height:820,
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
     borderWidth:2,

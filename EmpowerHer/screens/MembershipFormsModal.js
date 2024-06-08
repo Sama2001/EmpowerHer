@@ -18,6 +18,8 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
   };
   return (
     <Modal visible={visible} animationType="slide" transparent={false}>
+                  <Text style={styles.oppTitle}>Memberships</Text>
+
       <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center',margin: 10 }}>
         <View style={styles.modalMemberContainer}>
           {membershipData.length === 0 ? (
@@ -87,11 +89,7 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
             <Text style={styles.buttonText}>Close</Text>
           </TouchableOpacity> */}
           
-          <View style={styles.closeButtonContainer}>
-        <TouchableOpacity onPress={onClose} style={styles.Closebutton}>
-          <Ionicons name="close" size={24} color="black" />
-        </TouchableOpacity>
-      </View>
+         
         </View>
 
 
@@ -100,6 +98,11 @@ const MembershipFormsModal = ({ visible, onClose, membershipData, handleApprove,
         )}
 
       </ScrollView>
+      <View style={styles.closeButtonContainer}>
+        <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
     </Modal>
   );
 };

@@ -87,9 +87,16 @@ addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageI
                     <Text>+</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleAddToCart} style={styles.addToCartButton}>
+
+            <TouchableOpacity style={styles.iconButton} onPress={handleAddToCart}>
+            <Text style={styles.buttonText1}>Add</Text>
+                    <Ionicons name="cart" size={24} color="#a86556" />
+                    <Ionicons name="add" size={12} color="#a86556" style={styles.plusIcon} />
+                </TouchableOpacity>
+
+            {/** <TouchableOpacity onPress={handleAddToCart} style={styles.addToCartButton}>
                 <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
         </View>
     );
 };

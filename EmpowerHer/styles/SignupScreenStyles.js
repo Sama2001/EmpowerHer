@@ -12,14 +12,23 @@ export const signupScreenStyles = StyleSheet.create({
     margin: 5,
     borderColor: '#a86556',
   },
+  eyeIcon: {
+    position: 'absolute',
+    right: 13,
+    top: 10,
+  },
   button: {
-    backgroundColor: 'rgba(187, 123, 107, 0.79)',
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 10,
-    width: 250,
+    backgroundColor: 'rgba(187, 123, 107, 1)',
+    borderRadius: 25, // Rounder button shape
+    paddingVertical: 10,
+    paddingHorizontal: 60,
+    width: '70%',
+    marginTop: 35,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
     alignItems: 'center',
-    borderRadius: 50,
   },
   buttonText: {
     fontSize: 18,
@@ -31,11 +40,16 @@ export const signupScreenStyles = StyleSheet.create({
     left: 10,
   },
   inputContainer: {
-    backgroundColor: '#ffff',
-    width: '85%',
+    backgroundColor: '#fff',
+    width: '90%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 17,
+    marginBottom: 20,
+    borderRadius: 8, // Add border radius
+    elevation: 2, // Add elevation for shadow (Android)
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
   },
 
   input: {

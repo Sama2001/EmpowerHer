@@ -2,10 +2,42 @@ import { StyleSheet } from 'react-native';
 
 export const AddCartScreenStyles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
+        flex:1,
+        backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
         alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        borderWidth: 4,
+        borderRadius: 30,
+        borderColor: '#a86556',
+
+        margin: 5,
+        height:700,
     },
+    iconButton: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#a86556',
+       marginBottom:35,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    buttonText1: {
+        color: 'grey',
+        fontWeight:'bold',
+        fontSize: 16,
+        marginRight:15,
+    },
+    plusIcon: {
+        position: 'absolute',
+        top: 5,
+        right:2,
+        fontSize: 16,
+    },
+
     title: {
         fontSize: 24,
        // marginBottom: 10,
@@ -44,6 +76,24 @@ export const AddCartScreenStyles = StyleSheet.create({
         height: 320,
         marginBottom: 100,
     },
+    buyButton: {
+        backgroundColor: '#a86556',
+        padding: 12,
+        borderRadius: 5,
+       marginTop:-20,
+         width:300,
+        marginBottom:50,
+        alignItems: 'center',
+        justifyContent: 'center',
+
+    },
+    buyText:
+    {
+        fontSize:16,
+        fontWeight:'bold',
+        color:'white',
+    },
+
     imageContainer: {
         flexDirection: 'row',
         alignItems: 'center',

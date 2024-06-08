@@ -133,12 +133,16 @@ const ProductDetailsScreen = ({ route ,navigation}) => {
             </View>
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
-                    <Text style={styles.buttonText}>Add to Cart</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.buyButton]} onPress={handleBuyNow}>
+            <TouchableOpacity style={[styles.button, styles.buyButton]} onPress={handleBuyNow}>
                     <Text style={styles.buttonText}>Buy Now</Text>
                 </TouchableOpacity>
+
+            <TouchableOpacity style={styles.iconButton} onPress={handleAddToCart}>
+            <Text style={styles.buttonText1}>Add to Cart</Text>
+                    <Ionicons name="cart" size={24} color="#a86556" />
+                    <Ionicons name="add" size={12} color="#a86556" style={styles.plusIcon} />
+                </TouchableOpacity>
+               
             </View>
 
         </View>
@@ -147,11 +151,35 @@ const ProductDetailsScreen = ({ route ,navigation}) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 16,
-        justifyContent: 'center',
+        flex:1,
+        backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
         alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        borderWidth: 4,
+        borderRadius: 30,
+        borderColor: '#a86556',
 
+        margin: 5,
+        height:700,
+
+    },
+    iconButton: {
+        backgroundColor: 'white',
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#a86556',
+       marginBottom:35,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    plusIcon: {
+        position: 'absolute',
+        top: 0,
+        right: 70,
+        fontSize: 16,
     },
     leftButton: {
         left: -20,
@@ -161,7 +189,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24,
-        marginBottom: 10,
+        marginBottom: 5,
+        marginTop:12,
         textAlign: 'center',
     },
     dotsContainer: {
@@ -204,7 +233,7 @@ const styles = StyleSheet.create({
     //Price///
     detailsContainer: {
         
-        marginTop:-31,
+        marginTop:-30,
         marginBottom:30,
         flex: 1,
         justifyContent: 'center',
@@ -218,7 +247,7 @@ const styles = StyleSheet.create({
 
     detailsContainer1: {
         flex: 1,
-        marginBottom: 50,
+        marginBottom: 35,
         justifyContent: 'center',
         alignItems: 'flex-start',
         borderWidth: 1,
@@ -235,7 +264,7 @@ const styles = StyleSheet.create({
     },
     label: {
         marginLeft:10,
-        fontWeight: '400',
+        fontWeight: 'bold',
         flex: 1,
     },
     value: {
@@ -244,7 +273,7 @@ const styles = StyleSheet.create({
 
     buttonContainer: {
         flexDirection: 'column',
-        marginTop: 20,
+        marginTop: 5,
     },
     button: {
         backgroundColor: '#007BFF',
@@ -253,11 +282,27 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     buyButton: {
-        backgroundColor: '#28a745',
+        backgroundColor: '#a86556',
+        padding: 12,
+        borderRadius: 5,
+       marginTop:15,
+         width:300,
+        marginBottom:35,
+        alignItems: 'center',
+        justifyContent: 'center',
+
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
+        fontWeight:'bold',
         fontSize: 16,
+        marginRight:10,
+    },
+    buttonText1: {
+        color: 'grey',
+        fontWeight:'bold',
+        fontSize: 16,
+        marginRight:15,
     },
 
 });

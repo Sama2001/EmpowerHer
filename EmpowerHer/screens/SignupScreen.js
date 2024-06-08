@@ -4,18 +4,23 @@ import { View, TextInput, Button, Alert, StyleSheet,TouchableOpacity,Text } from
 import emailValidator from 'email-validator';
 import GoogleSignIn from './google';
 import { signupScreenStyles as styles } from '../styles/SignupScreenStyles'; // Import styles
-
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from expo/vector-icons
 import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome icons
+
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [eyeIconColor, setEyeIconColor] = useState('gray');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [confirm, setConfirm] = useState('');
 
-
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+    setEyeIconColor(showPassword ? 'gray' : 'black');
+  };
 
   const handleRegister = async () => {
     // Validate email format on the frontend
@@ -89,7 +94,7 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setEmail}
       />
     </View>
-    <View style={styles.inputContainer}>
+    {/*   <View style={styles.inputContainer}>
       <FontAwesome name="lock" size={24} color="#a86556" style={styles.icon} />
       <TextInput
         style={styles.input}
@@ -98,7 +103,27 @@ const SignupScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
-    </View>
+    </View>*/}
+  
+
+    <View style={styles.inputContainer}>
+        <FontAwesome name="lock" size={23} color="#a86556" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.eyeIcon} onPress={togglePasswordVisibility}>
+          <Ionicons
+            name={showPassword ? 'eye' : 'eye-off'}
+            size={24}
+            color="#a86556"
+          />
+        </TouchableOpacity>
+      </View>
+
     <View style={styles.inputContainer}>
       <FontAwesome name="lock" size={24} color="#a86556" style={styles.icon} />
       <TextInput

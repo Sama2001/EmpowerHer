@@ -14,12 +14,16 @@ export const homeScreenStyles = StyleSheet.create({
     borderColor: '#a86556',
   },
   button: {
-    backgroundColor: 'rgba(187, 123, 107, 0.79)', 
-    borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    backgroundColor: 'rgba(187, 123, 107, 1)',
+    borderRadius: 25, // Rounder button shape
+    paddingVertical: 15,
+    paddingHorizontal: 60,
     width: 300,
+    marginTop: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
     alignItems: 'center',
   },
   buttonS: {
@@ -53,7 +57,8 @@ export const homeScreenStyles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffff', 
+    color: '#fff',
+    textTransform: 'uppercase', 
   },
   buttonContainer: {
     alignItems: 'center',

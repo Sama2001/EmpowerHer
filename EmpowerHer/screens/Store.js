@@ -178,14 +178,14 @@ const DropdownMenu2 = ({ productId }) => {
     <View style={styles.container}>
      {/*<Text style={styles.title}>Store</Text> */} 
       
-
+     { memberId && (
       <TouchableOpacity 
             style={styles.Button} 
             onPress={() => navigation.navigate('AddProduct', { authToken, memberId })}
             >        
             <Text style={styles.ButtonText}>+ Add Product</Text>
            </TouchableOpacity>
-
+     )}
        {/**   <Button
     title="Add "
     onPress={() => navigation.navigate('AddProduct', { authToken, memberId })}
@@ -211,6 +211,9 @@ const DropdownMenu2 = ({ productId }) => {
             <Text>{item.productName}</Text>
             <Text>₪{item.price}</Text>
 
+            {item.quantity == 0 && (
+                            <Text style={styles.soldOutLabel}>Sold Out</Text>
+                        )}
 
             {item.memberId === memberId && ( // Check if the memberId matches the current userId
       <View style={styles.editButtonContainer}>

@@ -8,7 +8,7 @@ import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome icons
 import { profileScreenStyles as styles } from '../styles/ProfileScreenStyles'; // Import styles
 
 const ProfileScreen = ({route,navigation}) => {
-    //const [password, setPassword] = useState('');
+    const [userId, setUserId] = useState(null);
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -30,7 +30,8 @@ const ProfileScreen = ({route,navigation}) => {
   };
 
 
-  const saveProfilePicture = async (result) => {
+
+  {/**const saveProfilePicture = async (result) => {
     try {
       if (!result.assets || result.assets.length === 0) {
         console.error('Error: No assets found in ImagePicker result');
@@ -56,7 +57,49 @@ const ProfileScreen = ({route,navigation}) => {
     } catch (error) {
       console.error('Error loading profile picture:', error);
     }
+  }; */}
+
+  const sanitizeKey = (key) => {
+    if (!key) {
+      //console.error('Error: Key is null or undefined');
+      return null;
+    }
+    const sanitizedKey = key.replace(/[^a-zA-Z0-9.-_]/g, '_');
+    console.log('Sanitized Key:', sanitizedKey);
+    return sanitizedKey;
   };
+
+  const saveProfilePicture = async (uri,userId) => {
+    try {
+      if (!uri) {
+        console.error('Error: URI is not provided');
+        return;
+      }
+      const sanitizedEmail = sanitizeKey(userId);
+      const profilePictureKey = `${sanitizedEmail}_profilePictureURI`; 
+      console.log(`Saving profile picture with key: ${profilePictureKey}`);
+      const uriString = typeof uri === 'string' ? uri : uri.toString(); // Ensure uri is a string
+
+      await SecureStore.setItemAsync(profilePictureKey, uriString);
+    } catch (error) {
+      console.error('Error saving profile picture:', error);
+    }
+};
+
+  const loadProfilePicture = async (userId) => {
+    try {
+      const sanitizedEmail = sanitizeKey(userId);
+      const profilePictureKey = `${sanitizedEmail}_profilePictureURI`; 
+      console.log(`Loading profile picture with key: ${profilePictureKey}`);
+      const uriString = await SecureStore.getItemAsync(profilePictureKey);
+      if (uriString !== null) {
+        setProfilePicture(uriString); // Use URI string directly
+      }
+    } catch (error) {
+      console.error('Error loading profile picture:', error);
+    }
+};
+  
   
   /////////////////////////
   const handleChoosePhoto = async () => {
@@ -72,12 +115,16 @@ const ProfileScreen = ({route,navigation}) => {
 
       
       if (!result.canceled) {
-      
-        // Save the URI to AsyncStorage
-        setProfilePicture(result.uri);
-        saveProfilePicture(result); // Pass the entire result object
-
-    }
+        // Check if 'uri' exists in result
+        if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+          const photoUri = result.assets[0].uri;
+          // Save the URI to AsyncStorage
+          setProfilePicture(photoUri);
+          saveProfilePicture(photoUri, userId); // Pass the URI and userId
+        } else {
+          console.error("Error: URI is not provided");
+        }
+      }
     } catch (error) {
       console.error("Error selecting image:", error);
     }
@@ -86,8 +133,9 @@ const ProfileScreen = ({route,navigation}) => {
   useEffect(() => {
     // Fetch user info when component mounts
     console.log('Auth Token:', authToken);
+    console.log('user id:',userId);
     fetchUserInfo();
-    loadProfilePicture();
+    loadProfilePicture(userId);
   }, [profilePicture]); ////new
 
 const fetchUserInfo = async () => {
@@ -107,11 +155,14 @@ const fetchUserInfo = async () => {
         });
         const data = await response.json();
         if (data.success) {
-            const { firstName, lastName,email,mobile } = data.user;
+            const { _id,firstName, lastName,email,mobile} = data.user;
             setFirstName(firstName);
             setLastName(lastName);
             setEmail(email);
             setMobile(mobile);
+            setUserId(_id);
+            loadProfilePicture(_id); // Load profile picture after setting userId
+
         } else {
             Alert.alert('Error', data.message);
         }

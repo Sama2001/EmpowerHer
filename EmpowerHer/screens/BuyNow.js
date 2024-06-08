@@ -88,8 +88,8 @@ navigation.navigate('Buy', { userId, product,quantity}); // Navigate to Purchase
                     <Text>+</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleBuyNow} style={styles.addToCartButton}>
-                <Text style={styles.addToCartButtonText}>Buy</Text>
+            <TouchableOpacity onPress={handleBuyNow} style={styles.buyButton}>
+                <Text style={styles.buyText}>Buy</Text>
             </TouchableOpacity>
         </View>
     );

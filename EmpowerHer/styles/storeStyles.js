@@ -20,7 +20,7 @@ export const StoreScreenStyles = StyleSheet.create({
       },
       editButton: {
         position: 'absolute',
-        top: -40,
+        top: -35,
         right: 10,
         backgroundColor: 'transparent',
         padding: 10,
@@ -78,6 +78,7 @@ export const StoreScreenStyles = StyleSheet.create({
     productContainer: {
         flex: 1,
         margin: 5, // Add margin to ensure space between items
+        marginTop:10,
         padding: 10,
         backgroundColor: '#f9f9f9',
         borderRadius: 5,
@@ -88,4 +89,15 @@ export const StoreScreenStyles = StyleSheet.create({
         height: 150,
         marginBottom: 10,
     },
+    soldOutLabel: {
+      color: 'red',
+      fontWeight: 'bold',
+      position: 'absolute', // Ensure the label is positioned correctly
+      top: 10,
+      left: 10,
+      backgroundColor: 'rgba(255, 255, 255, 0.8)', // Add some background to make it stand out
+      padding: 5,
+      borderRadius: 5,
+
+  },
 });

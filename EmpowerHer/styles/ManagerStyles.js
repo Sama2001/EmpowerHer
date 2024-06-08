@@ -30,18 +30,18 @@ export const Manager = StyleSheet.create({
   },
   closeButtonContainer: {
     position: 'absolute',
-    top: 50, // Adjust as needed
-    left: 200, // Adjust as needed
+    top: 60, // Adjust as needed
+    left: 350, // Adjust as needed
   },
   closeButtonContainer1: {
     position: 'absolute',
     top: 60,
-    right:-2,
+    right:25,
   },
   closeButtonContainer2: {
     position: 'absolute',
     top:50,
-    right:8,
+    right:25,
   },
   CloseButton:{
     
@@ -267,6 +267,17 @@ color:'white',
     fontSize: 25,
     color: '#a86556',
     paddingTop:50,
+    textAlign: 'center',
+
+   
+  backgroundColor:'white',
+  
+  },
+  oppTitle:{ 
+    fontWeight:'bold',
+    fontSize: 25,
+    color: '#a86556',
+    paddingTop:60,
     textAlign: 'center',
 
    
