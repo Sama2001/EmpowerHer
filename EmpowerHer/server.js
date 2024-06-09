@@ -335,6 +335,44 @@ const productSaleSchema = new mongoose.Schema({
 
 const ProductSale = mongoose.model("Sales", productSaleSchema);
 
+const CustomersSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  productId: { type: mongoose.Schema.Types.ObjectId,
+     ref: 'Product', 
+     required: true },
+  quantity: { type: Number,
+     required: true },
+  Country: {
+    type: String,
+    required: true,
+  },
+  City: {
+    type: String,
+    required: true,
+  },
+  Street: {
+    type: String,
+    required: true,
+  },
+  mobileNumber: {
+    type: String,
+    required: true
+  },
+  TotalAmount: {
+    type: String,
+    required: true,
+    },
+  date: {
+    type: Date,
+    default: Date.now, 
+    },
+});
+
+const Customers = mongoose.model("Customers", CustomersSchema); 
+
 ///productSales//////
 app.post('/purchase', async (req, res) => {
   const { cartItems } = req.body;
@@ -364,6 +402,32 @@ app.post('/purchase', async (req, res) => {
   } catch (error) {
       console.error('Error purchasing:', error);
       res.status(500).json({ success: false, message: 'Failed to process purchase' });
+  }
+});
+
+app.post('/Customers', async (req, res) => {
+  const { userId, cartItems, Country, City, Street, mobileNumber,TotalAmount } = req.body;
+  try {
+    if (!userId || !Country || !City || !Street || !mobileNumber || !cartItems || !Array.isArray(cartItems)) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
+  }
+        for (const item of cartItems) {
+        const customerEntry = new Customers({
+          userId,
+          productId: item._id,
+          quantity: item.quantity,
+          Country: Country,
+          City: City,
+          Street: Street,
+          mobileNumber: mobileNumber,
+          TotalAmount:TotalAmount,
+          date: new Date()        });
+        await customerEntry.save();
+      }
+      res.json({ success: true, message: 'Customer details saved successfully' });
+  } catch (error) {
+    console.error('Error saving customer data:', error);
+    res.status(500).json({ success: false, message: 'Failed to process customer details' });
   }
 });
 

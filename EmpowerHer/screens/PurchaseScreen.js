@@ -7,9 +7,9 @@ const PurchaseScreen = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [purchaseMessage, setPurchaseMessage] = useState('');
     const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
-    const [country, setCountry] = useState('');
-    const [street, setStreet] = useState('');
+    const [City, setCity] = useState('');
+    const [Country, setCountry] = useState('');
+    const [Street, setStreet] = useState('');
     const [visa, setVisa] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const { cartItems } = route.params;
@@ -19,9 +19,29 @@ const PurchaseScreen = ({ route, navigation }) => {
 
     console.log("cartItems in PurchaseScreen:", cartItems); // Log cartItems
     const handlePurchase = async () => {
-
+        if (!Country || !City || !Street  || !mobileNumber) {
+            setPurchaseMessage('Please fill out all fields');
+            return;
+        }
         setIsLoading(true);
         try {
+
+            const CustomersBody = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({  userId, cartItems, Country, City, Street, mobileNumber,TotalAmount:totalPrice })
+            };
+            const responseCutomers = await fetch('http://192.168.1.120:3000/Customers', CustomersBody);
+            if (!responseCutomers.ok) {
+                throw new Error('Failed to save customer details');
+            }
+            const dataCustomers = await responseCutomers.json();
+            if (!dataCustomers.success) {
+                throw new Error(customersData.message || 'Failed to save customer details');
+            }
+            console.log('POST /customers response:', responseCutomers.status, dataCustomers);
+
+            
             const requestOptions = {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -29,20 +49,38 @@ const PurchaseScreen = ({ route, navigation }) => {
             };
     
             const response = await fetch('http://192.168.1.120:3000/purchase', requestOptions);
+            if (!response.ok) {
+                throw new Error('Failed to process purchase PUT request');
+            }
             const data = await response.json();
-    
+            if (!data.success) {
+                throw new Error(putData.message || 'Failed to process purchase PUT request');
+            }
+
             const requestOptionsPOST = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cartItems })
             };
-            const responsePOST = await fetch('http://192.168.1.120:3000/purchase', requestOptionsPOST);
-            const dataPOST = await responsePOST.json();
             
+            const responsePOST = await fetch('http://192.168.1.120:3000/purchase', requestOptionsPOST);
+            if (!responsePOST.ok) {
+                throw new Error('Failed to process purchase POST request');
+            }
+
+            const dataPOST = await responsePOST.json();
+            if (!dataPOST.success) {
+                throw new Error(postData.message || 'Failed to process purchase POST request');
+            }
+       
+          
+          
+
             const { success, message } = data;
             const { success: successPOST, message: messagePOST } = dataPOST;
+            const { success: successCustomers, message: messageCustomers } = dataCustomers;
 
-            if (successPOST && success) {
+            if (successPOST && success && successCustomers) {
                 setPurchaseMessage('Purchase successful!');
     
                 // Clear cart items locally or navigate to another screen
@@ -97,12 +135,12 @@ const PurchaseScreen = ({ route, navigation }) => {
                 placeholder="Street"
                 onChangeText={text => setStreet(text)}
             />
-            <Text style={styles.sectionTitle}>Payment Information</Text>
-            <TextInput
+           {/**<Text style={styles.sectionTitle}>Payment Information</Text> */} 
+           {/* <TextInput
                 style={styles.input}
                 placeholder="Visa Card"
                 onChangeText={text => setVisa(text)}
-            />
+            /> */}
             <TextInput
                 style={styles.input}
                 placeholder="Mobile Number"
