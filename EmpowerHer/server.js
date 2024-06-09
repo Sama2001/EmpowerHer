@@ -328,6 +328,48 @@ app.post('/messages', verifyToken, async (req, res) => {
   res.send(newMessage);
 });*/
 
+const productSaleSchema = new mongoose.Schema({
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, // Assuming productId refers to a product in another collection
+  quantity: { type: Number, required: true },
+});
+
+const ProductSale = mongoose.model("Sales", productSaleSchema);
+
+///productSales//////
+app.post('/purchase', async (req, res) => {
+  const { cartItems } = req.body;
+
+  try {
+      // Loop through cart items
+      for (const item of cartItems) {
+          // Check if the product already exists for the user
+          const existingProductSale = await ProductSale.findOne({productId: item._id });
+
+          if (existingProductSale) {
+              // If the product exists, update the quantity
+              existingProductSale.quantity += item.quantity;
+              await existingProductSale.save();
+          } else {
+              // If the product doesn't exist, create a new entry
+              const productSale = new ProductSale({
+                  productId: item._id,
+                  quantity: item.quantity,
+                  
+              });
+              await productSale.save();
+          }
+      }
+
+      res.json({ success: true, message: 'Purchase successful' });
+  } catch (error) {
+      console.error('Error purchasing:', error);
+      res.status(500).json({ success: false, message: 'Failed to process purchase' });
+  }
+});
+
+
+
+
 //////////register/////////////
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile} = req.body;

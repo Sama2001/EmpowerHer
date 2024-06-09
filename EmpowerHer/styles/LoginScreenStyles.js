@@ -30,14 +30,16 @@ export const loginScreenStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
   },
-  icon: {
-    marginLeft: 10,
-  },
+ 
   input: {
     flex: 1,
     height: 50,
     paddingHorizontal: 15,
     fontSize: 16,
+  },
+
+  icon: {
+    marginLeft: 10,
   },
   passwordInput: {
     paddingRight: 40,

@@ -23,8 +23,17 @@ const Purchase = ({ route, navigation }) => {
             const response = await fetch('http://192.168.1.120:3000/purchase', requestOptions);
             const data = await response.json();
     
+            const requestOptionsPOST = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cartItems: [{ ...product, quantity }] })
+            };
+            const responsePOST = await fetch('http://192.168.1.120:3000/purchase', requestOptionsPOST);
+            const dataPOST = await responsePOST.json();
+            const { success: successPOST, message: messagePOST } = dataPOST;
+
             const { success, message } = data;
-            if (success) {
+            if (success && successPOST) {
                 setPurchaseMessage('Purchase successful!');
     
                 // Clear cart items locally or navigate to another screen
