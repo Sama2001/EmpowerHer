@@ -7,10 +7,7 @@ import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo fo
 
 const MembersModal = ({ visible, onClose, membersData, openTaskForm, showTaskForm, closeTaskForm, handleAssignTask, fetchMemberTasks, selectedMemberData,tasks,tasksModalVisible, setTasksModalVisible  }) => {
 
-  
-  
-  
-
+ 
     return (
       
     <Modal visible={visible} animationType="slide" transparent={false} >

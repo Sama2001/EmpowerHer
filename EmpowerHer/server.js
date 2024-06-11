@@ -431,9 +431,6 @@ app.post('/Customers', async (req, res) => {
   }
 });
 
-
-
-
 //////////register/////////////
 app.post('/register', async (req, res) => {
   const { firstName, lastName,email, password,mobile} = req.body;
@@ -905,6 +902,28 @@ app.get('/managers',verifyToken , async (req, res) => {
     return res.status(200).json({ success: true, managers });
   } catch (error) {
     console.error('Error fetching managers:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/sales',verifyToken , async (req, res) => { 
+  try {
+    const sales = await ProductSale.find();
+
+    return res.status(200).json({ success: true, sales });
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+app.get('/orders',verifyToken , async (req, res) => { 
+  try {
+    const customers = await Customers.find();
+
+    return res.status(200).json({ success: true, customers });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });

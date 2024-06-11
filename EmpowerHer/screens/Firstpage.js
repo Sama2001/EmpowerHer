@@ -21,7 +21,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [memberId, setMemberId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [fadeAnim] = useState(new Animated.Value(0));
-
+  const [greeting, setGreeting] = useState('');
   const { cartItems } = useCart(); // Access the cartItems from the context
   //console.log('Cart Items:', cartItems);
   const userCartItems = cartItems.filter(item => item.userId === userId);
@@ -104,6 +104,19 @@ const loadProfilePicture = async (userId) => {
     console.log('Sanitized Key:', sanitizedKey);
     return sanitizedKey;
   };
+  const getCurrentGreeting = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour < 18) {
+      return { message: 'Good Morning', icon: 'white-balance-sunny' };
+    } else if (currentHour < 12) {
+      return { message: 'Good Afternoon', icon: 'weather-sunny' };
+    } else {
+      return { message: 'Good Evening', icon: 'weather-night' };
+    }
+  };
+  const { message, icon } = getCurrentGreeting();
+
+
   const fetchUserInfo = async () => {
     try {
 
@@ -130,6 +143,8 @@ const loadProfilePicture = async (userId) => {
             loadProfilePicture(_id); // Load profile picture after setting userId
             fetchMemberIdByEmail(email);
 
+          
+        
         } else {
             Alert.alert('Error', data.message);
         }
@@ -211,7 +226,7 @@ const navigateToChatScreen = () => {
     
     <View style={styles.container}>
         <TouchableOpacity style={styles.menuIconContainer} onPress={toggleMenu}>
-        <MaterialIcons name="menu" size={30} color="#a86556" />
+        <MaterialIcons name="menu" size={30} color="#a86556"  />
       </TouchableOpacity>
 
       
@@ -238,11 +253,17 @@ const navigateToChatScreen = () => {
       </View>
      
       <ScrollView>
+        
+      <View style={styles.greetingContainer}>
+          <MaterialCommunityIcons name={icon} size={24} color="yellow" marginLeft={5} marginRight={-5}/>
+          <Text style={styles.greetingText}>{message}, {firstName}</Text>
+        </View>
       <Animated.View style={[styles.empowerHerContainer, { opacity: fadeAnim }]}>
           <Text style={styles.empowerHerText}>EmpowerHer</Text>
         </Animated.View>
       {/* Menu Button */}
      
+
       {/* Content */}
       <View style={styles.container1}>
       <ScrollView style={styles.contentContainer}>

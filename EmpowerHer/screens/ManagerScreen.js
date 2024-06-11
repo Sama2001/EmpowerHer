@@ -6,31 +6,38 @@ import ProjectPicturesModal from '../screens/ProjectPicturesModal';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import { Picker } from '@react-native-picker/picker'; // Import Picker from '@react-native-picker/picker'
 import TaskForm from './TaskForm';
-import TasksModal from './TasksModal'; // Import the TasksModal component
-import MembershipFormsModal from './MembershipFormsModal'; // Import the MembershipFormsModal component
+import TasksModal from './TasksModal'; 
+import MembershipFormsModal from './MembershipFormsModal'; 
 import OpportunitiesModal  from './oppModal';
 import MembersModal from './membersModal';
 import InternsModal from './internsModal';
+import SalesModal from './SalesModal'; 
+import OrdersModal from './ordersModal';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
   const [membersData, setMembersData] = useState([]);
   const [internsData, setInternsData] = useState([]);
   const [opportunitiesData, setOpportunitiesData] = useState([]);
-  const [showMembershipForms, setShowMembershipForms] = useState(false); // State for showing/hiding membership forms
-  const [showMembers, setShowMembers] = useState(false); // State for showing/hiding membership forms
-  const [showInterns, setShowInterns] = useState(false); // State for showing/hiding membership forms
-  const [showOpportunitiesForms, setShowOpportunitiesForms] = useState(false); // State for showing/hiding membership forms
+  const [showMembershipForms, setShowMembershipForms] = useState(false); 
+  const [showMembers, setShowMembers] = useState(false); 
+  const [showInterns, setShowInterns] = useState(false); 
+  const [showOpportunitiesForms, setShowOpportunitiesForms] = useState(false); 
   const [showModal, setShowModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null); // State for selected member from dropdown
+  const [selectedMember, setSelectedMember] = useState(null); 
   const [showTaskForm, setShowTaskForm] = useState(false);
   const {authToken} = route.params;
   const [selectedMembers, setSelectedMembers] = useState(Array(internsData.length).fill(null));
   const [selectedMemberData, setSelectedMemberData] = useState(null);
-  const [tasksModalVisible, setTasksModalVisible] = useState(false); // State for task modal visibility
-  const [tasks, setTasks] = useState([]); // State for tasks data
-  const [showMembersModal, setShowMembersModal] = useState(false); // State for showing/hiding members modal
+  const [tasksModalVisible, setTasksModalVisible] = useState(false);
+  const [tasks, setTasks] = useState([]); 
+  const [showMembersModal, setShowMembersModal] = useState(false); 
   const [showInternsModal, setShowInternsModal] = useState(false);
+  const [sales, setSales] = useState([]); 
+  const [salesModalVisible, setSalesModalVisible] = useState(false); 
+ 
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
+  const [orders, setOrders] = useState([]);
 
   const openMembersModal = () => {
     setShowMembersModal(true);
@@ -49,6 +56,29 @@ const ManagerScreen = ({ navigation,route }) => {
   const closeInternsModal = () => {
     setShowInternsModal(false);
   };
+
+  const openSalesModal = async () => {
+    try {
+      await fetchsales();
+      setSalesModalVisible(true);
+    } catch (error) {
+      console.error('Error opening sales modal:', error);
+      Alert.alert('Error', 'An error occurred while opening the sales modal');
+    }
+  };
+
+  const openOrdersModal = async () => {
+    try {
+      await fetchOrders();
+      setShowOrdersModal(true);
+    } catch (error) {
+      console.error('Error opening sales modal:', error);
+      Alert.alert('Error', 'An error occurred while opening the sales modal');
+    }
+  };
+  
+
+
   const openModal = () => {
     setShowModal(true);
   };
@@ -216,6 +246,75 @@ const ManagerScreen = ({ navigation,route }) => {
       Alert.alert('Error', 'An error occurred while fetching member tasks');
     }
   };
+
+  const fetchsales = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
+
+      const response = await fetch(`http://192.168.1.120:3000/sales`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+
+      const data = await response.json();
+      console.log('Response data:', data); // Log the response data
+
+      if (data.success) {
+        setSales(data.sales); 
+       // setSalesModalVisible(true); 
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching sales:', error);
+      Alert.alert('Error', 'An error occurred while fetching sales');
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
+  
+      const response = await fetch(`http://192.168.1.120:3000/orders`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+  
+      // Check if response status is ok
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      console.log('Response data:', data); // Log the response data
+  
+      if (data.success) {
+        setOrders(data.customers);
+        //setShowOrdersModal(true); // Show modal after fetching orders
+
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      Alert.alert('Error', 'An error occurred while fetching orders');
+    }
+  };
+  
   
   const toggleMembershipForms = () => {
     setShowMembershipForms(!showMembershipForms); // Toggle the state
@@ -243,6 +342,9 @@ const ManagerScreen = ({ navigation,route }) => {
     fetchOpportunitiesData();
     fetchmembersData();
     fetchInternsData();
+    fetchsales();
+    fetchOrders();
+
   }, []);
 
   const openPDF = (pdfUrl) => {
@@ -519,7 +621,27 @@ const ManagerScreen = ({ navigation,route }) => {
       membersData={membersData}
       handleConnect={handleConnect}
       />
-  
+
+<TouchableOpacity style={styles.button} onPress={openSalesModal}>
+          <Text style={styles.buttonText}>Show Sales</Text>
+        </TouchableOpacity>
+        <SalesModal
+          visible={salesModalVisible}
+          onClose={() => setSalesModalVisible(false)}
+          sales={sales}
+        />
+
+
+<TouchableOpacity style={styles.button} onPress={openOrdersModal}>
+          <Text style={styles.buttonText}>Show Orders</Text>
+        </TouchableOpacity>
+        <OrdersModal visible={showOrdersModal} 
+        onClose={() => setShowOrdersModal(false)} 
+        orders={orders} 
+        />
+
+
+
 {/*interns */}
 {/*<TouchableOpacity
   style={showInterns ? styles.button1 : styles.button}

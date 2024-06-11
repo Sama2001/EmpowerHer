@@ -307,5 +307,29 @@ empowerHerText: {
     // Other styles for menu item text
   },
  
+  greetingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'left',
+    marginVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom:3,
+    //marginLeft:10,
+    backgroundColor: 'lightgrey',
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    //width:200,
+  },
+  greetingText: {
+    fontSize: 16,
+    //fontWeight: 'bold',
+    color: 'black',
+    marginLeft: 10,
+  },
 
 });
