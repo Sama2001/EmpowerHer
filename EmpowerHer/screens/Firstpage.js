@@ -106,9 +106,9 @@ const loadProfilePicture = async (userId) => {
   };
   const getCurrentGreeting = () => {
     const currentHour = new Date().getHours();
-    if (currentHour < 18) {
+    if (currentHour < 12) {
       return { message: 'Good Morning', icon: 'white-balance-sunny' };
-    } else if (currentHour < 12) {
+    } else if (currentHour < 18) {
       return { message: 'Good Afternoon', icon: 'weather-sunny' };
     } else {
       return { message: 'Good Evening', icon: 'weather-night' };
@@ -218,7 +218,7 @@ navigation.navigate('Cart', { userId: userId });
 };
 
 const navigateToChatScreen = () => {
-  navigation.navigate('Chat', { userId: userId }); // Pass userId to ChatScreen
+  navigation.navigate('Chat'); 
 };
 
 

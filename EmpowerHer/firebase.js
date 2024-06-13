@@ -1,19 +1,25 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+// Import the functions you need from the Firebase SDKs
+import firebase from 'firebase/compat/app'; // Import firebase from compat/app
+import 'firebase/compat/firestore'; // Import Firestore
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAm73Z7bcmhYHQN0OOqC7BHZYAi_GbNuUM",
-  authDomain: "empowerher-239f6.firebaseapp.com",
-  projectId: "empowerher-239f6",
-  storageBucket: "empowerher-239f6.appspot.com",
-  messagingSenderId: "469916600273",
-  appId: "1:469916600273:web:e2ad16fbd2bd0fd15242f0",
-  measurementId: "G-1W3XY0VE4Y"
+  apiKey: "AIzaSyCgEPwaAbqHK6jQaBmpqZMnbxwd1tyRBFc",
+  authDomain: "chat-empowerher.firebaseapp.com",
+  projectId: "chat-empowerher",
+  storageBucket: "chat-empowerher.appspot.com",
+  messagingSenderId: "756856534803",
+  appId: "1:756856534803:web:c867f3f61dd93e2cd88ce6"
 };
 
+// Initialize Firebase
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  
-  const db = firebase.firestore();
-  export { db };
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized, use that one
+}
+
+// Export firebase instance
+export const db = firebase.firestore();
+
+export default firebase;
