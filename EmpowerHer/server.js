@@ -951,6 +951,17 @@ app.get('/Gmembers',verifyToken, async (req, res) => {
   }
 });
 
+app.get('/users', verifyToken, async (req, res) => {
+  try {
+    const users = await User.find({});
+    return res.status(200).json({ success: true, users }); // Ensure the key is `users`
+  } catch (error) {
+    console.error('Error fetching Users:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
 ////get interns/////////
 app.get('/interns',verifyToken, async (req, res) => {
   try {

@@ -217,9 +217,14 @@ navigation.navigate('Cart', { userId: userId });
     }
 };
 
-const navigateToChatScreen = () => {
-  navigation.navigate('Chat'); 
-};
+  const navigateToChatScreen = () =>
+     { if (userId)
+       {
+      navigation.navigate('Chat', { authToken, userId });
+    } else {
+      Alert.alert('Error', 'User ID not found');
+    }
+  };
 
 
   return (
