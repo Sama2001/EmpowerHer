@@ -54,42 +54,45 @@ const ChatScreen = ({ route }) => {
   useEffect(() => {
     const fetchChats = async () => {
       if (!currentUser) return;
-
+  
       try {
         const senderChatSnapshots = await db
           .collection('chat-empowerher')
           .where('user._id', '==', currentUser._id)
           .get();
-
+  
         const recipientChatSnapshots = await db
           .collection('chat-empowerher')
           .where('recipientId', '==', currentUser._id)
           .get();
-
-        const chatData = [
-          ...senderChatSnapshots.docs.map(doc => doc.data()),
-          ...recipientChatSnapshots.docs.map(doc => doc.data()),
-        ];
-
-        // Group chats by chatId and find the latest message for each chat
+  
+        const senderChats = senderChatSnapshots.docs.map(doc => doc.data());
+        const recipientChats = recipientChatSnapshots.docs.map(doc => doc.data());
+  
+        // Merge and sort chats by createdAt descending
+        const mergedChats = [...senderChats, ...recipientChats];
+        const sortedChats = mergedChats.sort((a, b) => b.createdAt - a.createdAt);
+  
+        // Group chats by the other user's ID (sender or recipient)
         const groupedChats = {};
-        chatData.forEach(chat => {
-          const chatId = generateChatId(currentUser._id, chat.recipientId);
-          if (!groupedChats[chatId] || chat.createdAt > groupedChats[chatId].createdAt) {
-            groupedChats[chatId] = chat;
+        sortedChats.forEach(chat => {
+          const otherUserId = chat.user._id === currentUser._id ? chat.recipientId : chat.user._id;
+          if (!groupedChats[otherUserId] || chat.createdAt > groupedChats[otherUserId].createdAt) {
+            groupedChats[otherUserId] = chat;
           }
         });
-
+  
         // Convert object back to array and sort by latest message
-        const sortedChats = Object.values(groupedChats).sort((a, b) => b.createdAt - a.createdAt);
-        setChats(sortedChats);
+        const finalChats = Object.values(groupedChats).sort((a, b) => b.createdAt - a.createdAt);
+        setChats(finalChats);
       } catch (error) {
         console.error('Error fetching chats:', error);
       }
     };
-
+  
     fetchChats();
   }, [currentUser]);
+  
 
   // Fetch messages when a user selects a chat recipient
   useEffect(() => {
@@ -180,7 +183,7 @@ const ChatScreen = ({ route }) => {
                   style={styles.userItem}
                   onPress={() => handleUserSelect(item)}
                 >
-                  <Text style={styles.userName}>{item.firstName}{item.lastName}</Text>
+                  <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -197,28 +200,29 @@ const ChatScreen = ({ route }) => {
 
       {/* Render chats list */}
       <FlatList
-        data={chats}
-        keyExtractor={item => item._id}
-        renderItem={({ item }) => {
-          const otherUser = item.user._id === currentUser._id ? item.recipientName : item.user.name;
-          const lastMessage = item.user._id === currentUser._id ? `You: ${item.text}` : item.text;
-          return (
-            <TouchableOpacity
-              style={styles.chatItem}
-              onPress={() => handleUserSelect({
-                _id: item.user._id === currentUser._id ? item.recipientId : item.user._id,
-                firstName: otherUser.split(' ')[0],
-                lastName: otherUser.split(' ')[1],
-              })}
-            >
-              <Text style={styles.chatUserName}>{otherUser}</Text>
-              <Text style={styles.lastMessage}>
-                {lastMessage ? lastMessage : ''}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
+  data={chats}
+  keyExtractor={item => item._id}
+  renderItem={({ item }) => {
+    const otherUser = item.user._id === currentUser._id ? item.recipientName : item.user.name;
+    const lastMessage = item.user._id === currentUser._id ? `You: ${item.text}` : item.text;
+    return (
+      <TouchableOpacity
+        style={styles.chatItem}
+        onPress={() => handleUserSelect({
+          _id: item.user._id === currentUser._id ? item.recipientId : item.user._id,
+          firstName: otherUser.split(' ')[0],
+          lastName: otherUser.split(' ')[1],
+        })}
+      >
+        <Text style={styles.chatUserName}>{otherUser}</Text>
+        <Text style={styles.lastMessage}>
+          {lastMessage ? lastMessage : ''}
+        </Text>
+      </TouchableOpacity>
+    );
+  }}
+/>
+
 
       {/* Render GiftedChat when a user is selected */}
       {selectedUser && currentUser && (
