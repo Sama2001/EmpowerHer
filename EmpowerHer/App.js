@@ -24,11 +24,14 @@ import PurchaseScreen from './screens/PurchaseScreen';
 import EditProductScreen from './screens/EditProduct';
 import BuyNow from './screens/BuyNow';
 import Purchase from './screens/PurchaseNow';
+import { MessageProvider } from './screens/MessageContext';
+import AdminStoreScreen from './screens/AdminStore';
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <CartProvider>
+    <MessageProvider>
 
     <NavigationContainer>
 
@@ -54,12 +57,13 @@ export default function App() {
         <Stack.Screen name="EditProduct" component={EditProductScreen}/>
         <Stack.Screen name="BuyNow" component={BuyNow}/>
         <Stack.Screen name="Buy" component={Purchase}/>
-
+        <Stack.Screen name="AdminStore" component={AdminStoreScreen}/>
 
 
       </Stack.Navigator>
 
     </NavigationContainer>
+    </MessageProvider>
     </CartProvider>
 
 

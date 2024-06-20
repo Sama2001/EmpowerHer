@@ -35,7 +35,7 @@ const ManagerScreen = ({ navigation,route }) => {
   const [showInternsModal, setShowInternsModal] = useState(false);
   const [sales, setSales] = useState([]); 
   const [salesModalVisible, setSalesModalVisible] = useState(false); 
- 
+
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [orders, setOrders] = useState([]);
 
@@ -554,6 +554,12 @@ const ManagerScreen = ({ navigation,route }) => {
     setShowTaskForm(true); // Open the task form
   };
 
+  const navigateToStore = () => {
+
+    navigation.navigate('AdminStore', { authToken });
+    
+};
+
   // Function to close the task form
   const closeTaskForm = () => {
     setSelectedMemberData(null); // Reset selected member's data
@@ -639,7 +645,10 @@ const ManagerScreen = ({ navigation,route }) => {
         onClose={() => setShowOrdersModal(false)} 
         orders={orders} 
         />
-
+<TouchableOpacity style={styles.button} onPress={navigateToStore}>
+          <Text style={styles.buttonText}>Store</Text>
+        </TouchableOpacity>
+        
 
 
 {/*interns */}

@@ -3,6 +3,8 @@ import { View, Text, Modal, FlatList, TouchableOpacity, StyleSheet } from 'react
 import { GiftedChat } from 'react-native-gifted-chat';
 import { db } from '../firebase'; // Adjust path if necessary
 import uuid from 'uuid';
+import { useMessageCount } from './MessageContext';
+import { MessageContext } from './MessageContext'; // Adjust path as necessary
 
 const ChatScreen = ({ route }) => {
   const { authToken, userId } = route.params;
@@ -13,6 +15,8 @@ const ChatScreen = ({ route }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [chats, setChats] = useState([]);
   const [chatModalVisible, setChatModalVisible] = useState(false); // <-- Add state for full-screen chat modal
+  const {  setMessageCount ,resetMessageCount} = useMessageCount();
+  const { messageCount, incrementMessageCount } = useMessageCount();
 
   // Fetch users and current user details on component mount
   useEffect(() => {
@@ -30,6 +34,7 @@ const ChatScreen = ({ route }) => {
         console.error('Error fetching users:', error);
       }
     };
+ 
 
     const fetchCurrentUser = async () => {
       try {
@@ -50,6 +55,28 @@ const ChatScreen = ({ route }) => {
     fetchCurrentUser();
   }, [authToken, userId]);
 
+
+  
+  useEffect(() => {
+    const fetchMessageCount = async () => {
+      if (!currentUser) return;
+
+      try {
+        const recipientChatSnapshots = await db
+          .collection('chat-empowerher')
+          .where('recipientId', '==', currentUser._id)
+          .get();
+
+        const messageCount = recipientChatSnapshots.docs.length;
+        setMessageCount(messageCount);
+      } catch (error) {
+        console.error('Error fetching message count:', error);
+      }
+    };
+
+    fetchMessageCount();
+  }, [currentUser,setMessageCount]);
+
   // Fetch chats where currentUser is either sender or recipient
   useEffect(() => {
     const fetchChats = async () => {
@@ -68,7 +95,8 @@ const ChatScreen = ({ route }) => {
   
         const senderChats = senderChatSnapshots.docs.map(doc => doc.data());
         const recipientChats = recipientChatSnapshots.docs.map(doc => doc.data());
-  
+      
+      
         // Merge and sort chats by createdAt descending
         const mergedChats = [...senderChats, ...recipientChats];
         const sortedChats = mergedChats.sort((a, b) => b.createdAt - a.createdAt);
@@ -93,7 +121,6 @@ const ChatScreen = ({ route }) => {
     fetchChats();
   }, [currentUser]);
   
-
   // Fetch messages when a user selects a chat recipient
   useEffect(() => {
     const fetchMessages = async () => {
@@ -145,17 +172,24 @@ const ChatScreen = ({ route }) => {
           await db.collection('chat-empowerher').add(message);
         })
       );
+      setMessageCount(messageCount + newMessages.length);
+
     } catch (error) {
       console.error('Error sending message:', error);
     }
-  }, [userId, selectedUser, currentUser]);
+  }, [userId, selectedUser, currentUser,setMessageCount]);
 
   // Function to handle selecting a user to chat with
-  const handleUserSelect = (user) => {
+ const handleUserSelect = async (user) => {
     setSelectedUser(user);
     setModalVisible(false);
-        setChatModalVisible(true); // <-- Open full-screen chat modal
+    setChatModalVisible(true); // Open full-screen chat modal
 
+  };
+
+  const closeChatModal = () => {
+    setChatModalVisible(false);
+    setSelectedUser(null); // Clear selected user when closing modal
   };
 
   // Function to open modal for selecting user
@@ -166,6 +200,10 @@ const ChatScreen = ({ route }) => {
   // Rendering the chat screen
   return (
     <View style={{ flex: 1 }}>
+<View style={styles.totalReceivedMessages}>
+        <Text style={styles.messageCountText}>Messages received: {messageCount}</Text>
+      </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -226,8 +264,18 @@ const ChatScreen = ({ route }) => {
 
       {/* Render GiftedChat when a user is selected */}
       {selectedUser && currentUser && (
+          <Modal
+          animationType="slide"
+          visible={chatModalVisible}
+          onRequestClose={closeChatModal}
+        >
+
         <View style={{ flex: 1 }}>
           <View style={styles.header}>
+          <TouchableOpacity onPress={closeChatModal}>
+                <Text style={styles.backButton}>Back</Text>
+              </TouchableOpacity>
+
             <Text style={styles.headerText}>{selectedUser.firstName} {selectedUser.lastName}</Text>
           </View>
           <GiftedChat
@@ -247,6 +295,8 @@ const ChatScreen = ({ route }) => {
             }}
           />
         </View>
+        </Modal>
+
       )}
     </View>
   );
@@ -259,12 +309,21 @@ const generateChatId = (userId1, userId2) => {
 
 // Styles for the ChatScreen component
 const styles = StyleSheet.create({
+  
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
   },
+
+  totalReceivedMessages: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+
   modalView: {
     margin: 20,
     backgroundColor: "white",
@@ -316,10 +375,18 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
+    marginTop:30,
     backgroundColor: "#f5f5f5",
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+  },
+  backButton: {
+    fontSize: 18,
+    marginRight: 100,
+    color: '#007BFF',
   },
   headerText: {
     fontSize: 20,
@@ -327,4 +394,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default ChatScreen;  

@@ -98,7 +98,7 @@ module.exports = User;
 
 ///////////managers////////////////////
 const ManagerSchema = new mongoose.Schema({
- 
+
   email: {
     type: String,
     ref: 'User',

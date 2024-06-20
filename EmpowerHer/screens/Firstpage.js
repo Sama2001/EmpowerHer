@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as SecureStore from 'expo-secure-store';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import  Ionicons  from '@expo/vector-icons';
+import { useMessageCount } from './MessageContext'; // Corrected path
 
 import { useCart } from './CartContext'; // Assuming you have a CartContext
 
@@ -24,6 +25,8 @@ const FirstPage = ({ navigation, route,result }) => {
   const [greeting, setGreeting] = useState('');
   const { cartItems } = useCart(); // Access the cartItems from the context
   //console.log('Cart Items:', cartItems);
+  const { messageCount, resetMessageCount, incrementMessageCount } = useMessageCount(); // Access the messageCount and reset function from the context
+
   const userCartItems = cartItems.filter(item => item.userId === userId);
 
   const totalUniqueItemsInCart = [...new Set(userCartItems.map(item => item._id))].length;
@@ -55,7 +58,7 @@ const loadProfilePicture = async (userId) => {
   try {
     const sanitizedEmail = sanitizeKey(userId);
     const profilePictureKey = `${sanitizedEmail}_profilePictureURI`; 
-    console.log(`Loading profile picture with key: ${profilePictureKey}`);
+   // console.log(`Loading profile picture with key: ${profilePictureKey}`);
     const uriString = await SecureStore.getItemAsync(profilePictureKey);
     if (uriString !== null) {
       setProfilePicture(uriString); // Use URI string directly
@@ -101,7 +104,7 @@ const loadProfilePicture = async (userId) => {
       return null;
     }
     const sanitizedKey = key.replace(/[^a-zA-Z0-9.-_]/g, '_');
-    console.log('Sanitized Key:', sanitizedKey);
+    //console.log('Sanitized Key:', sanitizedKey);
     return sanitizedKey;
   };
   const getCurrentGreeting = () => {
@@ -155,6 +158,10 @@ const loadProfilePicture = async (userId) => {
 };
 
 useEffect(() => {
+  console.log('Message count updated:', messageCount); // Check messageCount value
+}, [messageCount]);
+
+useEffect(() => {
   fetchUserInfo();
   loadProfilePicture(userId);
   const fadeInAnimation = Animated.timing(fadeAnim, {
@@ -167,7 +174,7 @@ useEffect(() => {
   loopAnimation.start();
 
   return () => loopAnimation.stop();
-}, [fadeAnim]); 
+}, [fadeAnim , resetMessageCount]); 
 
   const navigateToProfile = async() => {
 
@@ -220,7 +227,10 @@ navigation.navigate('Cart', { userId: userId });
   const navigateToChatScreen = () =>
      { if (userId)
        {
-      navigation.navigate('Chat', { authToken, userId });
+        console.log('LOG Before reset: messageCount', messageCount);
+        resetMessageCount(); // Reset message count from context
+        console.log('LOG After reset: messageCount', messageCount); 
+        navigation.navigate('Chat', { authToken, userId,messageCount });
     } else {
       Alert.alert('Error', 'User ID not found');
     }
@@ -234,7 +244,7 @@ navigation.navigate('Cart', { userId: userId });
         <MaterialIcons name="menu" size={30} color="#a86556"  />
       </TouchableOpacity>
 
-      
+
 
       <View style={styles.iconRow}>
       <TouchableOpacity style={styles.iconContainer} onPress={navigateToCart}>
@@ -248,7 +258,12 @@ navigation.navigate('Cart', { userId: userId });
         
         <TouchableOpacity style={[styles.iconContainer, styles.circularIconContainer]} onPress={navigateToChatScreen}>
           <MaterialCommunityIcons name="message-processing-outline" size={28} color="#a86556" />
-        
+          {messageCount > 0 && (
+            <View style={styles.notification}>
+              <Text style={styles.notificationText}>{messageCount}</Text>
+            </View>
+          )}
+          
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.iconContainer}>
@@ -258,7 +273,7 @@ navigation.navigate('Cart', { userId: userId });
       </View>
      
       <ScrollView>
-        
+
       <View style={styles.greetingContainer}>
           <MaterialCommunityIcons name={icon} size={24} color="yellow" marginLeft={5} marginRight={-5}/>
           <Text style={styles.greetingText}>{message}, {firstName}</Text>

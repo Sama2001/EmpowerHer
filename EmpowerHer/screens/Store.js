@@ -192,6 +192,7 @@ const DropdownMenu2 = ({ productId }) => {
 /> */}    
    
 
+
       <FlatList
         data={products}
         numColumns={2}
@@ -247,55 +248,3 @@ const DropdownMenu2 = ({ productId }) => {
 
 export default StoreScreen;
 
-{/*       <Button title="Add Product" onPress={() => setShowForm(!showForm)} />
-
-      {showForm && (
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Product Name"
-            value={productName}
-          onChangeText={(text) => setProductName(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Description"
-            value={description}
-          onChangeText={(text) => setDescription(text)}
-          />
-        <TextInput
-          style={styles.input}
-           placeholder="Price"
-           keyboardType="numeric"
-           value={price}
-          onChangeText={(text) => setPrice(text)}
-         />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Category"
-            value={category}
-          onChangeText={(text) => setCategory(text)}
-          />
-          <TextInput
-          style={styles.input}
-          placeholder="Quantity"
-          value={quantity}
-          onChangeText={(text) => setQuantity(text)}
-        />
-
-          <Button title="Pick Images" onPress={pickImage} />
-          <View style={styles.imagePreview}>
-            {pickedImages.map((imageUri, index) => (
-              <Image key={index} source={{ uri: imageUri }} style={styles.image} />
-            ))}
-          </View>
-          <Button 
-   title="Add Product" 
-  onPress={() => addProduct({ productName, description, price, category, quantity })} 
-/>
-
-          
-        </View>
-      )}
-      */}
