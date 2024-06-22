@@ -30,6 +30,7 @@ const FirstPage = ({ navigation, route,result }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [attendanceCount, setAttendanceCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showEvents, setShowEvents] = useState(false); // State to manage events visibility
 
   const userCartItems = cartItems.filter(item => item.userId === userId);
 
@@ -269,6 +270,13 @@ useEffect(() => {
     </TouchableOpacity>
   );
 
+  const toggleEvents = () => {
+    setShowEvents(!showEvents); // Toggle events visibility state
+    console.log('Toggling events');
+    };
+    
+    
+
   const handleEventPress = (event) => {
     setSelectedEvent(event);
     setAttendanceCount(event.Attendance || 0); // Set initial attendance count
@@ -467,16 +475,27 @@ useEffect(() => {
   </TouchableOpacity>
 
 
-
+ 
       </Animated.View>
+      <TouchableOpacity style={styles.toggleEventsButton} onPress={toggleEvents}>
+      <Text style={styles.toggleEventsButtonText}>
+        {showEvents ? 'Hide Events' : 'Show Events'}
+      </Text>
+    </TouchableOpacity>
+   
       </ScrollView>
+    
+
+    
+ {/* Events Section */}
+ {showEvents && (
       <FlatList
         data={events}
         keyExtractor={(event) => event._id}
         renderItem={renderEvent}
         contentContainerStyle={styles.eventList}
       />
-
+    )}
       <Modal
         animationType="slide"
         transparent={false}
@@ -487,11 +506,27 @@ useEffect(() => {
         }}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{selectedEvent ? selectedEvent.description : ''}</Text>
-          <Text style={styles.modalText}>Current Attendance: {attendanceCount}</Text>
-          <Button title="Attend" onPress={handleAttend} />
-          <Button title="Close" onPress={() => setModalVisible(false)} />
-        </View>
+       
+        <Text style={styles.modalTitle}>{selectedEvent ? selectedEvent.description : ''}</Text>
+        <Text style={styles.modalText}>Current Attendance: {attendanceCount}</Text>
+
+        {selectedEvent && selectedEvent.images && (
+          <ScrollView contentContainerStyle={styles.modalImageList}>
+            {selectedEvent.images.map((imageUri, index) => (
+              <Image key={index} source={{ uri: imageUri }} style={styles.modalImage} />
+            ))}
+          </ScrollView>
+        )}
+{/**        <Button title="Attend" onPress={handleAttend} />
+ */}
+        <TouchableOpacity style={styles.attendButton} onPress={handleAttend}>
+          <Text style={styles.attendButtonText}>Attend</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+          <Text style={styles.closeButtonText}>×</Text>
+        </TouchableOpacity>
+      </View>
       </Modal>
     </View>
   );

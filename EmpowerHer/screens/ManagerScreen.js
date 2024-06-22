@@ -46,6 +46,7 @@ const ManagerScreen = ({ navigation,route }) => {
   const [maxAttendance, setMAttendance] = useState('');
   const [date, setDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false); // State to toggle date picker visibility
+  const [showEventForm, setShowEventForm] = useState(false);
 
   const openMembersModal = () => {
     setShowMembersModal(true);
@@ -422,6 +423,8 @@ const ManagerScreen = ({ navigation,route }) => {
           type: `image/${fileType}`,
         });
       });  
+      console.log('Sending images:', images);
+
       const response = await fetch('http://192.168.1.120:3000/events', {
         method: 'POST',
         headers: {
@@ -764,41 +767,47 @@ const ManagerScreen = ({ navigation,route }) => {
           <Text style={styles.buttonText}>Store</Text>
         </TouchableOpacity>
         
-
-<TextInput
-          style={styles.input}
-          placeholder="Description"
-          value={description}
-          onChangeText={setDescription}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="maximum attendance"
-          value={maxAttendance}
-          onChangeText={setMAttendance}
-          keyboardType='numeric'
-        />
-      
-      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-        <Text>Select Date</Text>
-        </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={date || new Date()}
-          mode="datetime"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleDateChange}
-          style={Platform.OS === 'android' ? styles.pickerText : undefined}
-        />
-      )}
-
-<TouchableOpacity style={styles.button1} onPress={handlePictureSelection}>
-        <Text style={styles.buttonText1}>choose pictures</Text>
+        <TouchableOpacity style={styles.button} onPress={() => setShowEventForm(!showEventForm)}>
+        <Text style={styles.buttonText}>{showEventForm ? 'Cancel' : 'Add Event'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.logout} onPress={postEvent}>
-    <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />
-    <Text style={styles.logoutText}>add event</Text>
-  </TouchableOpacity>
+
+      {showEventForm && (
+        <View style={styles.eventFormContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Maximum Attendance"
+            value={maxAttendance}
+            onChangeText={setMAttendance}
+            keyboardType="numeric"
+          />
+
+          <TouchableOpacity style={styles.selectDateButton} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.selectDateButtonText}>Select Date</Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={date || new Date()}
+              mode="datetime"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleDateChange}
+              style={Platform.OS === 'android' ? styles.pickerText : undefined}
+            />
+          )}
+
+          <TouchableOpacity style={styles.button1} onPress={handlePictureSelection}>
+            <Text style={styles.buttonText1}>Choose Pictures</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={postEvent}>
+            <Text style={styles.buttonText}>Add Event</Text>
+          </TouchableOpacity>
+        </View>
+      )}
  
 
  

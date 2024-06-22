@@ -5,6 +5,7 @@ export const firstPageStyles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     backgroundColor: 'white',
+
   },
   scrollViewContent: {
    flexGrow: 1,
@@ -12,6 +13,7 @@ export const firstPageStyles = StyleSheet.create({
   },
   scrollView: {
    flex: 1, // Make the ScrollView take up the entire available space
+
   },
   aboutSection: {
     margin: 20,
@@ -237,7 +239,7 @@ contentSection: {
     height:220,
     backgroundColor: '#fff',
     borderWidth:1,
-    marginBottom:100,
+    marginBottom:70,
     //borderRadius:20,
 },
 sectionTitle: {
@@ -331,5 +333,114 @@ empowerHerText: {
     color: 'black',
     marginLeft: 10,
   },
-
+  toggleEventsButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  eventList: {
+    marginTop: 20,
+    paddingHorizontal: 16,
+  },
+  eventContainer: {
+    backgroundColor: '#f0f0f0',
+    padding: 16,
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  eventDescription: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  eventMaxAttendance: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  eventDate: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  eventImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  toggleEventsButton: {
+    backgroundColor: '#a86556',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: -50,
+    marginBottom:100,
+    marginLeft:15,
+    width:380,
+  },
+  toggleEventsButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight:'bold',
+  },
+  modalContainer: {
+    marginTop:70,
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  modalImage: {
+    width: 300,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+   modalImageList: {
+    width: '100%',
+  },
+  modalImageItem: {
+    width: 200,
+    height: 100,
+    margin: 5,
+    borderRadius: 10,
+  },
+  attendButton: {
+    backgroundColor: '#a86556',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop:50,
+    width:120,
+  },
+  attendButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 });

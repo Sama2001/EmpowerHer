@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
 const OrdersModal = ({ visible, orders, onClose }) => {
   //console.log('Orders:', orders); // Log the orders prop
@@ -32,21 +33,7 @@ const OrdersModal = ({ visible, orders, onClose }) => {
         <Text style={styles.title}>Orders Modal</Text>
 
 
-{/* {orders && orders.length > 0 ? (
-            orders.map((order, index) => (
-              <View key={index} style={styles.orderContainer}>
-                <Text style={styles.orderTitle}>Order {index + 1}</Text>
-                <Text>Quantity: {order.quantity}</Text>
-                <Text>Product Id: {order.productId}</Text>
-                <Text>Country: {order.Country} {order.country}</Text>
-                <Text>Date: {order.date} </Text>
 
-
-              </View>
-            ))
-          ) : (
-            <Text style={styles.noOrdersText}>No orders found</Text>
-          )}*/}
 
         <ScrollView contentContainerStyle={styles.scrollView}>
          
@@ -72,9 +59,17 @@ const OrdersModal = ({ visible, orders, onClose }) => {
           )}
         </ScrollView>
 
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+       
+
+{/** <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Text style={styles.closeButtonText}>Close Modal</Text>
+        </TouchableOpacity> */}
+        <View style={styles.closeButtonContainer2}>
+        <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
+          <Ionicons name="close" size={24} color="black" />
         </TouchableOpacity>
+      </View>
+
       </View>
     </Modal>
   );
@@ -83,8 +78,14 @@ const OrdersModal = ({ visible, orders, onClose }) => {
 const styles = {
   container: {
     flex: 1,
+    backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 3,
+    borderRadius: 30,
+    //margin: 20,
+    marginTop:50,
+    borderColor: '#a86556',
   },
   title: {
     fontSize: 24,
@@ -112,6 +113,18 @@ const styles = {
   closeButtonText: {
     fontSize: 16,
     color: 'blue',
+  },
+  closeButtonContainer2: {
+    position: 'absolute',
+    top:18,
+    right:25,
+  },
+  CloseButton:{
+    
+    padding: 3,
+    borderRadius:10,
+    backgroundColor: 'rgba(187, 123, 107, 0.6)',
+
   },
 };
 

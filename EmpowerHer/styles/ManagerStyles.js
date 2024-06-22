@@ -12,7 +12,7 @@ export const Manager = StyleSheet.create({
      borderRadius: 30,
      margin: 5,
      borderColor: '#a86556',
-     height:900,
+     height:1500,
    },
   modalMemberContainer: {
     flex: 1,
@@ -20,7 +20,6 @@ export const Manager = StyleSheet.create({
     alignItems: 'center',
 
   },
-  
   selectDate:{
     marginTop:20,
     marginBottom:20,
@@ -29,7 +28,7 @@ export const Manager = StyleSheet.create({
     borderColor:'gray',
     borderRadius:5,
   },
-  
+
   Closebutton:{
    
     padding: 5,
@@ -308,5 +307,33 @@ color:'white',
     fontSize: 16,
     color: 'black',
 marginBottom:10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: 'white',
+  },
+  selectDateButton: {
+    backgroundColor: '#a86556',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  selectDateButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  pickerText: {
+    color: '#a86556',
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
   },
 });
