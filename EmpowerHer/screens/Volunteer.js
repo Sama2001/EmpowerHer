@@ -10,7 +10,7 @@ const VolunteerForm = ({route}) => {
   const [address, setAddress] = useState('');
   const [mobile, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
-
+  const [skills, setSkills] = useState('');
   const [cv, setCvFiles] = useState([]); // State to store selected CV files
 
   const {authToken} = route.params;
@@ -83,7 +83,8 @@ const handleChooseFile = async () => {
       formData.append('address', address);
       formData.append('mobile', mobile);
       formData.append('email', email);
-      
+      formData.append('skills', skills);
+
      
       cv.forEach((file, index) => {
         formData.append(`cv`, file);
@@ -101,6 +102,7 @@ const handleChooseFile = async () => {
 
      setAddress('');
       setFullName('');
+      setSkills('');
       setCvFiles([]);
       // Optionally, you can navigate to a success screen or show a success message
     } catch (error) {
@@ -137,6 +139,12 @@ const handleChooseFile = async () => {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+      />
+        <TextInput
+        style={styles.input}
+        placeholder="Skills"
+        value={skills}
+        onChangeText={setSkills}
       />
     <Text style={styles.label}>Upload CV</Text>
       <TouchableOpacity style={styles.button} onPress={handleChooseFile}>

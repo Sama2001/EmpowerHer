@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Expo for icons
 import { useCart } from './CartContext';
 import { AddCartScreenStyles as styles } from '../styles/AddcartStyles'; // Import styles
@@ -35,7 +35,7 @@ const AddToCart = ({ route,navigation }) => {
     const handleAddToCart = () => {
         console.log('User ID:', userId);
 addToCart(userId, { ...product, quantity, imageUrl: product.images[currentImageIndex] });
-
+Alert.alert('Added to cart');
     };
 
     return (

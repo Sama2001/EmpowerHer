@@ -25,6 +25,8 @@ const OpportunitiesModal = ({ visible, onClose, opportunitiesData, handleApprove
               <Text style={styles.opportunityTitle}>Opportunity {index + 1}</Text>
               <Text>Name: {opportunity.fullName}</Text>
               <Text>Address: {opportunity.address}</Text>
+              <Text>Skills: {opportunity.skills}</Text>
+
               {/* Render PDF files */}
               {opportunity.cv && opportunity.cv.map((pdfFile, pdfIndex) => (
                 <Button

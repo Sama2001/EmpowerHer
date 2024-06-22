@@ -20,6 +20,12 @@ const ProfileScreen = ({route,navigation}) => {
     const [showOldPassword, setShowOldPassword] = useState(false); // State variable to control old password visibility
     const [showNewPassword, setShowNewPassword] = useState(false); // State variable to control new password visibility
     const [changePasswordVisible, setChangePasswordVisible] = useState(false); // State variable to control visibility of password change fields
+    const [membersData, setMembersData] = useState([]);
+    const [internsData, setInternsData] = useState([]);
+    const [connectedInterns, setConnectedInterns] = useState([]); // State to store connected interns
+    const[memebrId,setMemberId]=useState('');
+    const [showInterns, setShowInterns] = useState(false);
+
 
     const handleChangePasswordPress = () => {
       setChangePasswordVisible(true);
@@ -30,34 +36,80 @@ const ProfileScreen = ({route,navigation}) => {
   };
 
 
-
-  {/**const saveProfilePicture = async (result) => {
+  const fetchmembersData = async () => {
     try {
-      if (!result.assets || result.assets.length === 0) {
-        console.error('Error: No assets found in ImagePicker result');
+      const token = authToken;
+      if (!token) {
+        console.error('Error: authToken is not provided');
         return;
       }
-  
-      const selectedAsset = result.assets[0];
-      const uriString = selectedAsset.uri;
-  
-      await SecureStore.setItem('profilePictureURI', uriString);
+
+      const response = await fetch('http://192.168.1.120:3000/Gmembers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+
+      const data = await response.json();
+        if (data.success) {
+            const { _id} = data.membersData;
+            setMemeberId(_id);
+            console.log(_id);
+
+        } else {
+            Alert.alert('Error', data.message);
+        }
     } catch (error) {
-      console.error('Error saving profile picture:', error);
+      console.error('Error fetching opportunities data:', error);
+      Alert.alert('Error', 'An error occurred while fetching opportunities data');
     }
   };
 
-////////////////
-  const loadProfilePicture = async () => {
-    try {
-      const uriString = await SecureStore.getItem('profilePictureURI');
-      if (uriString !== null) {
-        setProfilePicture(uriString); // Use URI string directly
+  useEffect(() => {
+    const fetchInternsData = async () => {
+      try {
+        const token = authToken;
+        if (!token) {
+          console.error('Error: authToken is not provided');
+          return;
+        }
+  
+        const response = await fetch('http://192.168.1.120:3000/interns', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+        });
+  
+        const data = await response.json();
+        console.log('Response data:', data); // Log the response data
+  
+        if (data.success) {
+          // Filter interns connected to the member using memberId
+          const internsConnectedToMember = data.internshipData.filter(intern => intern.employeeId === memebrId);
+          setConnectedInterns(internsConnectedToMember); // Set connected interns state
+          setInternsData(data.internshipData); // Set all interns data in state (if needed)
+        } else {
+          Alert.alert('Error', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching interns data:', error);
+        Alert.alert('Error', 'An error occurred while fetching interns data');
       }
-    } catch (error) {
-      console.error('Error loading profile picture:', error);
+    };
+  
+    // Call fetchInternsData when component mounts or when memberId changes
+    if (authToken && memebrId) {
+      fetchInternsData();
     }
-  }; */}
+  }, [authToken, memebrId]); // Include dependencies authToken and memberId
+  
+  
+  
+  
 
   const sanitizeKey = (key) => {
     if (!key) {
@@ -136,6 +188,9 @@ const ProfileScreen = ({route,navigation}) => {
     console.log('user id:',userId);
     fetchUserInfo();
     loadProfilePicture(userId);
+    //fetchInternsData();
+    //fetchmembersData();
+   //fetchMemberId();
   }, [profilePicture]); ////new
 
 const fetchUserInfo = async () => {
@@ -171,6 +226,44 @@ const fetchUserInfo = async () => {
         Alert.alert('Error', 'An error occurred while fetching user info');
     }
 };
+
+useEffect(() => {
+  const fetchMemberId = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/members/${email}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch member ID');
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (!data.memberId) {
+        throw new Error('Member ID not found in response');
+      }
+      setMemberId(data.memberId); // Set member ID state
+    } catch (error) {
+      console.error('Error fetching member ID:', error.message);
+      Alert.alert('Error', 'An error occurred while fetching member ID');
+    }
+  };
+
+  if (authToken && email) {
+    fetchMemberId();
+  }
+}, [authToken, email]);
+
 
   const handleSaveChanges = async () => {
    console.log("hh")
@@ -239,6 +332,28 @@ const fetchUserInfo = async () => {
   };
   
 
+  const renderConnectedInterns = () => {
+    if (connectedInterns.length === 0) {
+      return <Text style={styles.text}>You are not connected with any interns.</Text>;
+    } else {
+      return (
+        <View>
+          <Text style={styles.text}>Interns connected to you:</Text>
+          {connectedInterns.map((intern) => (
+             <View key={intern._id} style={styles.internContainer}>
+             <Text style={styles.text}>{intern.fullName}</Text>
+             <Text style={styles.text}>{intern.mobileNumber}</Text>
+           </View>
+           
+          ))}
+        </View>
+      );
+    }
+  };
+
+  const toggleInternsVisibility = () => {
+    setShowInterns(!showInterns);
+  };
   return (
     <View style={styles.container}>
       
@@ -246,8 +361,38 @@ const fetchUserInfo = async () => {
     <Image source={{ uri: profilePicture }} style={styles.profilePicture} /> 
     <Button title="Edit Profile Picture" onPress={handleChoosePhoto} />
 
-      <Text style={styles.text}>Email: {email}</Text>
-      <Text style={styles.text}>            Mobile Number: {mobile}</Text>
+
+    <Text style={styles.text}>Email: {email}</Text>
+
+
+    <TouchableOpacity style={styles.intbutton} onPress={toggleInternsVisibility}>
+        <Text style={styles.intbuttonText}>
+          {showInterns ? 'Hide Connected Interns' : 'Show Connected Interns'}
+        </Text>
+      </TouchableOpacity>
+
+      {showInterns && (
+        <View style={styles.internsContainer}>
+          {connectedInterns.length === 0 ? (
+            <Text style={styles.text}>You are not connected with any interns.</Text>
+          ) : (
+            <>
+              <Text style={styles.text}>Interns connected to you:</Text>
+              {connectedInterns.map((intern) => (
+                <View key={intern._id} style={styles.internContainer}>
+                  <Text style={styles.text}>{intern.fullName}</Text>
+                  <Text style={styles.text}>{intern.mobileNumber}</Text>
+                </View>
+              ))}
+            </>
+          )}
+        </View>
+      )}
+
+{/**      <Text style={styles.text}>            Mobile Number: {mobile}</Text>
+ *       <Text style={styles.text}>Id: {memebrId}</Text>
+
+ */}
       <TextInput
         style={styles.input}
         value={firstName}
@@ -296,6 +441,8 @@ const fetchUserInfo = async () => {
                     </TouchableOpacity>
                 </>
             )}
+
+
 
 <TouchableOpacity 
 style={styles.button}

@@ -12,7 +12,7 @@ export const Manager = StyleSheet.create({
      borderRadius: 30,
      margin: 5,
      borderColor: '#a86556',
-     height:790,
+     height:800,
    },
   modalMemberContainer: {
     flex: 1,
@@ -84,7 +84,7 @@ export const Manager = StyleSheet.create({
     backgroundColor: 'rgba(187, 123, 107, 0.79)',
     borderRadius: 10,
     alignItems: 'center',
-    marginTop:50,
+    marginTop:35,
     paddingTop:12,
 
   },
@@ -174,7 +174,7 @@ margin:7,
   },
 
   title:{
-    fontWeight:'bold'
+    fontWeight:'bold',
 
   },
   link:{
@@ -189,7 +189,7 @@ color:'blue',
   logout:{
     width:150,
     flexDirection:'row',
-   marginTop:50, 
+   marginTop:30, 
    borderRadius:9,
    borderColor:'black',
    borderStyle:'solid',
@@ -202,7 +202,7 @@ paddingVertical:8,
     marginTop:7,
     marginRight:20, 
     paddingLeft:10,
-
+fontWeight:'bold',
   },
   modalContainer: {
     backgroundColor: 'white',

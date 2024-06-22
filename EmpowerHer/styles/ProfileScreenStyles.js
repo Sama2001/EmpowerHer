@@ -6,6 +6,25 @@ export const profileScreenStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  intbutton:{
+
+    backgroundColor: 'rgba(187, 123, 107, 0.79)',
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 8,
+    marginBottom:15,
+    marginRight:120,
+    width: 220,
+    alignItems: 'center',
+    color:'black',
+  },
+  intbuttonText:{
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'black',
+
+  },
+
   input: {
     width: '80%',
     marginBottom: 20,

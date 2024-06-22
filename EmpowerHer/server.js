@@ -209,6 +209,10 @@ const internships= new mongoose.Schema({
     type: String,
     required: true
   },
+  skills: {
+    type: String, 
+    required: true
+  },
   employeeId:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Members',
@@ -237,6 +241,10 @@ const OpportunitiesSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    required: true
+  },
+  skills: {
+    type: String, 
     required: true
   },
   cv: [String]
@@ -304,29 +312,7 @@ const ProductSchema = new mongoose.Schema({
 
 const Product = mongoose.model("products", ProductSchema);
 
-/*const chatSchema = new mongoose.Schema({
-  text: String,
-  createdAt: { type: Date, default: Date.now },
-  user: {
-    _id: String,
-    name: String
-  }
-});
 
-const Chat = mongoose.model('Chat', chatSchema);
-*/
-
-/*app.get('/messages', verifyToken, async (req, res) => {
-  const messages = await Chat.find().sort({ createdAt: -1 });
-  res.send(messages);
-});
-
-// Send message
-app.post('/messages', verifyToken, async (req, res) => {
-  const newMessage = new Chat(req.body);
-  await newMessage.save();
-  res.send(newMessage);
-});*/
 
 const productSaleSchema = new mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, // Assuming productId refers to a product in another collection
@@ -589,13 +575,44 @@ app.post('/members',verifyToken, async (req, res) => {
   }
 });
 
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: 'samafadah2001@gmail.com', // your email
+    pass: 'apwt fkgw bnng ycxp' // app password
+  }
+});
+
+// Route to send email
+app.post('/send-email', async (req, res) => {
+  const { email, fullName } = req.body;
+
+  const mailOptions = {
+    from: 'samafadah2001@gmail.com',
+    to: email,
+    subject: 'Internship Approval',
+    text: `Dear ${fullName},\n\nCongratulations! Your request to become an intern has been approved.\n\nBest regards,\nEmpowerHer`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
+});
+
 ////////////post internship/////
 app.post('/internships',verifyToken, async (req, res) => {
   try {
-    const { fullName, address, mobileNumber, emailAddress } = req.body; // Destructure variables from req.body
+    const { fullName, address, mobileNumber, emailAddress,skills } = req.body; // Destructure variables from req.body
 
     // Create a new member instance using the Member model
-    const newIntern = new internship({ fullName, address, mobileNumber, emailAddress });
+    const newIntern = new internship({ fullName, address, mobileNumber, emailAddress,skills });
 
     // Save the new member to the database
     await newIntern.save();
@@ -1178,4 +1195,3 @@ app.delete('/product/:id', verifyToken, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

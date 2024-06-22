@@ -384,6 +384,7 @@ const ManagerScreen = ({ navigation,route }) => {
           },
         });
         setMembershipData(prevData => prevData.filter(item => item._id !== form._id));
+        fetchInternsData();
 
         // Perform any additional actions as needed (e.g., updating UI, refreshing data)
       } else {
@@ -404,6 +405,8 @@ const ManagerScreen = ({ navigation,route }) => {
         address: opportunity.address,
         mobileNumber:opportunity.mobile,
         emailAddress: opportunity.email,
+        emailAddress: opportunity.email,
+        skills:opportunity.skills,
             };
   
       // Make a POST request to add the member to the members table
@@ -428,8 +431,19 @@ const ManagerScreen = ({ navigation,route }) => {
         });
         setOpportunitiesData(prevData => prevData.filter(item => item._id !== opportunity._id));
 
-        // Perform any additional actions as needed (e.g., updating UI, refreshing data)
-      
+        const emailResponse = await fetch('http://192.168.1.120:3000/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authToken, // Assuming you have a token for authentication
+          },
+          body: JSON.stringify({ email: opportunity.email, fullName: opportunity.fullName  }),
+        });
+  
+        const emailData = await emailResponse.json();
+        if (!emailData.success) {
+          Alert.alert('Error', emailData.message);
+        }      
       } else {
         Alert.alert('Error', data.message); // Display error message if request fails
       }
@@ -496,16 +510,18 @@ const ManagerScreen = ({ navigation,route }) => {
   };
   
 
-  const handleConnect = async (internId, selectedMemberId) => {
+  const handleConnect = async (internId, selectedMemberId,selectedSuggestedMemberId) => {
     try {
       // Make a PUT request to update the Internship document with the selected memberId
+      const memberIdToUse = selectedSuggestedMemberId || selectedMemberId;
+
       const response = await fetch(`http://192.168.1.120:3000/Internship/${internId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': authToken, // Replace with your actual token
         },
-        body: JSON.stringify({ employeeId: selectedMemberId }), // Send selected memberId in the request body
+        body: JSON.stringify({ employeeId: memberIdToUse }), // Send selected memberId in the request body
       });
   
       const data = await response.json();
@@ -649,53 +665,6 @@ const ManagerScreen = ({ navigation,route }) => {
           <Text style={styles.buttonText}>Store</Text>
         </TouchableOpacity>
         
-
-
-{/*interns */}
-{/*<TouchableOpacity
-  style={showInterns ? styles.button1 : styles.button}
-  onPress={toggleInterns}
->
-  <Text style={styles.buttonText}>{showInterns ? "Hide Interns " : "Show Interns"}</Text>
-</TouchableOpacity>
-{showInterns && internsData.length === 0 && (
-        <Text>No interns found</Text>
-      )}
-
-        {showInterns && internsData.length > 0 && (
-        internsData.map((interns, index) => (
-          <View key={index} style={styles.opportunityContainer}>
-            <Text style={styles.opportunityTitle}>Intern {index + 1}</Text>
-            <Text>Name: {interns.fullName}</Text>
-            <Text>Email: {interns.email}</Text>
-            <Text>Address: {interns.address}</Text>
-             
-             
-             <Picker
-        selectedValue={selectedMembers[index]?.fullName}
-        onValueChange={(value) => handleMemberChange(index, value)}>
-        <Picker.Item label="Select a member" value={null} />
-        {membersData.map((member, memberIndex) => (
-          <Picker.Item key={memberIndex} label={member.fullName} value={member.fullName} />
-        ))}
-      </Picker>
-      {selectedMembers[index] && (
-        <View style={styles.selectedMemberInfo}>
-          <Text style={styles.selectedMemberTitle}>Selected Member:</Text>
-          <Text>Name: {selectedMembers[index]._id}</Text>
-          <Text>Email: {selectedMembers[index].emailAddress}</Text>
-        </View>
-      )}
-            <TouchableOpacity 
-  style={styles.Taskbutton} 
-  onPress={() => handleConnect(interns._id, selectedMembers[index]?._id)}
->
-  <Text style={styles.buttonText1}>Connect</Text>
-</TouchableOpacity>
-
-          </View>
-        ))
-      )} */}
 
 <TouchableOpacity style={styles.logout} onPress={handleLogout}>
     <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />

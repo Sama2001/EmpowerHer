@@ -222,7 +222,7 @@ const DropdownMenu2 = ({ productId }) => {
         <Text style={styles.editButtonText}>...</Text>
       </TouchableOpacity>
       {showDropdown === item._id && <DropdownMenu  productId={item._id}/>}
-    </View>
+    </View> 
     )}
     
 {item.memberId !== memberId && ( // Check if the memberId doesn't match the current userId
