@@ -359,6 +359,31 @@ const CustomersSchema = new mongoose.Schema({
 
 const Customers = mongoose.model("Customers", CustomersSchema); 
 
+const EventsSchema = new mongoose.Schema({
+
+  description: {
+    type: String,
+    required: true,
+  },
+
+ maxAttendance:{
+  type: Number,
+  required: true 
+ },
+ Attendance:{
+  type: Number,
+ },
+  date: {
+    type: Date,
+    },
+
+    images: [String],
+
+});
+
+const Events = mongoose.model("events", EventsSchema); 
+module.exports = Events; // Export model
+
 ///productSales//////
 app.post('/purchase', async (req, res) => {
   const { cartItems } = req.body;
@@ -540,6 +565,84 @@ app.post('/membership',verifyToken ,upload.array('projectPictures'),async (req, 
     } catch (error) {
       console.error('Error sending email notification:', error);
     }
+  }
+});
+
+app.post('/events',verifyToken ,upload.array('images'),async (req, res) => {
+  try {
+    const { description, maxAttendance, date } = req.body;
+
+    const images = req.files.map(file => file.path);
+
+    if (isNaN(maxAttendance)) {
+      return res.status(400).json({ success: false, message: 'maxAttendance must be a number' });
+    }
+
+    // Validate date is a valid date
+    if (isNaN(Date.parse(date))) {
+      return res.status(400).json({ success: false, message: 'Invalid date format' });
+    }
+    const newEvent = await Events.create({
+      description,
+      maxAttendance: Number(maxAttendance), // Convert to number explicitly
+      date: new Date(date), // Convert to Date object explicitly
+      images,
+    });
+    res.status(201).json({ success: true, message: 'Event added successfully' });
+    console.log('Received description:', req.body.description);
+
+  } catch (error) {
+    console.error('Error adding event :', error);
+    res.status(500).json({ success: false, message: 'Failed to add event' });
+  }
+});
+
+app.get("/events", async (req, res) => {
+  try {
+    const events = await Events.find();
+
+    if (!events) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No events found" });
+    }
+    const productsWithPictures = events.map((event) => {
+      const { images, ...rest } = event.toObject();
+      const pictureUrls = images.map(
+        (picture) =>
+          `${req.protocol}://${req.get("host")}/uploads/${path.basename(
+            picture
+          )}`
+      );
+      return { ...rest, images: pictureUrls };
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, events: productsWithPictures });
+  } catch (error) {
+    console.error("Error fetching products :", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.put('/attend/:id', async (req, res) => {
+  const eventId = req.params.id;
+  const { Attendance } = req.body;
+
+  try {
+    const event = await Events.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Event not found' });
+    }
+
+    event.Attendance = Attendance; // Update attendance
+    await event.save();
+
+    return res.status(200).json({ success: true, message: 'Attendance updated successfully', event });
+  } catch (error) {
+    console.error('Error updating attendance:', error.message);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Alert, StyleSheet, Image,Linking,ScrollView,TouchableOpacity } from 'react-native';
+import { View, Text, Alert, StyleSheet,Platform, Image,Linking,ScrollView,TouchableOpacity,TextInput,Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Manager as styles } from '../styles/ManagerStyles'; // Import styles from the separated file
 import ProjectPicturesModal from '../screens/ProjectPicturesModal';
@@ -13,6 +13,8 @@ import MembersModal from './membersModal';
 import InternsModal from './internsModal';
 import SalesModal from './SalesModal'; 
 import OrdersModal from './ordersModal';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker from '@react-native-community/datetimepicker'
+import * as ImagePicker from 'expo-image-picker';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -38,6 +40,12 @@ const ManagerScreen = ({ navigation,route }) => {
 
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [orders, setOrders] = useState([]);
+
+  const [images, setImages] = useState([]); // State for project pictures
+  const [description, setDescription] = useState('');
+  const [maxAttendance, setMAttendance] = useState('');
+  const [date, setDate] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false); // State to toggle date picker visibility
 
   const openMembersModal = () => {
     setShowMembersModal(true);
@@ -351,6 +359,95 @@ const ManagerScreen = ({ navigation,route }) => {
     Linking.openURL(pdfUrl);
   };
 
+  const handlePictureSelection = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        aspect: [4, 3],
+        quality: 1,
+        allowsMultipleSelection: true, // Enable multiple selection if available
+      });
+
+      console.log('Image Picker Result:', result);
+
+      if (!result.canceled) {
+        const selectedURIs = result.assets.map((asset) => asset.uri);
+        setImages([...images, ...selectedURIs]);
+        console.log('Selected Pictures:', selectedURIs);
+      } else {
+        console.log('Image selection cancelled or URI undefined.');
+      }
+    } catch (error) {
+      console.error('Error selecting picture:', error);
+    }
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false); // Hide date picker
+    setDate(currentDate); // Update selected date
+  };
+  
+  const postEvent = async (eventData) => {
+    try {
+      const token = authToken; // Assuming authToken is stored or retrieved
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
+      console.log('Sending description:', description);
+
+      const isoDate = date.toISOString(); // Convert selected date to ISO format
+
+      const maxAttendanceNumber = parseInt(maxAttendance);
+
+      // Validate maxAttendance to ensure it's a number
+      if (isNaN(maxAttendanceNumber)) {
+        console.error('maxAttendance must be a number');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('description', description);
+      formData.append('maxAttendance', maxAttendanceNumber);
+      formData.append('date',isoDate);
+      images.forEach((uri, index) => {
+
+        const uriParts = uri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+        
+        formData.append('images', {
+          uri,
+          name: `images_${index}.${fileType}`,
+          type: `image/${fileType}`,
+        });
+      });  
+      const response = await fetch('http://192.168.1.120:3000/events', {
+        method: 'POST',
+        headers: {
+          Authorization: token,
+          'Content-Type': 'multipart/form-data',
+
+        },
+        body: formData,
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Event added successfully:', data);
+        console.log('Sending description:', eventData.description);
+
+        // Handle success (optional)
+      } else {
+        console.error('Failed to add event:', data.message);
+        // Handle error (optional)
+      }
+    } catch (error) {
+      console.error('Error adding event:', error);
+      // Handle network or other errors (optional)
+    }
+  };
+  
 
   const handleApprove = async (form) => {
     try {
@@ -541,6 +638,7 @@ const ManagerScreen = ({ navigation,route }) => {
   const handleAssignTask = async (description, deadline) => {
     try {
       // Make a POST request to assign a task to the member
+      console.log('task')
       const memberId = selectedMemberData?._id;
 
       const response = await fetch('http://192.168.1.120:3000/tasks', {
@@ -643,6 +741,7 @@ const ManagerScreen = ({ navigation,route }) => {
       membersData={membersData}
       handleConnect={handleConnect}
       />
+      
 
 <TouchableOpacity style={styles.button} onPress={openSalesModal}>
           <Text style={styles.buttonText}>Show Sales</Text>
@@ -666,17 +765,51 @@ const ManagerScreen = ({ navigation,route }) => {
         </TouchableOpacity>
         
 
-<TouchableOpacity style={styles.logout} onPress={handleLogout}>
+<TextInput
+          style={styles.input}
+          placeholder="Description"
+          value={description}
+          onChangeText={setDescription}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="maximum attendance"
+          value={maxAttendance}
+          onChangeText={setMAttendance}
+          keyboardType='numeric'
+        />
+      
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <Text>Select Date</Text>
+        </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={date || new Date()}
+          mode="datetime"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={handleDateChange}
+          style={Platform.OS === 'android' ? styles.pickerText : undefined}
+        />
+      )}
+
+<TouchableOpacity style={styles.button1} onPress={handlePictureSelection}>
+        <Text style={styles.buttonText1}>choose pictures</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.logout} onPress={postEvent}>
+    <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />
+    <Text style={styles.logoutText}>add event</Text>
+  </TouchableOpacity>
+ 
+
+ 
+
+ 
+ 
+
+  <TouchableOpacity style={styles.logout} onPress={handleLogout}>
     <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />
     <Text style={styles.logoutText}>Logout</Text>
   </TouchableOpacity>
-
-  {/*<TasksModal
-        visible={tasksModalVisible}
-        onClose={() => setTasksModalVisible(false)}
-        tasks={tasks}
-      /> */}
-
     </View>
     </ScrollView>
 

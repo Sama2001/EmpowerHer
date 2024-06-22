@@ -12,13 +12,22 @@ export const Manager = StyleSheet.create({
      borderRadius: 30,
      margin: 5,
      borderColor: '#a86556',
-     height:800,
+     height:900,
    },
   modalMemberContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
 
+  },
+  
+  selectDate:{
+    marginTop:20,
+    marginBottom:20,
+    borderStyle:'solid',
+    borderBottomWidth:1,
+    borderColor:'gray',
+    borderRadius:5,
   },
   
   Closebutton:{

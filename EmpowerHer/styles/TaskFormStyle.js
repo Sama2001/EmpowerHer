@@ -32,7 +32,19 @@ export const TaskForm = StyleSheet.create({
         borderColor:'gray',
         borderRadius:5,
       },
+      assign: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 70,
+        marginBottom:10,
+        width: 270,
 
+        alignItems: 'center',
+        borderColor:'rgba(187, 123, 107, 0.79)',
+        borderWidth:1,
+        //borderRadius: 50,
+      },
       buttonText:{
         color:'rgba(187, 123, 107, 1)',
         fontSize: 16,

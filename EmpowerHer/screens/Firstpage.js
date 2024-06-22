@@ -1,5 +1,5 @@
 import React, { useState, useRef,useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Animated,Image,Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Animated,Image,Alert,FlatList,Modal,Button } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import * as SecureStore from 'expo-secure-store';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,6 +26,10 @@ const FirstPage = ({ navigation, route,result }) => {
   const { cartItems } = useCart(); // Access the cartItems from the context
   //console.log('Cart Items:', cartItems);
   const { messageCount, resetMessageCount, incrementMessageCount } = useMessageCount(); // Access the messageCount and reset function from the context
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [attendanceCount, setAttendanceCount] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const userCartItems = cartItems.filter(item => item.userId === userId);
 
@@ -210,12 +214,6 @@ useEffect(() => {
       
   };
 
- /* const navigateToCart = () => {
-   // navigation.navigate('Cart', { authToken, memberId});
-   // Example navigation code to navigate to the ShoppingCartScreen
-navigation.navigate('Cart', { userId: userId });
-
-  };*/
   const navigateToCart = () => {
     if (userId) {
         navigation.navigate('Cart', { authToken,userId });
@@ -237,14 +235,75 @@ navigation.navigate('Cart', { userId: userId });
   };
 
 
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('http://192.168.1.120:3000/events'); // Replace with your backend URL
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
+      }
+      const eventData = await response.json();
+      setEvents(eventData.events);
+    } catch (error) {
+      console.error('Error fetching events:', error.message);
+    }
+  };
+
+  const renderEvent = ({ item }) => (
+    <TouchableOpacity onPress={() => handleEventPress(item)} style={styles.eventContainer}>
+      <Text style={styles.eventDescription}>{item.description}</Text>
+      <Text style={styles.eventMaxAttendance}>Max Attendance: {item.maxAttendance}</Text>
+      <Text style={styles.eventDate}>Date: {new Date(item.date).toLocaleString()}</Text>
+      <FlatList
+        data={item.images}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(uri) => uri}
+        renderItem={({ item: uri }) => (
+          <Image source={{ uri }} style={styles.eventImage} />
+        )}
+      />
+    </TouchableOpacity>
+  );
+
+  const handleEventPress = (event) => {
+    setSelectedEvent(event);
+    setAttendanceCount(event.Attendance || 0); // Set initial attendance count
+    setModalVisible(true);
+  };
+
+  const handleAttend = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/attend/${selectedEvent._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken,
+
+        },
+        body: JSON.stringify({ Attendance: attendanceCount + 1 }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update attendance');
+      }
+
+      setAttendanceCount(attendanceCount + 1);
+    } catch (error) {
+      console.error('Error updating attendance:', error.message);
+    }
+  };
+
+
   return (
     
     <View style={styles.container}>
         <TouchableOpacity style={styles.menuIconContainer} onPress={toggleMenu}>
         <MaterialIcons name="menu" size={30} color="#a86556"  />
       </TouchableOpacity>
-
-
 
       <View style={styles.iconRow}>
       <TouchableOpacity style={styles.iconContainer} onPress={navigateToCart}>
@@ -394,6 +453,7 @@ navigation.navigate('Cart', { userId: userId });
         <Text style={styles.menuItemText}> Store </Text>
       </TouchableOpacity>
       
+   
      
  <View style={styles.contentContainer}>
          
@@ -410,7 +470,29 @@ navigation.navigate('Cart', { userId: userId });
 
       </Animated.View>
       </ScrollView>
+      <FlatList
+        data={events}
+        keyExtractor={(event) => event._id}
+        renderItem={renderEvent}
+        contentContainerStyle={styles.eventList}
+      />
 
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+          setSelectedEvent(null);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>{selectedEvent ? selectedEvent.description : ''}</Text>
+          <Text style={styles.modalText}>Current Attendance: {attendanceCount}</Text>
+          <Button title="Attend" onPress={handleAttend} />
+          <Button title="Close" onPress={() => setModalVisible(false)} />
+        </View>
+      </Modal>
     </View>
   );
 };

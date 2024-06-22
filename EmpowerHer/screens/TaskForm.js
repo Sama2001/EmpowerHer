@@ -14,6 +14,7 @@ const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
     // Check if description is not empty
     if (description.trim() === '') {
       // Show an error message or do nothing
+      console.log('no');
       return;
     }
 
@@ -65,11 +66,11 @@ const TaskForm = ({ visible, onClose, onAssignTask, memberData }) => {
           style={Platform.OS === 'android' ? styles.pickerText : undefined} // Android specific style
           />
         )}
-       {/* <Button title="Assign Task" onPress={handleAssignTask} />*/} 
-
-        <TouchableOpacity onPress={() => {handleAssignTask} } style={styles.selectDate}>
-        <Text style={styles.buttonText}>Assign Task</Text>
-          </TouchableOpacity>
+{/**      <Button title="Assign Task" onPress={handleAssignTask} />
+ */}
+      <TouchableOpacity onPress={handleAssignTask} style={styles.assign}>
+  <Text style={styles.buttonText}>Assign Task</Text>
+</TouchableOpacity>
 
         <TouchableOpacity onPress={onClose} style={styles.CloseButton}>
             <Ionicons name="close" size={24} color="black" />
