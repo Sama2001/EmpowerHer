@@ -3,6 +3,7 @@ import React from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Manager as styles } from '../styles/ManagerStyles'; // Import styles from the separated file
 import { format } from 'date-fns';
+import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
 const TasksModal = ({ visible, onClose, tasks }) => {
     const formatDeadline = (deadline) => {
@@ -11,8 +12,8 @@ const TasksModal = ({ visible, onClose, tasks }) => {
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+      <View style={styles.modalContainer3}>
+        <View style={styles.modalContent3}>
           <Text style={styles.modalTitle}>Tasks</Text>
           <ScrollView>
             {tasks.length > 0 ? (
@@ -30,9 +31,11 @@ const TasksModal = ({ visible, onClose, tasks }) => {
               <Text style={styles.noTasksText}>No tasks found</Text>
             )}
           </ScrollView>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+          <View style={styles.closeButtonContainer3}>
+        <TouchableOpacity onPress={onClose} style={styles.CloseButton3}>
+          <Ionicons name="close" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
         </View>
       </View>
     </Modal>

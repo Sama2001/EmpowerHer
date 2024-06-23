@@ -234,6 +234,33 @@ fontWeight:'bold',
     padding: 20,
     borderRadius: 10,
   },
+
+  modalContent3: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    marginLeft:-90,
+    marginTop:50,
+  },
+
+  modalContainer3: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 40,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 500,
+    height: '100%',
+  },
+
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -260,6 +287,20 @@ fontWeight:'bold',
     backgroundColor: 'blue',
     borderRadius: 5,
   },
+
+  closeButtonContainer3: {
+    position: 'absolute',
+    top:10,
+    right:10,
+  },
+  CloseButton3:{
+    
+    padding: 3,
+    borderRadius:10,
+    backgroundColor: 'rgba(187, 123, 107, 0.6)',
+
+  },
+  
   closeButtonText: {
     color: 'white',
     fontSize: 16,

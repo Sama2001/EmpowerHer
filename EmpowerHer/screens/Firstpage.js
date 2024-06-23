@@ -236,6 +236,18 @@ useEffect(() => {
   };
 
 
+  const navigateToDonation = () => {
+
+    navigation.navigate('Donation');
+    
+};
+
+const navigateToNotification = () => {
+console.log('memberId',memberId);
+navigation.navigate('Notifications', {authToken, memberId });
+};
+
+
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -333,7 +345,7 @@ useEffect(() => {
           
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer} onPress={navigateToNotification}>
           <MaterialCommunityIcons name="bell-outline" size={28} color="#a86556" />
          
         </TouchableOpacity>
@@ -365,7 +377,7 @@ useEffect(() => {
             <MaterialCommunityIcons name="bullseye" size={24} color="#a86556" style={styles.aboutIcon} />
             <Text style={styles.aboutText}>
               Mission: The Palestinian Businesswomen's
-               Association "Asala" is a Palestinian institution 
+               Association "EmpowerHer" is a Palestinian institution 
                that works to empower Palestinian women with limited resources 
                to reach their economic and social rights through a comprehensive and 
                sustainable developmental approach based on their needs and aspirations.
@@ -381,11 +393,11 @@ useEffect(() => {
           <View style={styles.aboutItem}>
             <MaterialCommunityIcons name="star" size={24} color="#a86556" style={styles.aboutIcon} />
             <Text style={styles.aboutText}>
-              Goals: Asala aims to enhance the necessary skills
+              Goals: EmpowerHer aims to enhance the necessary skills
                of Palestinian women and strengthen their opportunities
                 for successful contribution to society and its development,
                  aiming for equality in rights and access to resources and institutions. 
-                 To achieve this goal, Asala's staff commit to values of transparency, democracy,
+                 To achieve this goal, EmpowerHer's staff commit to values of transparency, democracy,
                   and social justice, and have developed a variety of services since its founding to
                    enable women to better organize their projects to benefit from economic opportunities.
             </Text>
@@ -398,12 +410,12 @@ useEffect(() => {
 <ScrollView>
 <Text style={styles.sectionTitle}>Join Us</Text>
   <Text style={styles.additionalText}>
-    Asala Palestinian Businesswomen's Association started its
+  EmpowerHer Palestinian Businesswomen's Association started its
      membership program in 2019, granting beneficiaries the opportunity
       to join the association and benefit more from the exhibitions, workshops,
        and trainings it conducts in various fields related to market access, 
        capacity building, mobilization, and advocacy. Members can choose the membership 
-       category that suits them and the size of their project. Asala aims to increase its
+       category that suits them and the size of their project. EmpowerHer aims to increase its
         membership and expand its beneficiary base to achieve its mission of empowering Palestinian 
         women economically</Text>
   <TouchableOpacity style={styles.membershipButton} onPress={navigateToMembership}>
@@ -415,7 +427,7 @@ useEffect(() => {
 <View style={styles.contentSection}>
   <Text style={styles.sectionTitle}>Store</Text>
   <Text style={styles.sectionText}>
-    Asala's store offers a variety of products produced by Palestinian women, including handicrafts, food items, clothing, jewelry, and gifts. Purchasing these products supports local women and contributes to boosting the local economy and promoting sustainable development in Palestine.
+  EmpowerHer's store offers a variety of products produced by Palestinian women, including handicrafts, food items, clothing, jewelry, and gifts. Purchasing these products supports local women and contributes to boosting the local economy and promoting sustainable development in Palestine.
   </Text>
   <TouchableOpacity style={styles.button} onPress={navigateToStore}>
     <Text style={styles.buttonText}>Visit Store</Text>
@@ -456,6 +468,10 @@ useEffect(() => {
  </TouchableOpacity>
 
 
+ <TouchableOpacity style={styles.DoButton} onPress={navigateToDonation}>
+       
+       <Text style={styles.menuItemText}> Support Us </Text>
+ </TouchableOpacity>
 
  <TouchableOpacity style={styles.StoreButton} onPress={navigateToStore}>
         <Text style={styles.menuItemText}> Store </Text>

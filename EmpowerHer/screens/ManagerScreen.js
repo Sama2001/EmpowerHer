@@ -40,6 +40,7 @@ const ManagerScreen = ({ navigation,route }) => {
 
   const [showOrdersModal, setShowOrdersModal] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   const [images, setImages] = useState([]); // State for project pictures
   const [description, setDescription] = useState('');
@@ -637,6 +638,19 @@ const ManagerScreen = ({ navigation,route }) => {
     }
   };
   
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch('http://192.168.1.120:3000/notifications');
+      const data = await response.json();
+      if (data.success) {
+        setNotifications(data.notifications);
+      } else {
+        console.error('Failed to fetch notifications:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
   
   const handleAssignTask = async (description, deadline) => {
     try {
@@ -657,6 +671,9 @@ const ManagerScreen = ({ navigation,route }) => {
       if (data.success) {
         // If task is successfully assigned, perform any additional actions as needed
         Alert.alert('Success', 'Task assigned successfully');
+        fetchNotifications();
+
+        
       } else {
         Alert.alert('Error', data.message); // Display error message if request fails
       }

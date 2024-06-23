@@ -119,6 +119,19 @@ export const firstPageStyles = StyleSheet.create({
     marginTop:320,
     zIndex: 2,
   },
+
+  DoButton: {
+    position: 'absolute',
+    top: 150,
+    left: 5,
+    padding: 10,
+    borderRadius: 10,
+    borderBottomWidth: 1,
+    borderColor: '#a86556',
+    width: 150,
+    marginTop:320,
+    zIndex: 2,
+  },
   logout: {
     position: 'absolute',
     top: 70,

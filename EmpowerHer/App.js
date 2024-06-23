@@ -26,6 +26,8 @@ import BuyNow from './screens/BuyNow';
 import Purchase from './screens/PurchaseNow';
 import { MessageProvider } from './screens/MessageContext';
 import AdminStoreScreen from './screens/AdminStore';
+import PaymentScreen from './screens/Donation';
+import NotificationScreen from './screens/Notifications';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -58,6 +60,8 @@ export default function App() {
         <Stack.Screen name="BuyNow" component={BuyNow}/>
         <Stack.Screen name="Buy" component={Purchase}/>
         <Stack.Screen name="AdminStore" component={AdminStoreScreen}/>
+        <Stack.Screen name="Donation" component={PaymentScreen}/>
+        <Stack.Screen name="Notifications" component={NotificationScreen}/>
 
 
       </Stack.Navigator>

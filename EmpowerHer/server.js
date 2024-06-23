@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
-
+const paypal = require('paypal-rest-sdk');
 const app = express();
 const PORT = 3000;
 const { OAuth2Client } = require('google-auth-library'); // Import Google Auth Library
@@ -43,6 +43,54 @@ const verifyToken = (req, res, next) => {
 
 
 
+paypal.configure({
+  mode: 'sandbox', // Set to 'live' for production
+  client_id: 'Ad9MEM-nFyEA2B_4JFJGjKz3aqUY8KkU73KNsAyZfy_DPFv7hFZAFGUH62_RuNeG71iM8qnJDIdh8EFF',
+  client_secret: 'EB61GTpP1Qm8fxZAbUDgIiG3su1srCLVyDMitNkXwl35ov_Sa18TdWXtf0ze0L_e7Igu-uem4F9ULbRO'
+});
+
+// Route to create a PayPal payment
+app.post('/create-payment', async (req, res) => {
+  const { amount, currency, description } = req.body;
+
+  // Payment details
+  const paymentData = {
+    intent: 'sale',
+    payer: {
+      payment_method: 'paypal',
+    },
+    redirect_urls: {
+      return_url: 'http://192.168.1.120:3000/success',
+      cancel_url: 'http://192.168.1.120:3000/cancel',
+    },
+    transactions: [
+      {
+        amount: {
+          total: amount.toFixed(2),
+          currency,
+        },
+        description,
+      },
+    ],
+  };
+
+  try {
+    // Create a PayPal payment
+    paypal.payment.create(paymentData, (error, payment) => {
+      if (error) {
+        console.error('Error creating PayPal payment:', error);
+        res.status(500).json({ success: false, message: 'Failed to create PayPal payment' });
+      } else {
+        // Extract the approval URL from the payment response
+        const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
+        res.json({ success: true, approvalUrl }); // Send approvalUrl back to the client
+      }
+    });
+  } catch (error) {
+    console.error('Error creating PayPal payment:', error);
+    res.status(500).json({ success: false, message: 'Failed to create PayPal payment' });
+  }
+});
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -53,6 +101,29 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+
+
+const notificationSchema = new mongoose.Schema({
+  memberId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Member',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  body: {
+    type: String,
+    required: true
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Notification = mongoose.model('Notification', notificationSchema);
 
 const UserSchema = new mongoose.Schema({
 
@@ -709,6 +780,59 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
+app.post('/send-email-task', async (req, res) => {
+  const { memberId, description, deadline } = req.body;
+
+  try {
+    // Fetch member details using memberId
+    const memberResponse = await fetch(`http://localhost:3000/members/${memberId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const memberData = await memberResponse.json();
+    if (!memberData.success) {
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+
+    const member = memberData.Member;
+    const email = member.email || member.emailAddress; // Check both possible fields
+    const { fullName } = member;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Member does not have an email address' });
+    }
+
+    const mailOptions = {
+      from: 'samafadah2001@gmail.com',
+      to: email,
+      subject: 'New Task Assignment',
+      text: `Hello ${fullName},
+
+We are pleased to inform you that you have been assigned a new task. Below are the details:
+
+Description: ${description}
+Due Date: ${deadline}
+
+Please make sure to complete it by the due date.
+
+Thank you for your dedication and hard work.
+
+Best regards,
+The EmpowerHer Team`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error assigning task or sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to assign task or send email' });
+  }
+});
+
 ////////////post internship/////
 app.post('/internships',verifyToken, async (req, res) => {
   try {
@@ -729,21 +853,92 @@ app.post('/internships',verifyToken, async (req, res) => {
 });
 
 /////post task////
-app.post("/tasks",verifyToken, async (req, res) => {
+app.post("/tasks", verifyToken, async (req, res) => {
   try {
     const { memberId, description, deadline } = req.body;
+
+    // Create a new task
     const newTask = await Task.create({
       memberId,
       description,
       deadline,
       progress: '0%', // Set default progress
     });
-    res.status(201).json({ success: true, task: newTask });
+
+    // Fetch member details using memberId
+    const Member = await member.findById(memberId);
+
+    if (!Member) {
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+//console.log('memebr',Member)
+    // Extract necessary details for sending email
+    const { emailAddress, fullName } = Member;
+
+console.log('email',emailAddress);
+    if (!emailAddress) {
+      return res.status(400).json({ success: false, message: 'Member does not have an email address' });
+    }
+
+    // Construct email options
+    const mailOptions = {
+      from: 'samafadah2001@gmail.com', // Sender's email address
+      to: emailAddress,
+      subject: 'New Task Assignment',
+      text: `Hello ${fullName},
+
+You have been assigned a new task. Below are the details:
+
+Description: ${description}
+Due Date: ${deadline}
+
+Please make sure to complete it by the due date.
+
+Best regards,
+EmpowerHer`,
+    };
+
+    // Send email using transporter
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+
+    const newNotification = new Notification({
+      memberId,
+      title: 'New Task Assigned',
+      body: `You have a new task: ${description}`,
+      timestamp: new Date().toISOString()
+    });
+    await newNotification.save();
+
+    // Respond with success message and task details
+    res.status(201).json({ success: true, message: 'Task created successfully and email sent', task: newTask });
   } catch (error) {
-    console.error("Error creating task:", error);
-    res.status(500).json({ success: false, message: "Failed to create task" });
+    console.error("Error creating task or sending email:", error);
+    res.status(500).json({ success: false, message: "Failed to create task or send email" });
   }
 });
+
+app.get('/notifications', async (req, res) => {
+  const { memberId } = req.query;
+
+  try {
+    let notifications;
+    
+    if (memberId) {
+      // Fetch notifications specific to the memberId
+      notifications = await Notification.find({ memberId }).sort({ timestamp: -1 });
+    } else {
+      // If memberId is not provided, fetch all notifications
+      notifications = await Notification.find().sort({ timestamp: -1 });
+    }
+    
+    res.json({ success: true, notifications });
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+});
+
 
 ///post products/////////
 app.post("/products", upload.array("images"), async (req, res) => {
@@ -892,6 +1087,27 @@ app.get('/members/:email', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.get('/members/:id', async (req, res) => {
+  const memberId = req.params.id;
+
+  try {
+    console.log('Fetching member with ID:', memberId); // Log before querying the database
+    const Member = await member.findById(memberId);
+
+    if (!Member) {
+      console.log('Member not found for ID:', memberId); // Log if member is not found
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+
+    console.log('Member found:', Member); // Log member details if found
+    res.status(200).json({ success: true, Member });
+  } catch (error) {
+    console.error('Error fetching member by ID:', error); // Log any errors that occur
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 
 // GET user to fetch user by ID
 app.get('/user/:id', verifyToken,async (req, res) => {
