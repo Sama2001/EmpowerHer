@@ -426,6 +426,12 @@ const CustomersSchema = new mongoose.Schema({
     type: Date,
     default: Date.now, 
     },
+
+    Review: {
+      type: String,
+      default: "Not reviewed", 
+
+      },
 });
 
 const Customers = mongoose.model("Customers", CustomersSchema); 
@@ -717,6 +723,33 @@ app.put('/attend/:id', async (req, res) => {
   }
 });
 
+app.put('/order/:id', async (req, res) => {
+  const orderId = req.params.id;
+  const { Review } = req.body;
+
+  try {
+    const customer = await Customers.findByIdAndUpdate(
+      orderId,
+      { Review },
+      { new: true } // Ensure validators run on update
+    );
+
+    if (!customer) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    return res.status(200).json({ success: true, message: 'Order review updated successfully', customer });
+  } catch (error) {
+    console.error('Error updating order review:', error.message);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
+
+
+
 /////post opportunities (Internship)/////////////////
 app.post('/opportunities',verifyToken, upload.array('cv'), async (req, res) => {
   try {
@@ -768,6 +801,26 @@ app.post('/send-email', async (req, res) => {
     to: email,
     subject: 'Internship Approval',
     text: `Dear ${fullName},\n\nCongratulations! Your request to become an intern has been approved.\n\nBest regards,\nEmpowerHer`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
+});
+
+app.post('/send-email-membership', async (req, res) => {
+  const { email, fullName } = req.body;
+
+  const mailOptions = {
+    from: 'samafadah2001@gmail.com',
+    to: email,
+    subject: 'Membership Approval',
+    text: `Dear ${fullName},\n\nCongratulations! Your request to become Member has been approved.\n\nBest regards,\nEmpowerHer`,
   };
 
   try {

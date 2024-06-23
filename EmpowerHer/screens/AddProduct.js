@@ -50,9 +50,10 @@ const AddProduct = ({ navigation, route }) => {
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsMultipleSelection: true, // Enable multiple selection if available
       aspect: [4, 3],
       quality: 1,
+
     });
 
     if (!result.canceled) {

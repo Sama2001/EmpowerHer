@@ -486,7 +486,20 @@ const ManagerScreen = ({ navigation,route }) => {
         });
         setMembershipData(prevData => prevData.filter(item => item._id !== form._id));
         fetchInternsData();
-
+        fetchmembersData();
+        const emailResponse = await fetch('http://192.168.1.120:3000/send-email-membership', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authToken, // Assuming you have a token for authentication
+          },
+          body: JSON.stringify({ email: form.email, fullName: form.fullName  }),
+        });
+  
+        const emailData = await emailResponse.json();
+        if (!emailData.success) {
+          Alert.alert('Error', emailData.message);
+        } 
         // Perform any additional actions as needed (e.g., updating UI, refreshing data)
       } else {
         Alert.alert('Error', data.message); // Display error message if request fails
@@ -704,7 +717,7 @@ const ManagerScreen = ({ navigation,route }) => {
   return (
     <ScrollView contentContainerStyle={{}}>
     <View style={styles.container}>
-      <Text style={{ fontSize: 24, marginBottom: 20 }}>Manager Screen</Text>
+      <Text style={{ fontSize: 24, marginBottom: 15, marginTop:-120, }}>Manager Screen</Text>
       {/*membership forms */}      
 
       <TouchableOpacity style={styles.button} onPress={() => setShowMembershipForms(true)}>

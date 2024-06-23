@@ -1,12 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, ScrollView,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
 const OrdersModal = ({ visible, orders, onClose }) => {
   //console.log('Orders:', orders); // Log the orders prop
   const [products, setProducts] = useState([]);
 
+  const handleReview = async (orderId) => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/order/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ Review: 'Reviewed' }),
+      });
 
+      const data = await response.json();
+      if (data.success) {
+        console.log('Order review updated successfully:', data.customer);
+        Alert.alert('Reviewed Successfully')
+        // Optionally, you can update the local state or refetch data
+        
+      } else {
+        console.error('Failed to update order review:', data.message);
+      }
+    } catch (error) {
+      console.error('Error updating order review:', error);
+    }
+  };
+
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -22,7 +46,6 @@ const OrdersModal = ({ visible, orders, onClose }) => {
         console.error('Error fetching products:', error);
       }
     };
-
     fetchProducts();
   }, [orders]);
 
@@ -30,7 +53,7 @@ const OrdersModal = ({ visible, orders, onClose }) => {
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.container}>
-        <Text style={styles.title}>Orders Modal</Text>
+        <Text style={styles.title}>Orders</Text>
 
 
 
@@ -48,10 +71,19 @@ const OrdersModal = ({ visible, orders, onClose }) => {
                 <Text>Quantity: {orders[index].quantity}</Text>
                 <Text>Country: {orders[index].Country} {orders[index].country} </Text>
                 <Text>City: {orders[index].City} {orders[index].city} </Text>
+                <Text>Mobile Number: {orders[index].mobileNumber}</Text>
                 <Text>Date: {orders[index].date} </Text>
                 <Text>Total Amount: ₪{orders[index].TotalAmount}{orders[index].totalAmount}</Text>
+                <Text style={styles.revTitle}>Status: {orders[index].Review}</Text>
 
                 {/* Add more order details as needed */}
+
+                {orders[index].Review !== 'Reviewed' && (
+                  <TouchableOpacity onPress={() => handleReview(orders[index]._id)} style={styles.reviewButton}>
+                    <Text style={styles.reviewButtonText}>Review</Text>
+                  </TouchableOpacity>
+                )}
+
               </View>
             ))
           ) : (
@@ -94,6 +126,20 @@ const styles = {
   scrollView: {
     alignItems: 'center',
   },
+
+  reviewButton: {
+    marginTop: 10,
+    backgroundColor: '#a86556',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+  },
+  reviewButtonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight:'bold',
+  },
   orderContainer: {
     marginBottom: 20,
     borderWidth: 1,
@@ -103,6 +149,10 @@ const styles = {
   },
   orderTitle: {
     fontWeight: 'bold',
+  },
+  revTitle: {
+    fontWeight: 'bold',
+    color:'red',
   },
   noOrdersText: {
     marginBottom: 20,

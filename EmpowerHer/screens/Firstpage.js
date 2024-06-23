@@ -31,8 +31,9 @@ const FirstPage = ({ navigation, route,result }) => {
   const [attendanceCount, setAttendanceCount] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [showEvents, setShowEvents] = useState(false); // State to manage events visibility
-
+  const [notificationCount, setNotificationCount] = useState(0); // State to hold notification count
   const userCartItems = cartItems.filter(item => item.userId === userId);
+  const [notifications, setNotifications] = useState([]);
 
   const totalUniqueItemsInCart = [...new Set(userCartItems.map(item => item._id))].length;
 
@@ -317,6 +318,30 @@ navigation.navigate('Notifications', {authToken, memberId });
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/notifications?memberId=${memberId}`, {
+        headers: {
+          Authorization: authToken, // Pass auth token in headers if required by your backend
+        },
+      });
+            const data = await response.json();
+      if (data.success) {
+        setNotifications(data.notifications || []);
+        setNotificationCount(data.notifications.length); // Update notification count
+      } else {
+        console.error('Failed to fetch notifications:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (memberId && authToken) {
+      fetchNotifications();
+    }
+  }, [memberId, authToken]);
 
   return (
     
@@ -347,7 +372,11 @@ navigation.navigate('Notifications', {authToken, memberId });
         
         <TouchableOpacity style={styles.iconContainer} onPress={navigateToNotification}>
           <MaterialCommunityIcons name="bell-outline" size={28} color="#a86556" />
-         
+          {notificationCount > 0 && (
+          <View style={styles.notification}>
+            <Text style={styles.notificationText}>{notificationCount}</Text>
+          </View>
+          )}
         </TouchableOpacity>
       </View>
      

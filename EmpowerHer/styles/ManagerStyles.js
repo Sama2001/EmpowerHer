@@ -12,7 +12,7 @@ export const Manager = StyleSheet.create({
      borderRadius: 30,
      margin: 5,
      borderColor: '#a86556',
-     height:1500,
+     height:1000,
    },
   modalMemberContainer: {
     flex: 1,

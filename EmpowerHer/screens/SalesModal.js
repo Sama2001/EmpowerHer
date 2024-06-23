@@ -1,21 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
 const SalesModal = ({ visible, sales, onClose }) => {
+
+  const [productNames, setProductNames] = useState({});
+
+  const fetchProductName = async (productId) => {
+    try {
+      const response = await fetch(`http://192.168.1.120:3000/product/${productId}`);
+      const data = await response.json();
+      if (data.success) {
+        const { productName } = data.product; // Assuming your product object has a 'productName' field
+        return productName;
+      } else {
+        console.error('Failed to fetch product details:', data.message);
+        return 'Product Name Unavailable'; // Default name if fetch fails
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      return 'Product Name Unavailable'; // Default name if fetch fails
+    }
+  };
+
+  const fetchProductNames = async () => {
+    const productNamesMap = {};
+    for (const sale of sales) {
+      const productName = await fetchProductName(sale.productId);
+      productNamesMap[sale.productId] = productName;
+    }
+    setProductNames(productNamesMap);
+  };
+
+  useEffect(() => {
+    if (visible && sales.length > 0) {
+      fetchProductNames();
+    }
+  }, [visible, sales]);
+
   return (
     <Modal visible={visible} animationType="slide">
       <View style={styles.container}>
-        <Text style={styles.title}>Sales Modal</Text>
+        <Text style={styles.title}>Sales </Text>
 
         <ScrollView contentContainerStyle={styles.scrollView}>
           {sales.length > 0 && (
             sales.map((sale, index) => (
               <View key={index} style={styles.saleContainer}>
+                  <Text style={styles.label}>Product ID:</Text>
+                  <Text style={styles.text}>{sale.productId}</Text>
+
+                  <Text style={styles.label}>Product Name:</Text>
+                  <Text style={styles.text}>{productNames[sale.productId] || 'Loading...'}</Text>
+
                 <Text style={styles.label}>Quantity:</Text>
                 <Text style={styles.text}>{sale.quantity}</Text>
-                <Text style={styles.label}>Product ID:</Text>
-                <Text style={styles.text}>{sale.productId}</Text>
+              
+
               </View>
             ))
           )}
