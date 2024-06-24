@@ -36,12 +36,12 @@ export const profileScreenStyles = StyleSheet.create({
   eyeIcon: {
     position: 'absolute',
     right: 50,
-    top: 470,
+    top: 480,
   },
   eyeIcon1: {
     position: 'absolute',
     right: 50,
-    top: 530,
+    top: 540,
   },
   
   button: {

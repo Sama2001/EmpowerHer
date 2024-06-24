@@ -254,8 +254,8 @@ useEffect(() => {
       }
       setMemberId(data.memberId); // Set member ID state
     } catch (error) {
-      console.error('Error fetching member ID:', error.message);
-      Alert.alert('Error', 'An error occurred while fetching member ID');
+     // console.error('Error fetching member ID:', error.message);
+     // Alert.alert('Error', 'An error occurred while fetching member ID');
     }
   };
 
@@ -323,7 +323,7 @@ useEffect(() => {
       }
       else {
         // Error updating profile
-        Alert.alert('Error', 'Failed to update profile');
+       // Alert.alert('Error', 'Failed to update profile');
       }
     } catch (error) {
       console.error('Error updating user profile:', error);
@@ -370,6 +370,9 @@ useEffect(() => {
           {showInterns ? 'Hide Connected Interns' : 'Show Connected Interns'}
         </Text>
       </TouchableOpacity>
+
+      
+
 
       {showInterns && (
         <View style={styles.internsContainer}>

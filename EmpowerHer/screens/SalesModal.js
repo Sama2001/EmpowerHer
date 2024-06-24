@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for vector icons
 
-const SalesModal = ({ visible, sales, onClose }) => {
+const SalesModal = ({ visible, sales, onClose,totalRevenue }) => {
 
   const [productNames, setProductNames] = useState({});
 
@@ -60,6 +60,8 @@ const SalesModal = ({ visible, sales, onClose }) => {
               </View>
             ))
           )}
+                    <Text>Total Revenue: {totalRevenue}</Text>
+
         </ScrollView>
 
         <View style={styles.closeButtonContainer2}>
@@ -109,6 +111,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 20,
+    marginTop:20,
+
   },
   scrollView: {
     alignItems: 'center',

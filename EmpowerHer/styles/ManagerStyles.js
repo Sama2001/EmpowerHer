@@ -58,14 +58,21 @@ export const Manager = StyleSheet.create({
     backgroundColor: 'rgba(187, 123, 107, 0.6)',
 
   },
-
+  revenuesContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    padding: 10,
+    width: 300,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
   MemeberformContainer: {
     marginBottom: 20,
     padding: 10,
     borderWidth: 1,
     borderColor: 'lightgray',
     borderRadius: 5,
-    width: 350,
+    width: 370,
   },
   formTitle: {
     fontSize: 18,

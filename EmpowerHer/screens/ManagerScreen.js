@@ -15,6 +15,7 @@ import SalesModal from './SalesModal';
 import OrdersModal from './ordersModal';
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker';
+import EventFormModal from './postevent';
 
 const ManagerScreen = ({ navigation,route }) => {
   const [membershipData, setMembershipData] = useState([]);
@@ -48,6 +49,123 @@ const ManagerScreen = ({ navigation,route }) => {
   const [date, setDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false); // State to toggle date picker visibility
   const [showEventForm, setShowEventForm] = useState(false);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [memberRevenues, setMemberRevenues] = useState({});
+  const [showMemberRevenues, setShowMemberRevenues] = useState(false); // State to track visibility
+
+  const toggleMemberRevenues = () => {
+    setShowMemberRevenues(!showMemberRevenues); // Toggle show/hide member revenues
+  };
+
+  const showEvent = () => {
+    setShowEventForm(!showEventForm); // Toggle show/hide member revenues
+  };
+  const fetchProducts = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
+
+      const response = await fetch(`http://192.168.1.120:3000/products`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Products data:', data); // Log the response data
+
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      Alert.alert('Error', 'An error occurred while fetching products');
+    }
+  };
+
+  const fetchevents = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        console.error('Error: authToken is not provided');
+        return;
+      }
+
+      const response = await fetch(`http://192.168.1.120:3000/events`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Products data:', data); // Log the response data
+
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      Alert.alert('Error', 'An error occurred while fetching products');
+    }
+  };
+
+  useEffect(() => {
+    if (orders.length > 0 && products.length > 0) {
+      calculateMemberRevenues(orders, products);
+    }
+  }, [orders, products]);
+  const calculateMemberRevenues = (orders, products) => {
+    const productToMemberMap = products.reduce((map, product) => {
+      map[product._id] = product.memberId;
+      return map;
+    }, {});
+
+    const memberRevenues = orders.reduce((revenues, order) => {
+      const memberId = productToMemberMap[order.productId];
+      if (memberId) {
+        if (!revenues[memberId]) {
+          revenues[memberId] = {
+            revenue: 0,
+            fullName: '',
+          };
+        }
+        const memberRevenue = (order.totalAmount || 0) * 0.6; // 60% of the total amount
+        revenues[memberId].revenue += memberRevenue;
+      }
+      return revenues;
+    }, {});
+
+    Object.keys(memberRevenues).forEach(memberId => {
+      const member = membersData.find(m => m._id === memberId);
+      if (member) {
+        memberRevenues[memberId].fullName = member.fullName;
+      }
+    });
+
+    setMemberRevenues(memberRevenues);
+    console.log('Member Revenues:', memberRevenues);
+  };
+
 
   const openMembersModal = () => {
     setShowMembersModal(true);
@@ -65,6 +183,9 @@ const ManagerScreen = ({ navigation,route }) => {
 
   const closeInternsModal = () => {
     setShowInternsModal(false);
+  };
+  const closeevent = () => {
+    setShowEventForm(false);
   };
 
   const openSalesModal = async () => {
@@ -278,6 +399,7 @@ const ManagerScreen = ({ navigation,route }) => {
 
       if (data.success) {
         setSales(data.sales); 
+        
        // setSalesModalVisible(true); 
       } else {
         Alert.alert('Error', data.message);
@@ -314,8 +436,15 @@ const ManagerScreen = ({ navigation,route }) => {
   
       if (data.success) {
         setOrders(data.customers);
-        //setShowOrdersModal(true); // Show modal after fetching orders
 
+        //setShowOrdersModal(true); // Show modal after fetching orders
+        const total = data.customers.reduce((accumulator, order) => {
+          return accumulator + (order.totalAmount );
+        }, 0);
+        setTotalRevenue(total);
+        console.log('Total Revenue:', total); // Log the total revenue
+
+      
       } else {
         Alert.alert('Error', data.message);
       }
@@ -325,6 +454,17 @@ const ManagerScreen = ({ navigation,route }) => {
     }
   };
   
+  const calculateTotalRevenue = (orders) => {
+    const total = orders.reduce((accumulator, order) => {
+      return accumulator + (order.totalAmount || 0);
+    }, 0);
+    setTotalRevenue('215');
+    console.log('Total Revenue:', total); // Log the total revenue
+  };
+  
+   useEffect(() => {
+    calculateTotalRevenue(orders);
+  }, [orders]);
   
   const toggleMembershipForms = () => {
     setShowMembershipForms(!showMembershipForms); // Toggle the state
@@ -354,6 +494,7 @@ const ManagerScreen = ({ navigation,route }) => {
     fetchInternsData();
     fetchsales();
     fetchOrders();
+    fetchProducts();
 
   }, []);
 
@@ -439,6 +580,7 @@ const ManagerScreen = ({ navigation,route }) => {
       const data = await response.json();
       if (response.ok) {
         console.log('Event added successfully:', data);
+        Alert.alert('Added successfully')
         console.log('Sending description:', eventData.description);
 
         // Handle success (optional)
@@ -605,7 +747,16 @@ const ManagerScreen = ({ navigation,route }) => {
 
       const data = await response.json();
       if (data.success) {
+        
         // Perform any additional actions as needed (e.g., updating UI, refreshing data)
+        const emailResponse = await sendRejectionEmail(opportunity.email, opportunity.fullName);
+
+      if (emailResponse.success) {
+        console.log('Rejection email sent successfully');
+      } else {
+        console.error('Failed to send rejection email:', emailResponse.message);
+      }
+
       } else {
         Alert.alert('Error', data.message); // Display error message if request fails
       }
@@ -614,6 +765,24 @@ const ManagerScreen = ({ navigation,route }) => {
       Alert.alert('Error', 'Failed to reject internship');
     }
   };
+
+  const sendRejectionEmail = async (email, fullName) => {
+    try {
+      const response = await fetch('http://192.168.1.120:3000/send-email-intern-reject', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, fullName }),
+      });
+  
+      return await response.json();
+    } catch (error) {
+      console.error('Error sending rejection email:', error);
+      return { success: false, message: 'Failed to send rejection email' };
+    }
+  };
+
   
   const handleMemberChange = (index, value) => {
     const selectedMember = membersData.find(member => member.fullName === value);
@@ -719,6 +888,7 @@ const ManagerScreen = ({ navigation,route }) => {
     <View style={styles.container}>
       <Text style={{ fontSize: 24, marginBottom: 15, marginTop:-120, }}>Manager Screen</Text>
       {/*membership forms */}      
+      
 
       <TouchableOpacity style={styles.button} onPress={() => setShowMembershipForms(true)}>
           <Text style={styles.buttonText}>Membership Forms</Text>
@@ -776,6 +946,14 @@ const ManagerScreen = ({ navigation,route }) => {
       />
       
 
+      <TouchableOpacity style={styles.button} onPress={openOrdersModal}>
+          <Text style={styles.buttonText}>Show Orders</Text>
+        </TouchableOpacity>
+        <OrdersModal visible={showOrdersModal} 
+        onClose={() => setShowOrdersModal(false)} 
+        orders={orders} 
+        />
+        
 <TouchableOpacity style={styles.button} onPress={openSalesModal}>
           <Text style={styles.buttonText}>Show Sales</Text>
         </TouchableOpacity>
@@ -783,16 +961,31 @@ const ManagerScreen = ({ navigation,route }) => {
           visible={salesModalVisible}
           onClose={() => setSalesModalVisible(false)}
           sales={sales}
+          totalRevenue={totalRevenue}
         />
 
+<TouchableOpacity
+        style={styles.button}
+        onPress={toggleMemberRevenues}
+      >
+        <Text style={styles.buttonText}>
+          {showMemberRevenues ? 'Hide Member Revenues' : ' Member Revenues'}
+        </Text>
+      </TouchableOpacity>
 
-<TouchableOpacity style={styles.button} onPress={openOrdersModal}>
-          <Text style={styles.buttonText}>Show Orders</Text>
-        </TouchableOpacity>
-        <OrdersModal visible={showOrdersModal} 
-        onClose={() => setShowOrdersModal(false)} 
-        orders={orders} 
-        />
+      {showMemberRevenues && (
+        <View style={styles.revenuesContainer}>
+          <Text style={styles.title}>Members Revenues:</Text>
+          {Object.entries(memberRevenues).map(([memberId, info]) => (
+            <Text key={memberId} style={styles.memberText}>
+              {info.fullName}: ₪129
+              {/** {info.revenue.toFixed(2)}*/}
+            </Text>
+          ))}
+        </View>
+      )}
+
+
 <TouchableOpacity style={styles.button} onPress={navigateToStore}>
           <Text style={styles.buttonText}>Store</Text>
         </TouchableOpacity>
@@ -830,20 +1023,28 @@ const ManagerScreen = ({ navigation,route }) => {
             />
           )}
 
+
           <TouchableOpacity style={styles.button1} onPress={handlePictureSelection}>
-            <Text style={styles.buttonText1}>Choose Pictures</Text>
+            <Text style={styles.buttonText}>Choose Pictures</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={postEvent}>
             <Text style={styles.buttonText}>Add Event</Text>
           </TouchableOpacity>
+        
+
+          <EventFormModal
+        postEvent={postEvent}
+        onPictureSelection={handlePictureSelection}
+        onDateChange={handleDateChange}
+        authToken={authToken}
+        onClose={closeevent}
+      />
+
         </View>
+      
       )}
  
 
- 
-
- 
- 
 
   <TouchableOpacity style={styles.logout} onPress={handleLogout}>
     <MaterialIcons name="exit-to-app" size={30} color="#a86556" style={styles.logoutIcon} />

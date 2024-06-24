@@ -65,17 +65,18 @@ const OrdersModal = ({ visible, orders, onClose }) => {
 {products.length > 0 ? (
             products.map((product, index) => (
               <View key={index} style={styles.orderContainer}>
-                <Text style={styles.orderTitle}>Order {index + 1}</Text>
-                <Text>Product Name: {product ? product.productName : 'Unknown'}</Text>
-                <Text>Product ID: {orders[index].productId} </Text>
-                <Text>Quantity: {orders[index].quantity}</Text>
-                <Text>Country: {orders[index].Country} {orders[index].country} </Text>
-                <Text>City: {orders[index].City} {orders[index].city} </Text>
-                <Text>Mobile Number: {orders[index].mobileNumber}</Text>
-                <Text>Date: {orders[index].date} </Text>
-                <Text>Total Amount: ₪{orders[index].TotalAmount}{orders[index].totalAmount}</Text>
-                <Text style={styles.revTitle}>Status: {orders[index].Review}</Text>
-
+               {/**<Text style={styles.orderTitle}>Order {index + 1}</Text>*/} 
+                <Text style={styles.noOrdersText}>Product Name: {product ? product.productName : 'Unknown'}</Text>
+                <Text style={styles.noOrdersText}>Product ID: {orders[index].productId} </Text>
+                <Text style={styles.noOrdersText}>Quantity: {orders[index].quantity}</Text>
+                <Text style={styles.noOrdersText}>Country: {orders[index].Country} {orders[index].country} </Text>
+                <Text style={styles.noOrdersText}>City: {orders[index].City} {orders[index].city} </Text>
+                <Text style={styles.noOrdersText}>Mobile Number: {orders[index].mobileNumber}</Text>
+                <Text style={styles.noOrdersText}>Date: {orders[index].date} </Text>
+                <Text style={styles.noOrdersText}>Total Amount: ₪{orders[index].TotalAmount}{orders[index].totalAmount}</Text>
+                <Text style={[styles.revTitle, orders[index].Review === 'Reviewed' ? styles.reviewed : styles.notReviewed]}>
+                  Status: {orders[index].Review}
+                </Text>
                 {/* Add more order details as needed */}
 
                 {orders[index].Review !== 'Reviewed' && (
@@ -141,21 +142,29 @@ const styles = {
     fontWeight:'bold',
   },
   orderContainer: {
-    marginBottom: 20,
+    marginBottom: 30,
     borderWidth: 1,
     padding: 10,
     width: 400,
     borderRadius: 10,
   },
   orderTitle: {
+    marginTop:20,
     fontWeight: 'bold',
   },
   revTitle: {
     fontWeight: 'bold',
-    color:'red',
+  },
+  reviewed: {
+    color: 'green',
+  },
+  notReviewed: {
+    color: 'red',
   },
   noOrdersText: {
-    marginBottom: 20,
+    marginBottom:10,
+    fontWeight:'bold',
+
   },
   closeButton: {
     marginTop: 20,

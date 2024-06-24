@@ -66,35 +66,48 @@ const NotificationScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#dddddd',
+    backgroundColor: '#f0f0f0',
+    textAlign: 'center',
+  },
+  notificationItemContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ededed',
   },
   notificationItem: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    elevation: 2,
   },
   notificationTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   notificationBody: {
     fontSize: 16,
+    color: '#555555',
+    marginBottom: 10,
   },
   notificationTimestamp: {
     fontSize: 14,
-    color: '#888',
+    color: '#888888',
   },
   emptyMessage: {
     alignSelf: 'center',
     marginTop: 20,
     fontSize: 16,
+    color: '#555555',
   },
 });
 

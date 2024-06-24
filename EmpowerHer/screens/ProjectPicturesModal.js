@@ -30,13 +30,20 @@ const ProjectPicturesModal = ({ projectPictures, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  scrollView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 20,
   },
   image: {
-    margin:200,
-    width: 150,
-    height: 150,
+    marginTop:70,
+    marginLeft:82,
+    width: 250,
+    height: 200,
   },
   closeButton: {
     position: 'absolute',
@@ -51,5 +58,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
 
 export default ProjectPicturesModal;

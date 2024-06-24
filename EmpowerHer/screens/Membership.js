@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet ,Alert} from 'react-native';
 import { Membership as styles } from '../styles/MemberShipStyles'; // Import styles
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
@@ -135,6 +135,16 @@ const handleSubmit = async () => {
         },
       });
       console.log('Membership application submitted:', response.data);
+      Alert.alert('Membership application submitted');
+      setFullName('');
+      setAddress('');
+      setMobileNumber('');
+      setEducationLevel('');
+      setAge('');
+      setWebsiteLink('');
+      setProjectLocation('');
+      setProjectSummary('');
+      
       // Optionally, you can navigate to a success screen or show a success message
     } catch (error) {
       console.error('Error submitting membership application:', error);

@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Modal, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Modal, FlatList, TouchableOpacity, StyleSheet ,TextInput} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { db } from '../firebase'; // Adjust path if necessary
 import uuid from 'uuid';
 import { useMessageCount } from './MessageContext';
 import { MessageContext } from './MessageContext'; // Adjust path as necessary
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons from Expo vector icons
 
-const ChatScreen = ({ route }) => {
+const ChatScreen = ({ route,navigation }) => {
   const { authToken, userId } = route.params;
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
@@ -17,7 +18,8 @@ const ChatScreen = ({ route }) => {
   const [chatModalVisible, setChatModalVisible] = useState(false); // <-- Add state for full-screen chat modal
   const {  setMessageCount ,resetMessageCount} = useMessageCount();
   const { messageCount, incrementMessageCount } = useMessageCount();
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState(users);
   // Fetch users and current user details on component mount
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,7 +57,21 @@ const ChatScreen = ({ route }) => {
     fetchCurrentUser();
   }, [authToken, userId]);
 
-
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    const lowerCaseQuery = text.toLowerCase();
+    const filteredData = users.filter(user => {
+      if (user && user.firstName && user.lastName) {
+        return (
+          user.firstName.toLowerCase().includes(lowerCaseQuery) ||
+          user.lastName.toLowerCase().includes(lowerCaseQuery)
+        );
+      }
+      return false;
+    });
+    setFilteredUsers(filteredData);
+  };
+  
   
   useEffect(() => {
     const fetchMessageCount = async () => {
@@ -199,9 +215,21 @@ const ChatScreen = ({ route }) => {
 
   // Rendering the chat screen
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ 
+      backgroundColor: 'hsla(0, 15%, 100%, 0.7)',
+     
+      borderWidth: 5,
+      borderRadius: 30,
+      margin: 5,
+      borderColor: '#a86556', 
+      height:800,
+      
+      }}>
+
+
 <View style={styles.totalReceivedMessages}>
-        <Text style={styles.messageCountText}>Messages received: {messageCount}</Text>
+  {/**         <Text style={styles.messageCountText}>Messages received: {messageCount}</Text>
+*/}
       </View>
 
       <Modal
@@ -213,22 +241,45 @@ const ChatScreen = ({ route }) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Select a User to Chat With</Text>
-            <FlatList
-              data={users}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.userItem}
-                  onPress={() => handleUserSelect(item)}
-                >
-                  <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
-                </TouchableOpacity>
-              )}
-            />
+            <View style={styles.searchContainer}>
+            <Ionicons name="search" size={24} color="rgba(187, 123, 107, 1)" style={styles.searchIcon} />
+
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search "
+          placeholderTextColor='gray'
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
+
+          {/* User List */}
+          <FlatList
+            data={filteredUsers}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.userItem}
+                onPress={() => handleUserSelect(item)}
+              >
+                <Text style={styles.userName}>{item.firstName} {item.lastName}</Text>
+              </TouchableOpacity>
+            )}
+          />
+
+
+
+<View style={styles.closeButtonContainer2}>
+  <TouchableOpacity onPress={() => navigation.navigate('Chat', { authToken, userId })} style={styles.CloseButton}>
+    <Ionicons name="close" size={24} color="black" />
+  </TouchableOpacity>
+</View>
+
+
           </View>
         </View>
       </Modal>
-
+   
       {/* Render a button to open modal if no user is selected */}
       {!selectedUser && (
         <TouchableOpacity style={styles.newChatButton} onPress={openModal}>
@@ -309,12 +360,42 @@ const generateChatId = (userId1, userId2) => {
 
 // Styles for the ChatScreen component
 const styles = StyleSheet.create({
-  
-  centeredView: {
+ 
+ 
+  closeButtonContainer2: {
+    position: 'absolute',
+    top:30,
+    right:25,
+  },
+  CloseButton:{
+    
+    padding: 3,
+    borderRadius:10,
+    backgroundColor: 'rgba(187, 123, 107, 0.6)',
+
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  searchInput: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    marginTop:20,
+  },
+  searchIcon: {
+    marginLeft: -10,
+    marginTop:20,
+
   },
 
   totalReceivedMessages: {
@@ -324,19 +405,25 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent background overlay
+  },
+  modalView: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    elevation: 5,
+    shadowRadius: 3.84,
   },
   modalText: {
     marginBottom: 15,
@@ -352,9 +439,10 @@ const styles = StyleSheet.create({
   },
   newChatButton: {
     padding: 10,
-    backgroundColor: "#007BFF",
-    borderRadius: 5,
-    margin: 10,
+    backgroundColor: "gray",
+    borderRadius: 8,
+    width:100,
+    marginLeft:280,
   },
   newChatButtonText: {
     color: "white",
@@ -369,19 +457,23 @@ const styles = StyleSheet.create({
   chatUserName: {
     fontSize: 18,
     fontWeight: "bold",
+
   },
   lastMessage: {
     fontSize: 14,
     color: "#888",
   },
-  header: {
+   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    marginTop:30,
-    backgroundColor: "#f5f5f5",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: '#ddd',
+    marginTop:30,
+
   },
   backButton: {
     fontSize: 18,
@@ -391,6 +483,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
+    marginRight:120,
   },
 });
 

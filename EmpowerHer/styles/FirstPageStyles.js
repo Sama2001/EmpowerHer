@@ -129,8 +129,16 @@ export const firstPageStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#a86556',
     width: 150,
-    marginTop:320,
+    marginTop:340,
     zIndex: 2,
+  },
+  intrested:
+  { fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color:'gray',
+  
   },
   logout: {
     position: 'absolute',

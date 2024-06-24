@@ -313,6 +313,7 @@ navigation.navigate('Notifications', {authToken, memberId });
       }
 
       setAttendanceCount(attendanceCount + 1);
+      Alert.alert('We are looking forwaerd to seeing you');
     } catch (error) {
       console.error('Error updating attendance:', error.message);
     }
@@ -552,18 +553,21 @@ navigation.navigate('Notifications', {authToken, memberId });
       >
         <View style={styles.modalContainer}>
        
-        <Text style={styles.modalTitle}>{selectedEvent ? selectedEvent.description : ''}</Text>
-        <Text style={styles.modalText}>Current Attendance: {attendanceCount}</Text>
+        <Text style={styles.modalTitle}>Event: {selectedEvent ? selectedEvent.description : ''}</Text>
+        {/**<Text style={styles.modalText}>Current Attendance: {attendanceCount}</Text> */}
 
         {selectedEvent && selectedEvent.images && (
           <ScrollView contentContainerStyle={styles.modalImageList}>
             {selectedEvent.images.map((imageUri, index) => (
               <Image key={index} source={{ uri: imageUri }} style={styles.modalImage} />
             ))}
+
           </ScrollView>
         )}
 {/**        <Button title="Attend" onPress={handleAttend} />
  */}
+         <Text style={styles.intrested}>Are you interested to attend this event?</Text>
+
         <TouchableOpacity style={styles.attendButton} onPress={handleAttend}>
           <Text style={styles.attendButtonText}>Attend</Text>
         </TouchableOpacity>

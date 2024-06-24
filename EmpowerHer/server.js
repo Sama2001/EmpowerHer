@@ -543,7 +543,7 @@ app.post('/register', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Please provide all required fields' });
 }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const adminEmails = ['admin31@gmail.com', 'adminSama@example.com', 'admin3@example.com'];
+  const adminEmails = ['admin31@gmail.com', 'adminSama@example.com', 'admin3@example.com','SamaAd@gmail.com'];
   try {
    
     console.log('Email:', email);
@@ -832,6 +832,27 @@ app.post('/send-email-membership', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to send email' });
   }
 });
+
+app.post('/send-email-intern-reject', async (req, res) => {
+  const { email, fullName } = req.body;
+
+  const mailOptions = {
+    from: 'samafadah2001@gmail.com',
+    to: email,
+    subject: 'Internship',
+    text: `Dear ${fullName},\n\nWe regret to inform you that your request to become an intern has not been approved at this time. We appreciate your interest and effort in applying. If you have any questions or would like more information, please feel free to reach out to us.\n\nBest regards,\nEmpowerHer`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
+});
+
 
 app.post('/send-email-task', async (req, res) => {
   const { memberId, description, deadline } = req.body;
